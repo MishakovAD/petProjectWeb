@@ -1,5 +1,10 @@
+import com.pakage.controller.TestConroller;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+
+@EnableAutoConfiguration
 public class Main {
-//    public static void main(String[] args) {
-//
-//    }
+    public static void main(String[] args) {
+        SpringApplication.run(Main.class, args);
+    }
 }
