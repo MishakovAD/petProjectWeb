@@ -4,8 +4,8 @@ com\pakage\Entity\Event.class
 Main.class
 com\pakage\Entity\Action.class
 com\pakage\controller\TestConroller.class
-com\pakage\config\RootConfig.class
 com\pakage\config\WebAppInitialiser.class
+com\pakage\controller\TestController3.class
 com\pakage\Entity\User.class
 com\pakage\config\WebConfig.class
 com\pakage\Entity\Location.class

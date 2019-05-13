@@ -69,6 +69,11 @@
       <version>7.0</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>Alexandr.Mishakov</groupId>
+      <artifactId>petProjectWeb</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
   <build>
