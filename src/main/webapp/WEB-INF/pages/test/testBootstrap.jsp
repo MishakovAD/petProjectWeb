@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Подключение Bootstrap, JQuery and Popper.js -->
     <link rel="stylesheet" href="${pageContext.request.contextPath} webjars/bootstrap/4.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath} webjars/jquery/3.3.1-1/jquery.min.js">
-    <link rel="stylesheet" href="${pageContext.request.contextPath} webjars/popper.js/1.14.1/popper.js">
+    <script src="${pageContext.request.contextPath} webjars/jquery/3.3.1-1/jquery.min.js"></script>
+    <script src="${pageContext.request.contextPath} webjars/popper.js/1.14.1/popper.js"></script>
     <!-- ${pageContext.request.contextPath} == META-INF/resources/ -->
 
     <title>Twitter Bootstrap Example</title>
