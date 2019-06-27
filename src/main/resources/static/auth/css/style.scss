@@ -1,0 +1,124 @@
+@import "compass/css3";
+
+body {
+	background:#ccc;
+	font-family: 'Open Sans', sans-serif;
+}
+
+.main-signin {
+  box-shadow: 0px 10px 20px #000;
+	width:455px;
+  height:360px;
+	margin:0 auto;
+	.main-signin__head {
+		background:#242328;
+		border-bottom:1px solid #2d2f32;
+		border-radius:10px 10px 0 0;
+		box-shadow: 0px 1px 0px #000;
+		padding:12px 0;
+		p {
+			color:#586069;
+			text-align:center;
+		}
+	}
+	.main-signin__middle {
+		background:#1f1e23;
+		border-bottom:1px solid #2d2f32;
+		border-top:1px solid #2d2f32;
+		box-shadow: 0px 1px 0px #000;
+		.middle__form {
+			margin:40px 0 20px 0;
+			::-webkit-input-placeholder {
+			   color: #25262a;
+			}
+			:-moz-placeholder { 
+			   color: #25262a;  
+			}
+			::-moz-placeholder { 
+			   color: #25262a;  
+			}
+			:-ms-input-placeholder {  
+			   color: #25262a;  
+			}
+			input[type="text"]{
+					background: #daf4fe;
+					border-radius:5px 5px 0 0;
+					border:none;
+					color:#25262a;
+					display:block;
+					margin:0 20px;
+					outline:none;
+					padding:15px 0;
+					text-indent:20px;
+					width:90%;
+				}
+			input[type="password"] {
+				@extend input[type="text"];
+				border-top:1px solid #acabab;
+				border-radius:0 0 5px 5px;
+			}
+			input[type="submit"] {
+				@extend input[type="text"];
+				background:#00aeef;
+				border-radius:5px;
+				border-bottom:1px solid #000;
+				border-top:1px solid #80d6f7;
+				color:#fff;
+				font-size:.8em;
+				margin-top:15px;
+				text-transform:uppercase;
+				&:active {
+					background:#80d6f7;
+				}
+			}
+		}
+	}
+	.main-signin__foot {
+		background:#242328;
+		border-top:1px solid #2d2f32;
+    border-radius: 0 0 10px 10px;
+		float:left;
+		padding:12px 0;
+		width:100%;
+		.foot__left {
+			float:left;
+			padding:0 0 0 6%;
+			width:56%;
+			p {
+				color:#586069;
+				margin:0;
+				padding:12px 0 0 0;
+				text-transform:uppercase;
+			}
+		}
+		.foot__right {
+			float:left;
+			width:38%;
+			.twit,
+			.face {
+				float:left;
+				a {
+					@include transition(.4s);
+					display:block;
+					margin:-12px 0;
+					text-indent:-999em;
+					width:85px;height:77px;
+					&:hover {
+						background-color:#2d2f32;
+					}
+				}
+			}
+			.twit {
+				a {
+					background: url(http://dommagnifi.co/sandbox/images/social/twitter.png) no-repeat center;
+				}
+			}
+			.face {
+				a {
+					background: url(http://dommagnifi.co/sandbox/images/social/facebook.png) no-repeat center;
+          border-radius: 0 0 10px 0;
+				}
+			}
+		}
+	}
+}

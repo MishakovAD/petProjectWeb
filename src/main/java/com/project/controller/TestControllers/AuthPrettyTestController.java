@@ -1,7 +1,6 @@
-package com.pakage.controller.TestControllers;
+package com.project.controller.TestControllers;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,19 +9,21 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 @Controller
-public class AjaxTestController {
-    @RequestMapping("/testAjax")
-    public String helloWorld(Model model) {
-        return "test/testAjax";
+public class AuthPrettyTestController {
+    @RequestMapping("/testAuthPretty")
+    public String testAuthPretty() {
+        return "test/auth/auth";
     }
 
-    @RequestMapping("/userServlet")
-    public void respAjax(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @RequestMapping("/testAuthPrettyResp")
+    public void respAuthPrettyAjax(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String userName = request.getParameter("userName").trim();
-        if(userName == null || "".equals(userName))
+        String password = request.getParameter("password");
+        if(userName == null || "".equals(userName)) {
             userName = "Guest";
+        }
 
-        String content = "Привет, " + userName;
+        String content = "Login: " + userName + "Password: " + password;
         response.setContentType("text/plain");
 
         OutputStream outStream = response.getOutputStream();

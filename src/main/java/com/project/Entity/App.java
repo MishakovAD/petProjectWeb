@@ -1,4 +1,4 @@
-package com.pakage.Entity;
+package com.project.Entity;
 
 public class App {
     private User user;
