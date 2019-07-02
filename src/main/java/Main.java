@@ -1,5 +1,4 @@
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -11,7 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
  * ВАЖНО: ComponentScan использовать вместе с пакетом, в противном случае он ищет слишком много и не поднимается.
  */
 @SpringBootApplication
-@ComponentScan("com.pakage")
+@ComponentScan({"com.project", "com.project.CinemaTickets"})
 public class Main extends SpringBootServletInitializer {
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {

@@ -1,4 +1,4 @@
-package com.pakage.Entity;
+package com.project.Entity;
 
 public class Action {
     private int action_id;

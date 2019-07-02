@@ -1,4 +1,4 @@
-package com.pakage.Entity;
+package com.project.Entity;
 
 public class Location {
     private int location_id;

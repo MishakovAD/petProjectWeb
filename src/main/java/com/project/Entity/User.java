@@ -1,4 +1,4 @@
-package com.pakage.Entity;
+package com.project.Entity;
 
 public class User {
     private int user_id;
