@@ -12,8 +12,8 @@
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 	<link rel="icon" href="http://vladmaxi.net/favicon.ico" type="image/x-icon">
 	<link rel="shortcut icon" href="http://vladmaxi.net/favicon.ico" type="image/x-icon">
-	<!-- Подключение Bootstrap, JQuery and Popper.js -->
-	<link rel="stylesheet" href="${pageContext.request.contextPath} webjars/bootstrap/4.1.1/css/bootstrap.min.css">
+	<!-- Подключение Bootstrap, JQuery and Popper.js
+	<link rel="stylesheet" href="${pageContext.request.contextPath} webjars/bootstrap/4.1.1/css/bootstrap.min.css"> -->
 	<script src="${pageContext.request.contextPath} webjars/jquery/3.3.1-1/jquery.min.js"></script>
 
 	<script src="js/auth-ajax.js" type="text/javascript"></script>

@@ -24,7 +24,7 @@ public class AuthPrettyTestController {
             userName = "Guest";
         }
 
-        String content = "Login: " + userName + "Password: " + password;
+        String content = "Login: " + userName + " Password: " + password;
         response.setContentType("text/plain");
 
         OutputStream outStream = response.getOutputStream();
