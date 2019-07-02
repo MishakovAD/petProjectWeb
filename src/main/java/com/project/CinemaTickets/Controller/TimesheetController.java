@@ -1,11 +1,14 @@
 package com.project.CinemaTickets.Controller;
 
+import com.project.CinemaTickets.backend.Parser.PlParser;
+import com.project.CinemaTickets.backend.Parser.PliParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -81,7 +84,20 @@ public class TimesheetController {
      * @throws IOException
      */
     public void parser(String query) throws IOException {
-        Document HTMLdoc = Jsoup.connect(query).get();
-        System.out.println(HTMLdoc);
+        Document HTMLdoc = Jsoup.connect(query)
+                .userAgent("Chrome/4.0.249.0 Safari/532.5")
+                .referrer("http://www.google.com")
+                .get();
+        System.out.println("Before parse");
+        plParser.parse(HTMLdoc);
+        System.out.println("After Parse");
+        //System.out.println(HTMLdoc);
+    }
+
+    @Inject
+    PliParser plParser;
+
+    private void setPlParser (PliParser plParser) {
+        this.plParser = plParser;
     }
 }
