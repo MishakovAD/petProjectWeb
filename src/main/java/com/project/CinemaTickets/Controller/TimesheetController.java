@@ -88,6 +88,9 @@ public class TimesheetController {
                 .userAgent("Chrome/4.0.249.0 Safari/532.5")
                 .referrer("http://www.google.com")
                 .get();
+        System.out.println("=========Counter=========");
+        plParser.counterOfPage("232355");
+        System.out.println("=========================");
         System.out.println("Before parse");
         plParser.parse(HTMLdoc);
         System.out.println("After Parse");
