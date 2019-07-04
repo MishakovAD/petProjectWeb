@@ -16,8 +16,16 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
 
+/**
+ * Сделать дополнительную проверку на запрос. возвращет ли он инужные данные или нет. Искать похожие запросы среди списка премьер
+ * чтобы не было такого, что фильм: какая то часть при неуказании части, не искались ссылки. В данном случае нужно брать последнюю часть
+ */
 @Controller
 public class TimesheetController {
+    private String urlFromGoogle = null;
+    private String urlFromYandex = null;
+    private int counterOfUseParser = 0;
+
     @GetMapping({"/cinema"})
     public String getTimesheetPage() {
         return "timesheet";
@@ -28,6 +36,7 @@ public class TimesheetController {
         String timesheetquery = request.getParameter("timesheetquery").trim();
 
         String content = "timesheetquery: " + timesheetquery;
+
         parser(timesheetquery);
         response.setContentType("text/plain");
 
@@ -36,44 +45,6 @@ public class TimesheetController {
         outStream.flush();
         outStream.close();
     }
-
-    public void getData(String query) throws IOException {
-            int c;
-            URL myUrl = new URL(query);
-            URLConnection myUrlCon = myUrl.openConnection();
-
-            // Получить дату
-            long d = myUrlCon.getDate();
-            if(d == 0)
-                System.out.println("Сведения о дате отсутствуют.");
-            else
-                System.out.println("Дата: " + new Date(d));
-
-            // Получить тип содержимого
-            System.out.println("Типа содержимого: "
-                    + myUrlCon.getContentType());
-            // Получить длину содержимого
-            long length = myUrlCon.getContentLengthLong();
-            if(length == -1)
-                System.out.println("Длина содержимого недоступна");
-            else
-                System.out.println("Длина содержимого: " + length);
-
-            if(length != 0) {
-                System.out.println("=== Содержимое ===");
-                String line;
-                InputStream input = myUrlCon.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                }
-                input.close();
-                reader.close();
-            } else {
-                System.out.println("Содержимое недоступно.");
-            }
-    }
-
 
     /**
      * Метод, который позволяет распарсить HTML страницу и получить из нее список всех кинотеатров, сеансов, адресов, стоимостью, рейтингом
@@ -84,17 +55,42 @@ public class TimesheetController {
      * @throws IOException
      */
     public void parser(String query) throws IOException {
-        Document HTMLdoc = Jsoup.connect(query)
-                .userAgent("Chrome/4.0.249.0 Safari/532.5")
-                .referrer("http://www.google.com")
-                .get();
-        System.out.println("=========Counter=========");
-        plParser.counterOfPage("232355");
-        System.out.println("=========================");
-        System.out.println("Before parse");
-        plParser.parse(HTMLdoc);
-        System.out.println("After Parse");
-        //System.out.println(HTMLdoc);
+        counterOfUseParser++;
+        String url = createUrlFromQuery(query);
+        String filmId = plParser.getFilmIdFromQuery(url);
+
+        if (filmId.equals("0")) {
+            parser(query);
+        } else {
+            System.out.println("До получения корректной ссылки parser() вызвался: " + counterOfUseParser + " раз");
+            counterOfUseParser = 0;
+
+            int pageCounter = plParser.counterOfPage(filmId);
+            for (int i = 1; i <= pageCounter; i++) {
+                StringBuffer urlStr = new StringBuffer();
+                //TODO: At this time, this work only for Moscow. At future change "msk" on other country.
+                urlStr.append("https://www.afisha.ru/msk/schedule_cinema_product/")
+                        .append(filmId)
+                        .append("/page")
+                        .append(i);
+
+                Document HTMLdoc = Jsoup.connect(urlStr.toString())
+                        .userAgent("Chrome/4.0.249.0 Safari/532.5")
+                        .referrer("http://www.google.com")
+                        .get();
+                plParser.parse(HTMLdoc);
+                System.out.println("Parse " + i + " page was sucsessfull");
+            }
+        }
+    }
+
+    //TODO: Тут добавить проверку на корректность ссылки. Минимум https://www.аfиша.ru/movie/filmId/, ну или хотя бы просто афиша
+    private String createUrlFromQuery(String queryForUrl) throws IOException {
+        urlFromYandex = plParser.createURLFromQueryWithYandex(queryForUrl);
+        if (urlFromYandex == null) {
+            urlFromGoogle = plParser.createURLFromQueryWithGoogle(queryForUrl);
+        }
+        return urlFromYandex != null ? urlFromYandex : urlFromGoogle;
     }
 
     @Inject

@@ -8,6 +8,11 @@ public class Cinema {
     public Cinema() {
     }
 
+    public Cinema(String name, String address) {
+        this.name = name;
+        this.address = address;
+    }
+
     public String getName() {
         return name;
     }
@@ -30,5 +35,14 @@ public class Cinema {
 
     public void setInfoAboutCinema(String infoAboutCinema) {
         this.infoAboutCinema = infoAboutCinema;
+    }
+
+    @Override
+    public String toString() {
+        return "Cinema{" +
+                "name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", infoAboutCinema='" + infoAboutCinema + '\'' +
+                '}';
     }
 }

@@ -4,12 +4,18 @@ public class Movie {
     private String name;
     private String rating;
     private Cinema cinema;
-    private int price;
+    private Session session;
     private String dateFrom;
-    private String[] movieShow; //Time of Movie
-    private String typeOfMovie; //2D,3D,IMax
 
     public Movie() {
+    }
+
+    public Movie(String name, String rating, Cinema cinema, Session session, String dateFrom) {
+        this.name = name;
+        this.rating = rating;
+        this.cinema = cinema;
+        this.session = session;
+        this.dateFrom = dateFrom;
     }
 
     public String getName() {
@@ -36,12 +42,12 @@ public class Movie {
         this.cinema = cinema;
     }
 
-    public int getPrice() {
-        return price;
+    public Session getSession() {
+        return session;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
+    public void setSession(Session session) {
+        this.session = session;
     }
 
     public String getDateFrom() {
@@ -52,19 +58,14 @@ public class Movie {
         this.dateFrom = dateFrom;
     }
 
-    public String[] getMovieShow() {
-        return movieShow;
-    }
-
-    public void setMovieShow(String[] movieShow) {
-        this.movieShow = movieShow;
-    }
-
-    public String getTypeOfMovie() {
-        return typeOfMovie;
-    }
-
-    public void setTypeOfMovie(String typeOfMovie) {
-        this.typeOfMovie = typeOfMovie;
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "name='" + name + '\'' +
+                ", rating='" + rating + '\'' +
+                ", cinema=" + cinema +
+                ", session=" + session +
+                ", dateFrom='" + dateFrom + '\'' +
+                '}';
     }
 }
