@@ -88,6 +88,14 @@
       <version>1</version>
     </dependency>
 
+    <!-- https://mvnrepository.com/artifact/net.databinder/dispatch-http -->
+    <dependency>
+      <groupId>net.databinder</groupId>
+      <artifactId>dispatch-http_2.11</artifactId>
+      <version>0.8.10</version>
+    </dependency>
+
+
 
   </dependencies>
 
