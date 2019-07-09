@@ -1,10 +1,12 @@
 package com.project.CinemaTickets.CinemaEntity;
 
 public class Movie {
+    private int movieId;
     private String name;
     private String rating;
     private Cinema cinema;
     private Session session;
+    private Timetable timetable;
     private String dateFrom;
 
     public Movie() {
@@ -16,6 +18,14 @@ public class Movie {
         this.cinema = cinema;
         this.session = session;
         this.dateFrom = dateFrom;
+    }
+
+    public int getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(int movieId) {
+        this.movieId = movieId;
     }
 
     public String getName() {
@@ -50,6 +60,14 @@ public class Movie {
         this.session = session;
     }
 
+    public Timetable getTimetable() {
+        return timetable;
+    }
+
+    public void setTimetable(Timetable timetable) {
+        this.timetable = timetable;
+    }
+
     public String getDateFrom() {
         return dateFrom;
     }
@@ -60,12 +78,12 @@ public class Movie {
 
     @Override
     public String toString() {
-        return "Movie{" +
-                "name='" + name + '\'' +
-                ", rating='" + rating + '\'' +
-                ", cinema=" + cinema +
-                ", session=" + session +
-                ", dateFrom='" + dateFrom + '\'' +
+        return "Фильм{" +
+                "Название='" + name + '\'' +
+                ", Рейтинг='" + rating + '\'' +
+                ", Кинотеатр=" + cinema +
+                ", Расписание=" + session +
+                ", Дата='" + dateFrom + '\'' +
                 '}';
     }
 }

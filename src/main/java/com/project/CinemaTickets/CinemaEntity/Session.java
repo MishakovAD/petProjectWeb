@@ -1,9 +1,11 @@
 package com.project.CinemaTickets.CinemaEntity;
 
 public class Session {
+    private int sessionId;
     private String timeOfShow; //Time of Movie
     private String typeOfMovie; //2D,3D,IMax
     private String price;
+    private String url;
 
     public Session() {
     }
@@ -12,6 +14,21 @@ public class Session {
         this.timeOfShow = timeOfShow;
         this.typeOfMovie = typeOfMovie;
         this.price = price;
+    }
+
+    public Session(String timeOfShow, String typeOfMovie, String price, String url) {
+        this.timeOfShow = timeOfShow;
+        this.typeOfMovie = typeOfMovie;
+        this.price = price;
+        this.url = url;
+    }
+
+    public int getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(int sessionId) {
+        this.sessionId = sessionId;
     }
 
     public String getTimeOfShow() {
@@ -38,12 +55,20 @@ public class Session {
         this.price = price;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     @Override
     public String toString() {
-        return "Session{" +
-                "timeOfShow='" + timeOfShow + '\'' +
-                ", typeOfMovie='" + typeOfMovie + '\'' +
-                ", price='" + price + '\'' +
+        return "Расписание{" +
+                "Время='" + timeOfShow + '\'' +
+                ", Тип='" + typeOfMovie + '\'' +
+                ", Цена='" + price + '\'' +
                 '}';
     }
 }

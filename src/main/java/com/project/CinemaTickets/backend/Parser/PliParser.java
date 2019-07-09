@@ -35,6 +35,7 @@ public interface PliParser {
      */
     public String createURLFromQueryWithGoogle(String query) throws IOException;
     public String createURLFromQueryWithYandex(String query) throws IOException;
+    public String createUrlFromQuery(String queryForUrl) throws IOException;
 
     public String getFilmIdFromQuery(String query);
 

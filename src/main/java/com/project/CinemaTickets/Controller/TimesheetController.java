@@ -1,6 +1,5 @@
 package com.project.CinemaTickets.Controller;
 
-import com.project.CinemaTickets.backend.Parser.PlParser;
 import com.project.CinemaTickets.backend.Parser.PliParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,9 +11,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Date;
 
 /**
  * Сделать дополнительную проверку на запрос. возвращет ли он инужные данные или нет. Искать похожие запросы среди списка премьер
@@ -22,8 +18,6 @@ import java.util.Date;
  */
 @Controller
 public class TimesheetController {
-    private String urlFromGoogle = null;
-    private String urlFromYandex = null;
     private int counterOfUseParser = 0;
 
     @GetMapping({"/cinema"})
@@ -56,7 +50,7 @@ public class TimesheetController {
      */
     public void parser(String query) throws IOException {
         counterOfUseParser++;
-        String url = createUrlFromQuery(query);
+        String url = plParser.createUrlFromQuery(query);
         String filmId = plParser.getFilmIdFromQuery(url);
 
         if (filmId.equals("0")) {
@@ -82,15 +76,6 @@ public class TimesheetController {
                 System.out.println("Parse " + i + " page was sucsessfull");
             }
         }
-    }
-
-    //TODO: Тут добавить проверку на корректность ссылки. Минимум https://www.аfиша.ru/movie/filmId/, ну или хотя бы просто афиша
-    private String createUrlFromQuery(String queryForUrl) throws IOException {
-        urlFromYandex = plParser.createURLFromQueryWithYandex(queryForUrl);
-        if (urlFromYandex == null) {
-            urlFromGoogle = plParser.createURLFromQueryWithGoogle(queryForUrl);
-        }
-        return urlFromYandex != null ? urlFromYandex : urlFromGoogle;
     }
 
     @Inject

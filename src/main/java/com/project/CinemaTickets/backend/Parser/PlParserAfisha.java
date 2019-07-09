@@ -11,20 +11,19 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class PlParser implements PliParser {
+public class PlParserAfisha implements PliParser {
     @Override
     public void parse(Document HTMLdoc) throws IOException {
-        List<Movie> movieList = new ArrayList<>();
+        List<Movie> movieTimetableList = new ArrayList<>();
         List<Cinema> cinemaList = new ArrayList<>();
         Movie movie;
-        Cinema cinemaMovie;
+        Cinema cinema;
 
         String nameMovie = HTMLdoc.select("div.title__name").text();
         String ratingMovie = HTMLdoc.select("div.rating-control__average-rating-value").text();
@@ -36,17 +35,24 @@ public class PlParser implements PliParser {
         for (Element element : elements.select("li")) {
             Elements rootElements = element.getElementsByAttributeValue("class", "unit__schedule-row");
             for (Element rootElement : rootElements) {
-                cinemaMovie = getCinemaFromElement(rootElement);
+                cinema = getCinemaFromElement(rootElement);
                 Timetable timetable = new Timetable(getSessionFromElement(rootElement));
                 for (Session session : timetable.getTimetable()) {
-                    movie = new Movie(nameMovie, ratingMovie, cinemaMovie, session, dateFromMovie);
-                    movieList.add(movie);
+                    movie = new Movie(nameMovie, ratingMovie, cinema, session, dateFromMovie);
+                    movieTimetableList.add(movie);
                 }
-                cinemaList.add(cinemaMovie);
+                cinema.setMovieList(movieTimetableList);
+                movieTimetableList = new ArrayList<>();
+                cinemaList.add(cinema);
             }
         }
 
-        for (Movie mov : movieList) System.out.println(mov.toString());
+        for (Cinema cinemaL : cinemaList) {
+            System.out.println("В кинотеатре " + cinemaL.getName() + " можно увидеть следующие фильмы: ");
+            for (Movie mov : cinemaL.getMovieList()) {
+                System.out.println(mov.toString());
+            }
+        }
     }
 
     @Override
@@ -137,6 +143,18 @@ public class PlParser implements PliParser {
         return urlFromYandex;
     }
 
+    //TODO: Тут добавить проверку на корректность ссылки. Минимум https://www.аfиша.ru/movie/filmId/, ну или хотя бы просто афиша
+    @Override
+    public String createUrlFromQuery(String queryForUrl) throws IOException {
+        String urlFromGoogle = null;
+        String urlFromYandex = null;
+        urlFromYandex = createURLFromQueryWithYandex(queryForUrl);
+        if (urlFromYandex == null) {
+            urlFromGoogle = createURLFromQueryWithGoogle(queryForUrl);
+        }
+        return urlFromYandex != null ? urlFromYandex : urlFromGoogle;
+    }
+
     @Override
     public String getFilmIdFromQuery(String query) {
         String filmId = "0";
@@ -156,19 +174,27 @@ public class PlParser implements PliParser {
 
     @Override
     public Cinema getCinemaFromElement(Element element) throws IOException {
+        Cinema cinema = new Cinema();
         String nameCinema;
         String addressCinema;
         StringBuffer urlAddressCinema = new StringBuffer("https://www.afisha.ru");
         nameCinema = element.getElementsByAttributeValue("class","unit__movie-name").text();
         urlAddressCinema.append(element.getElementsByAttributeValue("class", "unit__movie-name__link").attr("href"));
         try {
-            addressCinema = getAddressCinemaFromUrlOrDB(urlAddressCinema.toString());
+            //TODO: Сделать однократный поиск URL для кинотеатра и потом брать из БД. Очень тормозит работу.
+            //Добавить проверку на наличие в БД и если нету, идти в интернет, а так при старте делать выгрузку из БД в HashMap Имя кинотетра - объект кинотеатр
+            // И возвращать сразу готовый объект
+            //addressCinema = getAddressCinemaFromUrlOrDB(urlAddressCinema.toString());
+            addressCinema = "TODO: update in the future";
         } catch (Exception ex) {
             System.out.println("Error: " + ex + ". Необходимо оптимизировать поиск адресов кинотеатров");
             addressCinema = urlAddressCinema.toString();
         }
 
 
+        cinema.setName(nameCinema);
+        cinema.setAddress(addressCinema);
+        cinema.setUrlToAfisha(urlAddressCinema.toString());
         return new Cinema(nameCinema, addressCinema);
     }
 
@@ -202,17 +228,7 @@ public class PlParser implements PliParser {
     }
 
     public static void main(String[] args) throws IOException {
-        PlParser p = new PlParser();
-//        System.out.println(p.getFilmIdFromQuery("https://www.afisha.ru/krasnodar/schedule_cinema_product/257056/"));
-//        System.out.println(p.getFilmIdFromQuery("https://www.afisha.ru/movie/257056/"));
-//        System.out.println(p.createURLFromQueryWithYandex("купить билеты ибица"));
-//        System.out.println(p.createURLFromQueryWithGoogle("купить билеты ибица"));
-
-        Document HTMLdoc = Jsoup.connect("https://www.afisha.ru/msk/schedule_cinema_product/232355/06-07-2019/")
-                .userAgent("Chrome/4.0.249.0 Safari/532.5")
-                .referrer("http://www.google.com")
-                .get();
-        p.parse(HTMLdoc);
+        PlParserAfisha p = new PlParserAfisha();
 
     }
 }
