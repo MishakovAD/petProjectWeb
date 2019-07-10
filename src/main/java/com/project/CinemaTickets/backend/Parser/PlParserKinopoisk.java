@@ -21,6 +21,17 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
     public String CITY_MOSCOW = "Москва";
     public static Pattern PATTERN_CINEMA_KINOPOISK = Pattern.compile("(https://www.kinopoisk.ru/afisha/city/\\d+/cinema/[a-z0-9A-Zа-яА-Я -]+/?)");
 
+    /**
+     * Поисковым запросом мы сразу должны получить страницу с кинотеатром,
+     * где по элементам ищем название нашего фильма,
+     * а затем нужный сеанс и берем оттуда сессию и вставляем в ссылку
+     * Другой вариант: Сразу идти на сайт кинопоиска
+     * и там в поисковый запрос вставлять название, но это дольше. Не подходит.
+     * @param cinema
+     * @param movie
+     * @return
+     * @throws IOException
+     */
     @Override
     public String getUrlForBuyTickets(Cinema cinema, Movie movie) throws IOException {
         String urlForCinema = createUrlFromQuery(cinema.getName());
