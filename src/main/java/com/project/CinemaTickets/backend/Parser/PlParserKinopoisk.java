@@ -7,6 +7,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
@@ -14,13 +15,14 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class PlParserKinopoisk extends PlParserAfisha implements PliParser {
+@Component
+public class PlParserKinopoisk implements PliParserKinopoisk {
     public static String HELPER_FOR_QUERY_KINOPOISK = "купить билеты kinopoisk.ru ";
     public String CITY_MOSCOW = "Москва";
     public static Pattern PATTERN_CINEMA_KINOPOISK = Pattern.compile("(https://www.kinopoisk.ru/afisha/city/\\d+/cinema/[a-z0-9A-Zа-яА-Я -]+/?)");
 
-
-    public String getUrlForBuyTickets(Movie movie, Cinema cinema) throws IOException {
+    @Override
+    public String getUrlForBuyTickets(Cinema cinema, Movie movie) throws IOException {
         String urlForCinema = createUrlFromQuery(cinema.getName());
 
         return null;
@@ -95,12 +97,10 @@ public class PlParserKinopoisk extends PlParserAfisha implements PliParser {
         return urlFromYandex != null ? urlFromYandex : urlFromGoogle;
     }
 
-    @Override
     public Cinema getCinemaFromElement(Element element) throws IOException {
         return null;
     }
 
-    @Override
     public List<Session> getSessionFromElement(Element element) throws IOException {
         return null;
     }

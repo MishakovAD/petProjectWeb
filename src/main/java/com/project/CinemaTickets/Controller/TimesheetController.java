@@ -1,6 +1,8 @@
 package com.project.CinemaTickets.Controller;
 
+import com.project.CinemaTickets.CinemaEntity.Cinema;
 import com.project.CinemaTickets.backend.Parser.PliParser;
+import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,8 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Сделать дополнительную проверку на запрос. возвращет ли он инужные данные или нет. Искать похожие запросы среди списка премьер
@@ -19,12 +23,14 @@ import java.io.*;
 @Controller
 public class TimesheetController {
     private int counterOfUseParser = 0;
+    private List<Cinema> cinemaList;
 
     @GetMapping({"/cinema"})
     public String getTimesheetPage() {
         return "timesheet";
     }
 
+    //TODO: сделать потокобезопасную HashMap для многих пользователей, где ключ - сессия, которую получаем из реквест, а значение - List<Cinema>
     @RequestMapping("/timesheetquery")
     public void respTimesheet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String timesheetquery = request.getParameter("timesheetquery").trim();
@@ -49,6 +55,7 @@ public class TimesheetController {
      * @throws IOException
      */
     public void parser(String query) throws IOException {
+        cinemaList = new ArrayList<>();
         counterOfUseParser++;
         String url = plParser.createUrlFromQuery(query);
         String filmId = plParser.getFilmIdFromQuery(url);
@@ -72,16 +79,27 @@ public class TimesheetController {
                         .userAgent("Chrome/4.0.249.0 Safari/532.5")
                         .referrer("http://www.google.com")
                         .get();
-                plParser.parse(HTMLdoc);
-                System.out.println("Parse " + i + " page was sucsessfull");
+                cinemaList.addAll(plParser.parse(HTMLdoc));
+                System.out.println("Parse " + i + " page was sucsessfull! " + "size= " + cinemaList.size());
             }
+            /*
+            Какая то логика, которая будет выбирать подходящий сеанс. Возможно вынести это в отдельный метод.
+            Пока передам просто 1 элемент из листа
+             */
+            plParserKinopoisk.getUrlForBuyTickets(cinemaList.get(0), cinemaList.get(0).getMovieList().get(0));
         }
     }
 
     @Inject
     PliParser plParser;
+    @Inject
+    PliParserKinopoisk plParserKinopoisk;
 
     private void setPlParser (PliParser plParser) {
         this.plParser = plParser;
+    }
+
+    private void setPliParserKinopoisk (PliParserKinopoisk pliParserKinopoisk1) {
+        this.plParserKinopoisk = pliParserKinopoisk1;
     }
 }

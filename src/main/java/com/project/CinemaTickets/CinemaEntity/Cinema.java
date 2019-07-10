@@ -6,11 +6,12 @@ public class Cinema {
     private int cinemaId;
     private String name;
     private String address;
+    private String underground;
     private String urlToAfisha;
     private String urlToYandexAfisha;
     private String urlToKinopoisk;
     private String infoAboutCinema;
-    private List<Movie> movieList;
+    private List<Movie> movieList; //по сути это лист с одинаковыми фильмами, но разным расписанием. Поэтому в метод кинопоиска передаем и кинотеатр и нужный фильм - т.е. нужный сеанс.
 
     public Cinema() {
     }
@@ -42,6 +43,14 @@ public class Cinema {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getUnderground() {
+        return underground;
+    }
+
+    public void setUnderground(String underground) {
+        this.underground = underground;
     }
 
     public String getInfoAboutCinema() {
@@ -86,14 +95,15 @@ public class Cinema {
 
     @Override
     public String toString() {
-        return "Кинотеатр{" +
-                "cinemaId=" + cinemaId +
+        return "Кинотеатр {" +
+//                "cinemaId=" + cinemaId +
                 ", Название='" + name + '\'' +
-                ", Адрес='" + address + '\'' +
+//                ", Адрес='" + address + '\'' +
+                ", Метро='" + underground + '\'' +
                 ", urlToAfisha='" + urlToAfisha + '\'' +
-                ", urlToYandexAfisha='" + urlToYandexAfisha + '\'' +
-                ", urlToKinopoisk='" + urlToKinopoisk + '\'' +
-                ", infoAboutCinema='" + infoAboutCinema + '\'' +
+//                ", urlToYandexAfisha='" + urlToYandexAfisha + '\'' +
+//                ", urlToKinopoisk='" + urlToKinopoisk + '\'' +
+//                ", Информация='" + infoAboutCinema + '\'' +
                 '}';
     }
 }

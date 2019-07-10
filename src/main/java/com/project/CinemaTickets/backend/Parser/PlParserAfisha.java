@@ -19,7 +19,7 @@ import java.util.List;
 @Component
 public class PlParserAfisha implements PliParser {
     @Override
-    public void parse(Document HTMLdoc) throws IOException {
+    public List<Cinema> parse(Document HTMLdoc) throws IOException {
         List<Movie> movieTimetableList = new ArrayList<>();
         List<Cinema> cinemaList = new ArrayList<>();
         Movie movie;
@@ -53,6 +53,7 @@ public class PlParserAfisha implements PliParser {
                 System.out.println(mov.toString());
             }
         }
+        return cinemaList;
     }
 
     @Override
@@ -177,8 +178,10 @@ public class PlParserAfisha implements PliParser {
         Cinema cinema = new Cinema();
         String nameCinema;
         String addressCinema;
+        String underground;
         StringBuffer urlAddressCinema = new StringBuffer("https://www.afisha.ru");
         nameCinema = element.getElementsByAttributeValue("class","unit__movie-name").text();
+        underground = element.select("div.unit__movie-location").text();
         urlAddressCinema.append(element.getElementsByAttributeValue("class", "unit__movie-name__link").attr("href"));
         try {
             //TODO: Сделать однократный поиск URL для кинотеатра и потом брать из БД. Очень тормозит работу.
@@ -193,9 +196,10 @@ public class PlParserAfisha implements PliParser {
 
 
         cinema.setName(nameCinema);
+        cinema.setUnderground(underground);
         cinema.setAddress(addressCinema);
         cinema.setUrlToAfisha(urlAddressCinema.toString());
-        return new Cinema(nameCinema, addressCinema);
+        return cinema;
     }
 
     @Override
@@ -229,6 +233,9 @@ public class PlParserAfisha implements PliParser {
 
     public static void main(String[] args) throws IOException {
         PlParserAfisha p = new PlParserAfisha();
+
+        Document html = Jsoup.connect("https://www.afisha.ru/msk/schedule_cinema_product/246135/").get();
+        p.parse(html);
 
     }
 }

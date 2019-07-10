@@ -14,7 +14,7 @@ public interface PliParser {
      * to google and take page with content
      * @param HTMLdoc - HTML page from aфisha.ru
      */
-    public void parse(Document HTMLdoc) throws IOException;
+    public List<Cinema> parse(Document HTMLdoc) throws IOException;
 
     /**
      * Method return counter of page, which return Status 200 OK
