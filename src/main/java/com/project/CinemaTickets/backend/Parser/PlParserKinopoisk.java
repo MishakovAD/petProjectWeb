@@ -3,6 +3,7 @@ package com.project.CinemaTickets.backend.Parser;
 import com.project.CinemaTickets.CinemaEntity.Cinema;
 import com.project.CinemaTickets.CinemaEntity.Movie;
 import com.project.CinemaTickets.CinemaEntity.Session;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
 @Component
 public class PlParserKinopoisk implements PliParserKinopoisk {
     public static String HELPER_FOR_QUERY_KINOPOISK = "купить билеты kinopoisk.ru ";
+    public static String HELPER_FOR_BUY_TICKETS = "https://tickets.widget.kinopoisk.ru/w/sessions/";
     public String CITY_MOSCOW = "Москва";
     public static Pattern PATTERN_CINEMA_KINOPOISK = Pattern.compile("(https://www.kinopoisk.ru/afisha/city/\\d+/cinema/[a-z0-9A-Zа-яА-Я -]+/?)");
 
@@ -34,9 +36,27 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
      */
     @Override
     public String getUrlForBuyTickets(Cinema cinema, Movie movie) throws IOException {
+        StringBuffer urlForBuyTickets = new StringBuffer(HELPER_FOR_BUY_TICKETS);
         String urlForCinema = createUrlFromQuery(cinema.getName());
 
-        return null;
+        Document cinemaDocument = Jsoup.connect(urlForCinema)
+                .userAgent("Mozilla/5.0 Chrome/75.0.3770.100 Safari/537.36")
+                .referrer("http://www.google.com")
+                .get();
+//TODO: обязательно добавить проверку на тип сеанса, если пользователь скажет. что это важно! Либо сделать так, чтобы sortedCinemaListFromTypeShow() метод выполнял ее.
+        Elements elements = cinemaDocument.select("div.cinema-seances-page__seances");
+        for (Element element : elements.select("div.schedule-item.schedule-item_type_film")) {
+            if (StringUtils.equalsAnyIgnoreCase(movie.getName(), element.select("a.link.schedule-film__title").text())) {
+                for (Element timeElement : element.select("span.schedule-item__session-button.schedule-item__session-button_active.js-yaticket-button")) {
+                    if (StringUtils.equalsAnyIgnoreCase(timeElement.text(), movie.getSession().getTimeOfShow())) {
+                        urlForBuyTickets.append(timeElement.attr("data-session-id"));
+                        return urlForBuyTickets.toString();
+                    }
+                }
+            }
+        }
+
+        return "Сеанс не найден.";
     }
 
     @Override
@@ -118,6 +138,15 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
 
     public static void main(String[] args) throws IOException {
         PlParserKinopoisk p = new PlParserKinopoisk();
-        System.out.println(p.createUrlFromQuery("космик"));
+        Cinema cin = new Cinema();
+        cin.setName("Космик");
+        Movie mov = new Movie();
+        mov.setName("Человек-паук: Вдали от дома");
+        Session ses = new Session();
+        ses.setTimeOfShow("00:15");
+        ses.setTypeOfMovie("2D");
+        mov.setSession(ses);
+        System.out.println(p.getUrlForBuyTickets(cin, mov));
+        //System.out.println(p.createUrlFromQuery("космик"));
     }
 }
