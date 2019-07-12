@@ -26,11 +26,11 @@
 <br/>
 <div class="query">
     Название фильма: <input type="text" id="timesheetquery"/><br/>
-    Время сеанса: <input type="hidden" id="timesheet_time"/><br/>
+
     Тип фильма: <input type="hidden" id="timesheet_type"/><br/>
     Кинотеатр: <input type="hidden" id="timesheet_cinmea"/><br/>
 </div>
-
+Время сеанса: <input type="text" id="timesheet_time"/><br/>
 
 <strong>Ответ сервлета </strong>:
 <span id="ajaxTimesheetQuery"></span>

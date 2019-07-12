@@ -1,5 +1,5 @@
 // вызов функции по завершению загрузки страницы
-$(document).ready(function() {
+$(document).ready(function sendQuery() {
     // вызов функции после потери полем 'timesheetquery' фокуса
     $('#timesheetquery').blur(function() {
         $.ajax({
@@ -22,15 +22,14 @@ $(document).ready(function() {
 }
 );
 
-
-// вызов функции после потери полем 'timesheetquery' фокуса
-$('#timesheet_time').focusout(function(){
+$(document).ready(function () {
+$('#timesheet_time').focusout( function() {
     $.ajax({
-        url : 'timesheetquery_test',     // URL - сервлет
-        data : {                 // передаваемые сервлету данные
-            timesheetquery : $('#timesheet_time').val(),
+        url: 'timesheetquery_test',     // URL - сервлет
+        data: {                 // передаваемые сервлету данные
+            timesheetquery: $('#timesheet_time').val(),
         },
-        success : function(response) {
+        success: function (response) {
             // обработка ответа от сервера
             $('#ajaxTimesheetQuery').text(response);
 
@@ -39,5 +38,7 @@ $('#timesheet_time').focusout(function(){
             input.className = "timesheet_time";
             document.body.appendChild(input);
         }
-    });
+    })
 });
+}
+);
