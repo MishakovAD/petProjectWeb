@@ -4,6 +4,7 @@ import com.project.CinemaTickets.CinemaEntity.Cinema;
 import com.project.CinemaTickets.CinemaEntity.Movie;
 import com.project.CinemaTickets.CinemaEntity.Session;
 import com.project.CinemaTickets.CinemaEntity.Timetable;
+import com.project.CinemaTickets.backend.UserLogic.PlUserLogicFromInternet;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -47,7 +48,9 @@ public class PlParserAfisha implements PliParser {
             }
         }
 
-        for (Cinema cinemaL : cinemaList) {
+        PlUserLogicFromInternet p = new PlUserLogicFromInternet();
+
+        for (Cinema cinemaL : p.updateCinemaListFromTimeShow(p.updateCinemaListFromTypeShow(cinemaList, "2D"), "20:00")) {
             System.out.println("В кинотеатре " + cinemaL.getName() + " можно увидеть следующие фильмы: ");
             for (Movie mov : cinemaL.getMovieList()) {
                 System.out.println(mov.toString());

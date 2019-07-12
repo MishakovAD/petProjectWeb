@@ -3,6 +3,7 @@ package com.project.CinemaTickets.Controller;
 import com.project.CinemaTickets.CinemaEntity.Cinema;
 import com.project.CinemaTickets.backend.Parser.PliParser;
 import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
+import com.project.CinemaTickets.backend.UserLogic.PliUserLogic;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Controller;
@@ -22,7 +23,6 @@ import java.util.List;
  */
 @Controller
 public class TimesheetController {
-    private int counterOfUseParser = 0;
     private List<Cinema> cinemaList;
 
     @GetMapping({"/cinema"})
@@ -37,7 +37,7 @@ public class TimesheetController {
 
         String content = "timesheetquery: " + timesheetquery;
 
-        parser(timesheetquery);
+        pliUserLogic.getCinemaListWithMovie(timesheetquery);
         response.setContentType("text/plain");
 
         OutputStream outStream = response.getOutputStream();
@@ -46,63 +46,11 @@ public class TimesheetController {
         outStream.close();
     }
 
-    /**
-     * Метод, который позволяет распарсить HTML страницу
-     * и получить из нее список всех кинотеатров, сеансов, адресов, стоимостью, рейтингом
-     * для перемещения по страницам (а не "загрузить больше")
-     * использовать ссылку вида: https://www.afisha.ru/msk/schedule_cinema_product/232355/page2/?utm_content=afishapv
-     * где меняется только параметр страницы
-     * и проверять все страницы до тех пор, пока не придет ответ с 404 ошибкой.
-     * @param query
-     * @throws IOException
-     */
-    public void parser(String query) throws IOException {
-        cinemaList = new ArrayList<>();
-        counterOfUseParser++;
-        String url = pliParserAfisha.createUrlFromQuery(query);
-        String filmId = pliParserAfisha.getFilmIdFromQuery(url);
 
-        if (filmId.equals("0")) {
-            parser(query);
-        } else {
-            System.out.println("До получения корректной ссылки parser() вызвался: " + counterOfUseParser + " раз");
-            counterOfUseParser = 0;
-
-            int pageCounter = pliParserAfisha.counterOfPage(filmId);
-            for (int i = 1; i <= pageCounter; i++) {
-                StringBuffer urlStr = new StringBuffer();
-                //TODO: At this time, this work only for Moscow. At future change "msk" on other country. Can search to IP address
-                urlStr.append("https://www.afisha.ru/msk/schedule_cinema_product/")
-                        .append(filmId)
-                        .append("/page")
-                        .append(i);
-
-                Document HTMLdoc = Jsoup.connect(urlStr.toString())
-                        .userAgent("Chrome/4.0.249.0 Safari/532.5")
-                        .referrer("http://www.google.com")
-                        .get();
-                cinemaList.addAll(pliParserAfisha.parse(HTMLdoc));
-                System.out.println("Parse " + i + " page was sucsessfull! " + "size= " + cinemaList.size());
-            }
-            /*
-            Какая то логика, которая будет выбирать подходящий сеанс. Возможно вынести это в отдельный метод.
-            Пока передам просто 1 элемент из листа
-             */
-            pliParserKinopoisk.getUrlForBuyTickets(cinemaList.get(0), cinemaList.get(0).getMovieList().get(0));
-        }
-    }
-
-
-    PliParser pliParserAfisha;
-    PliParserKinopoisk pliParserKinopoisk;
+    private PliUserLogic pliUserLogic;
 
     @Inject
-    private void setPlParser (PliParser pliParser) {
-        this.pliParserAfisha = pliParser;
-    }
-
-    @Inject
-    private void setPliParserKinopoisk (PliParserKinopoisk pliParserKinopoisk1) {
-        this.pliParserKinopoisk = pliParserKinopoisk1;
+    private void setPliUserLogic (PliUserLogic pliUserLogic) {
+        this.pliUserLogic = pliUserLogic;
     }
 }
