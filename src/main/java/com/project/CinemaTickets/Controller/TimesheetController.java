@@ -37,9 +37,9 @@ public class TimesheetController {
 
         String content = "timesheetquery: " + timesheetquery;
 
-        pliUserLogic.getCinemaListWithMovie(timesheetquery);
-        response.setContentType("text/plain");
+        List<Cinema> firstIterationCinemaList = pliUserLogic.getCinemaListWithMovie(timesheetquery);
 
+        response.setContentType("text/plain");
         OutputStream outStream = response.getOutputStream();
         outStream.write(content.getBytes("UTF-8"));
         outStream.flush();

@@ -24,7 +24,12 @@
 <body>
 Тут билеты
 <br/>
-Запрос: <input type="text" id="timesheetquery"/><br/>
+<div class="query">
+    Название фильма: <input type="text" id="timesheetquery"/><br/>
+    Время сеанса: <input type="hidden" id="timesheet_time"/><br/>
+    Тип фильма: <input type="hidden" id="timesheet_type"/><br/>
+    Кинотеатр: <input type="hidden" id="timesheet_cinmea"/><br/>
+</div>
 
 
 <strong>Ответ сервлета </strong>:
