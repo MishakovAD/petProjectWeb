@@ -48,14 +48,13 @@ public class PlParserAfisha implements PliParser {
             }
         }
 
-        PlUserLogicFromInternet p = new PlUserLogicFromInternet();
 
-        for (Cinema cinemaL : p.updateCinemaListFromTimeShow(p.updateCinemaListFromTypeShow(cinemaList, "2D"), "20:00")) {
-            System.out.println("В кинотеатре " + cinemaL.getName() + " можно увидеть следующие фильмы: ");
-            for (Movie mov : cinemaL.getMovieList()) {
-                System.out.println(mov.toString());
-            }
-        }
+//        for (Cinema cinemaL : cinemaList) {
+//            System.out.println("В кинотеатре " + cinemaL.getName() + " можно увидеть следующие фильмы: ");
+//            for (Movie mov : cinemaL.getMovieList()) {
+//                System.out.println(mov.toString());
+//            }
+//        }
         return cinemaList;
     }
 
@@ -98,7 +97,7 @@ public class PlParserAfisha implements PliParser {
         urlQueryForGoogle.append("afisha.ru");
 
         Document googleHTMLdoc = Jsoup.connect(urlQueryForGoogle.toString())
-                .userAgent("Chrome/4.0.249.0 Safari/532.5")
+                .userAgent("Mozilla/5.0 Chrome/75.0.3770.100 Safari/537.36")
                 .referrer("http://www.google.com")
                 .get();
         Elements elements = googleHTMLdoc.select("div#main");
@@ -129,7 +128,7 @@ public class PlParserAfisha implements PliParser {
         urlQueryForYandex.append("afisha.ru");
 
         Document googleHTMLdoc = Jsoup.connect(urlQueryForYandex.toString())
-                .userAgent("Chrome/4.0.249.0 Safari/532.5")
+                .userAgent("Mozilla/5.0 Chrome/75.0.3770.100 Safari/537.36")
                 .referrer("http://www.yandex.ru")
                 .get();
         Elements elements = googleHTMLdoc.select("ul.serp-list.serp-list_left_yes");
@@ -236,9 +235,38 @@ public class PlParserAfisha implements PliParser {
 
     public static void main(String[] args) throws IOException {
         PlParserAfisha p = new PlParserAfisha();
+        List<Cinema> cinemaListTest = new ArrayList<>();
 
-        Document html = Jsoup.connect("https://www.afisha.ru/msk/schedule_cinema_product/246135/").get();
-        p.parse(html);
+        String urlWithFiltFromAfisha = p.createUrlFromQuery("Человек паук вдали от дома");
+        String filmIdFromAfisha = p.getFilmIdFromQuery(urlWithFiltFromAfisha);
+
+
+            int pageCounter = p.counterOfPage(filmIdFromAfisha);
+            for (int i = 1; i <= pageCounter; i++) {
+                StringBuffer urlStr = new StringBuffer();
+                //TODO: At this time, this work only for Moscow. At future change "msk" on other country. Can search to IP address
+                urlStr.append("https://www.afisha.ru/msk/schedule_cinema_product/")
+                        .append(filmIdFromAfisha)
+                        .append("/page")
+                        .append(i);
+
+                Document HTMLdoc = Jsoup.connect(urlStr.toString())
+                        .userAgent("Chrome/4.0.249.0 Safari/532.5")
+                        .referrer("http://www.google.com")
+                        .get();
+                cinemaListTest.addAll(p.parse(HTMLdoc));
+            }
+
+        PlUserLogicFromInternet plUserLogicFromInternet = new PlUserLogicFromInternet();
+        List<Cinema> cl_time = plUserLogicFromInternet.updateCinemaListFromTimeShow(cinemaListTest, "22:30");
+        List<Cinema> cl_type = plUserLogicFromInternet.updateCinemaListFromTypeShow(cl_time, "2D");
+
+        for (Cinema cinemaL : cl_type) {
+            System.out.println("В кинотеатре " + cinemaL.getName() + " можно увидеть следующие фильмы: ");
+            for (Movie mov : cinemaL.getMovieList()) {
+                System.out.println(mov.toString());
+            }
+        }
 
     }
 }

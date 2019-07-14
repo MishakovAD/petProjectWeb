@@ -2,9 +2,10 @@ package com.project.CinemaTickets.backend.UserLogic;
 
 import com.project.CinemaTickets.CinemaEntity.Cinema;
 import com.project.CinemaTickets.CinemaEntity.Movie;
+import com.project.CinemaTickets.backend.Parser.PlParserAfisha;
 import com.project.CinemaTickets.backend.Parser.PliParser;
 import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
-import net.bytebuddy.asm.Advice;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ import java.util.regex.Pattern;
 public class PlUserLogicFromInternet implements PliUserLogic {
     public static String[] TYPES_OF_SHOW_FILM = {"2D", "3D", "IMax", "Dolby Atmos"};
     public static Pattern PATTERN_CINEMA_KINOPOISK = Pattern.compile("(https://www.kinopoisk.ru/afisha/city/\\d+/cinema/[a-z0-9A-Zа-яА-Я -]+/?)");
-    public static Pattern PATTERN_TIME = Pattern.compile("(\\d{2}):(\\d{2})");
+    public static Pattern PATTERN_TIME = Pattern.compile("(\\d+):(\\d+)");
 
     private int counterTryGetFilmId = 0;
 
@@ -52,11 +53,10 @@ public class PlUserLogicFromInternet implements PliUserLogic {
                         .append(i);
 
                 Document HTMLdoc = Jsoup.connect(urlStr.toString())
-                        .userAgent("Chrome/4.0.249.0 Safari/532.5")
+                        .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36")
                         .referrer("http://www.google.com")
                         .get();
                 cinemaList.addAll(pliParserAfisha.parse(HTMLdoc));
-                System.out.println("Parse " + i + " page was sucsessfull! " + "size= " + cinemaList.size());
             }
             /*
             Какая то логика, которая будет выбирать подходящий сеанс. Возможно вынести это в отдельный метод.
@@ -69,6 +69,7 @@ public class PlUserLogicFromInternet implements PliUserLogic {
 
     @Override
     public List<Cinema> updateCinemaListFromTypeShow(List<Cinema> cinemaList, String type) {
+        //TODO: проверка на тип. Если пустой, то оставлять весь список, если несколько типов, то проверку по всем.
         List<Cinema> cinemaListNew = new ArrayList<>();
         List<Movie> movieListOld;
         List<Movie> movieListNew;
@@ -82,9 +83,7 @@ public class PlUserLogicFromInternet implements PliUserLogic {
             }
             cinema.getMovieList().removeAll(movieListOld);
             cinema.setMovieList(movieListNew);
-            if (movieListNew.size() == 0) {
-                continue;
-            } else {
+            if (movieListNew.size() != 0) {
                 cinemaListNew.add(cinema);
             }
         }
@@ -106,9 +105,7 @@ public class PlUserLogicFromInternet implements PliUserLogic {
             }
             cinema.getMovieList().removeAll(movieListOld);
             cinema.setMovieList(movieListNew);
-            if (movieListNew.size() == 0) {
-                continue;
-            } else {
+            if (movieListNew.size() != 0) {
                 cinemaListNew.add(cinema);
             }
         }
@@ -117,7 +114,13 @@ public class PlUserLogicFromInternet implements PliUserLogic {
 
     @Override
     public List<Cinema> updateCinemaListFromPlace(List<Cinema> cinemaList, String place) {
-        return null;
+        List<Cinema> cinemaListNew = new ArrayList<>();
+        for (Cinema cinema : cinemaList) {
+            if (StringUtils.contains(cinema.getUnderground(), place)) {
+                cinemaListNew.add(cinema);
+            }
+        }
+        return cinemaListNew;
     }
 
     /**
@@ -168,17 +171,6 @@ public class PlUserLogicFromInternet implements PliUserLogic {
         return false;
     }
 
-    public static void main(String[] args) {
-        LocalDateTime currentTime = LocalDateTime.now();
-        LocalDate ld = LocalDate.now();
-        LocalTime current = LocalTime.of(17, 13);
-        LocalTime movie = LocalTime.of(15, 30);
-        movie = movie.minusHours(current.getHour());
-
-        PlUserLogicFromInternet p = new PlUserLogicFromInternet();
-
-        System.out.println(p.isRrquiredPeriod("20:00", "19:50"));
-    }
 
     //--------------------------Injection part------------------------//
 
@@ -193,5 +185,25 @@ public class PlUserLogicFromInternet implements PliUserLogic {
     @Inject
     private void setPliParserKinopoisk (PliParserKinopoisk pliParserKinopoisk1) {
         this.pliParserKinopoisk = pliParserKinopoisk1;
+    }
+
+    public static void main(String[] args) throws IOException {
+        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDate ld = LocalDate.now();
+        LocalTime current = LocalTime.of(17, 13);
+        LocalTime movie = LocalTime.of(15, 30);
+        movie = movie.minusHours(current.getHour());
+
+        PlUserLogicFromInternet p = new PlUserLogicFromInternet();
+
+        System.out.println(p.isRrquiredPeriod("23:45", "00:40"));
+        PlUserLogicFromInternet pl = new PlUserLogicFromInternet();
+        PliParser plPars = new PlParserAfisha();
+        plPars.createUrlFromQuery("Человек паук вдали от дома");
+        List<Cinema> cl = pl.getCinemaListWithMovie("Человек паук вдали от дома");
+        List<Cinema> cl_time = pl.updateCinemaListFromTimeShow(cl, "22:30");
+        List<Cinema> cl_type = pl.updateCinemaListFromTypeShow(cl_time, "2D");
+        List<Cinema> cl_place = pl.updateCinemaListFromPlace(cl_time, "Аннино");
+        System.out.println(cl_place.size());
     }
 }

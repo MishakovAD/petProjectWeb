@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 @Component
 public class PlParserKinopoisk implements PliParserKinopoisk {
-    public static String HELPER_FOR_QUERY_KINOPOISK = "купить билеты kinopoisk.ru ";
+    public static String HELPER_FOR_QUERY_KINOPOISK = "купить билеты kinopoisk.ru afisha";
     public static String HELPER_FOR_BUY_TICKETS = "https://tickets.widget.kinopoisk.ru/w/sessions/";
     public String CITY_MOSCOW = "Москва";
     public static Pattern PATTERN_CINEMA_KINOPOISK = Pattern.compile("(https://www.kinopoisk.ru/afisha/city/\\d+/cinema/[a-z0-9A-Zа-яА-Я -]+/?)");
@@ -38,11 +38,12 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
     public String getUrlForBuyTickets(Cinema cinema, Movie movie) throws IOException {
         StringBuffer urlForBuyTickets = new StringBuffer(HELPER_FOR_BUY_TICKETS);
         String urlForCinema = createUrlFromQuery(cinema.getName());
-
+        System.out.println("################ " + urlForCinema);
         Document cinemaDocument = Jsoup.connect(urlForCinema)
-                .userAgent("Mozilla/5.0 Chrome/75.0.3770.100 Safari/537.36")
+                .userAgent("Mozilla/4.1 Chrome/75.0.3760.120 Safari/517.36")
                 .referrer("http://www.google.com")
                 .get();
+        System.out.println("############# Документ получен для кинотеатра " + cinema.getName());
 //TODO: обязательно добавить проверку на тип сеанса, если пользователь скажет. что это важно! Либо сделать так, чтобы sortedCinemaListFromTypeShow() метод выполнял ее.
         Elements elements = cinemaDocument.select("div.cinema-seances-page__seances");
         for (Element element : elements.select("div.schedule-item.schedule-item_type_film")) {
@@ -63,7 +64,7 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
     public String createURLFromQueryWithGoogle(String url) throws IOException {
         String urlFromGoogle = null;
         Document googleHTMLdoc = Jsoup.connect(url)
-                .userAgent("Mozilla/5.0 Chrome/75.0.3770.100 Safari/537.36")
+                .userAgent("Mozilla/5.2 Chrome/72.0.3770.100 Safari/337.36")
                 .referrer("http://www.google.com")
                 .get();
         Elements elements = googleHTMLdoc.select("div#main");
@@ -85,7 +86,7 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
     public String createURLFromQueryWithYandex(String url) throws IOException {
         String urlFromYandex = null;
         Document googleHTMLdoc = Jsoup.connect(url)
-                .userAgent("Mozilla/5.0 Chrome/75.0.3770.100 Safari/537.36")
+                .userAgent("Mozilla/2.0 Chrome/33.0.3770.100 Safari/337.36")
                 .referrer("http://www.google.ru")
                 .get();
         Elements elements = googleHTMLdoc.select("ul.serp-list.serp-list_left_yes");
@@ -104,6 +105,7 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
 
     @Override
     public String createUrlFromQuery(String queryForUrl) throws IOException {
+        System.out.println("##createUrlFromQuery = " + queryForUrl);
         String urlFromGoogle = null;
         String urlFromYandex = null;
 
@@ -111,8 +113,12 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         String[] wordsFromQuery = queryForUrl.split(" ");
         urlQueryForYandex.append("https://yandex.ru/search/?lr=213&text=");
         for (String word : wordsFromQuery) {
-            urlQueryForYandex.append(word + "+");        }
-        urlQueryForYandex.append(HELPER_FOR_QUERY_KINOPOISK);
+            urlQueryForYandex.append(word + "+");
+        }
+        for (String words : HELPER_FOR_QUERY_KINOPOISK.split(" ")) {
+            urlQueryForYandex.append(words + "+");
+        }
+        System.out.println("##createUrlFromQuery = " + urlQueryForYandex.toString());
         urlFromYandex = createURLFromQueryWithYandex(urlQueryForYandex.toString());
 
         if (urlFromYandex == null) {
@@ -121,7 +127,10 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
             for (String word : wordsFromQuery) {
                 urlQueryForGoogle.append(word + "+");
             }
-            urlQueryForGoogle.append(HELPER_FOR_QUERY_KINOPOISK);
+            for (String words : HELPER_FOR_QUERY_KINOPOISK.split(" ")) {
+                urlQueryForGoogle.append(words + "+");
+            }
+            System.out.println("##createUrlFromQuery = " + urlQueryForGoogle.toString());
             urlFromGoogle = createURLFromQueryWithGoogle(urlQueryForGoogle.toString());
         }
 
@@ -143,7 +152,7 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         Movie mov = new Movie();
         mov.setName("Человек-паук: Вдали от дома");
         Session ses = new Session();
-        ses.setTimeOfShow("00:15");
+        ses.setTimeOfShow("22:20");
         ses.setTypeOfMovie("2D");
         mov.setSession(ses);
         System.out.println(p.getUrlForBuyTickets(cin, mov));
