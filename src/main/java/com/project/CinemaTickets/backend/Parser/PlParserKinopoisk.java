@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 @Component
 public class PlParserKinopoisk implements PliParserKinopoisk {
+    int counterUrlForBuyTickets = 0;
     public static String HELPER_FOR_QUERY_KINOPOISK = "купить билеты kinopoisk.ru afisha";
     public static String HELPER_FOR_BUY_TICKETS = "https://tickets.widget.kinopoisk.ru/w/sessions/";
     public String CITY_MOSCOW = "Москва";
@@ -36,9 +37,16 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
      */
     @Override
     public String getUrlForBuyTickets(Cinema cinema, Movie movie) throws IOException {
+        counterUrlForBuyTickets++;
+        if (counterUrlForBuyTickets > 25) {
+            return "Ссылка не найдена. Повторите попытку позже.";
+        }
         StringBuffer urlForBuyTickets = new StringBuffer(HELPER_FOR_BUY_TICKETS);
         String urlForCinema = createUrlFromQuery(cinema.getName());
-        System.out.println("################ " + urlForCinema);
+        if (urlForCinema == null || urlForCinema.isEmpty()) {
+            getUrlForBuyTickets(cinema, movie);
+        }
+        System.out.println("################ counterUrlForBuyTickets= " + counterUrlForBuyTickets);
         Document cinemaDocument = Jsoup.connect(urlForCinema)
                 .userAgent("Mozilla/4.1 Chrome/75.0.3760.120 Safari/517.36")
                 .referrer("http://www.google.com")

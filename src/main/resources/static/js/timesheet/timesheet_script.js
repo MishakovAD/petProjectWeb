@@ -113,7 +113,7 @@ function getResponse(response) {
                 // новый элемент
                 var li = document.createElement('LI');
                 li.innerHTML = cinemaName + " - " + underground + " - " + " - " + movieName[j]
-                    + " - " + price[j] + " - " + type[j] + " - " + time[j];
+                    + " - " + price[j] + " - " + type[j] + " - " + time[j] + url[j];
                 var liUrl = document.createElement('li');
                 liUrl.href = url[j];
 
