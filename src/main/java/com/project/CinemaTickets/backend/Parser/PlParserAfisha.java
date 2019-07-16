@@ -26,12 +26,13 @@ import java.util.regex.Pattern;
 
 @Component
 public class PlParserAfisha implements PliParser {
-    public static String HELPER_FOR_QUERY_AFISHA = "https://afisha.ru ";
+    public static String HELPER_FOR_QUERY_AFISHA = "afisha.ru ";
     public String CITY_MOSCOW = "Москва";
-    public static Pattern PATTERN_CINEMA_AFISHA_FIRST = Pattern.compile("(https://www.afisha.ru/movie/[0-9]+)");
-    public static Pattern PATTERN_CINEMA_AFISHA_SECOND = Pattern.compile("(https://www.afisha.ru/\\w+/schedule_cinema_product/[0-9]+)");
+    public static Pattern PATTERN_CINEMA_AFISHA_FIRST = Pattern.compile("(https://www.afisha.ru/movie/[0-9]+/?)");
+    public static Pattern PATTERN_CINEMA_AFISHA_SECOND = Pattern.compile("(https://www.afisha.ru/\\w+/schedule_cinema_product/[0-9]+/?)");
 
     private Logger logger = LoggerFactory.getLogger(PlParserAfisha.class);
+    private int counterOfCreatingUrl = 0;
 
     @Override
     public List<Cinema> parse(Document HTMLdoc) throws IOException {
@@ -102,6 +103,9 @@ public class PlParserAfisha implements PliParser {
         String urlFromGoogle = null;
 
         Document googleHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(query);
+//        logger.info("#####################################################################");
+//        logger.info("##############" + googleHTMLdoc);
+//        logger.info("#####################################################################");
         Elements elements = googleHTMLdoc.select("div#main");
         for (Element element : elements.select("div.ZINbbc.xpd.O9g5cc.uUPGi")) {
             urlFromGoogle = element.getElementsByTag("a").attr("href");
@@ -123,6 +127,9 @@ public class PlParserAfisha implements PliParser {
         String urlFromYandex = null;
 
         Document yandexHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(query);
+//        logger.info("#####################################################################");
+//        logger.info("##############" + yandexHTMLdoc);
+//        logger.info("#####################################################################");
         Elements elements = yandexHTMLdoc.select("ul.serp-list.serp-list_left_yes");
         for (Element element : elements.select("li.serp-item").select("a.link.link_theme_outer.path__item.i-bem")) {
             urlFromYandex = element.getElementsByTag("a").attr("href");
@@ -166,7 +173,19 @@ public class PlParserAfisha implements PliParser {
 
             urlFromGoogle = createURLFromQueryWithGoogle(urlQueryForGoogle.toString());
         }
-        return urlFromYandex != null ? urlFromYandex : urlFromGoogle;
+        String returnUrl = urlFromYandex;
+        if (returnUrl == null) {
+            returnUrl = urlFromGoogle;
+        }
+        if (returnUrl == null) {
+            logger.info("############# Method createUrlFromQuery() don't find url, try again. Counter= " + counterOfCreatingUrl);
+            counterOfCreatingUrl++;
+            if (counterOfCreatingUrl > 100) {
+                return null;
+            }
+            createUrlFromQuery(queryForUrl);
+        }
+        return returnUrl;
     }
 
     @Override
@@ -249,38 +268,20 @@ public class PlParserAfisha implements PliParser {
     public static void main(String[] args) throws IOException {
         PlParserAfisha p = new PlParserAfisha();
         PliProxyServer pliProxyServer = new PlProxyServer();
-        List<Cinema> cinemaListTest = new ArrayList<>();
-
-        String urlWithFiltFromAfisha = p.createUrlFromQuery("Человек паук вдали от дома");
-        String filmIdFromAfisha = p.getFilmIdFromQuery(urlWithFiltFromAfisha);
-
-
-            int pageCounter = p.counterOfPage(filmIdFromAfisha);
-            for (int i = 1; i <= pageCounter; i++) {
-                StringBuffer urlStr = new StringBuffer();
-                //TODO: At this time, this work only for Moscow. At future change "msk" on other country. Can search to IP address
-                urlStr.append("https://www.afisha.ru/msk/schedule_cinema_product/")
-                        .append(filmIdFromAfisha)
-                        .append("/page")
-                        .append(i);
-
-                Document HTMLdoc = Jsoup.connect(urlStr.toString())
-                        .userAgent("Chrome/4.0.249.0 Safari/532.5")
-                        .referrer("http://www.google.com")
-                        .get();
-                cinemaListTest.addAll(p.parse(HTMLdoc));
-            }
-
-        PlUserLogicFromInternet plUserLogicFromInternet = new PlUserLogicFromInternet();
-        List<Cinema> cl_time = plUserLogicFromInternet.updateCinemaListFromTimeShow(cinemaListTest, "22:30");
-        List<Cinema> cl_type = plUserLogicFromInternet.updateCinemaListFromTypeShow(cl_time, "2D");
-
-        for (Cinema cinemaL : cl_type) {
-            System.out.println("В кинотеатре " + cinemaL.getName() + " можно увидеть следующие фильмы: ");
-            for (Movie mov : cinemaL.getMovieList()) {
-                System.out.println(mov.toString());
+        String urlFromYandex = "";
+        Document doc = pliProxyServer.getHttpDocumentFromInternet("https://yandex.ru/search/?lr=213&text=человек+паук+вдали+от+дома+afisha.ru");
+        Elements elements = doc.select("ul.serp-list.serp-list_left_yes");
+        for (Element element : elements.select("li.serp-item").select("a.link.link_theme_outer.path__item.i-bem")) {
+            urlFromYandex = element.getElementsByTag("a").attr("href");
+            if (PATTERN_CINEMA_AFISHA_FIRST.matcher(urlFromYandex).matches() ||
+                    PATTERN_CINEMA_AFISHA_SECOND.matcher(urlFromYandex).matches()){
+                int firstIndex = urlFromYandex.indexOf("http");
+                urlFromYandex = urlFromYandex.substring(firstIndex);
+                break;
             }
         }
+        System.out.println("#####################" + urlFromYandex);
+
 
     }
 

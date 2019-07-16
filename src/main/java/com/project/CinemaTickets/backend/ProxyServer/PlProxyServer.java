@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -119,13 +120,11 @@ public class PlProxyServer implements PliProxyServer {
 
         List<String> proxyList = getProxyFromDatabase();
         if (proxyList.size() < 2) {
-            proxyList.add("1.0.177.41:8080");
-            proxyList.add("67.63.33.7:80");
-            proxyList.add("45.113.69.177:1080");
+            proxyList.add("158.69.59.125:8888");
         }
 
         Random random = new Random(System.currentTimeMillis());
-        int index = random.nextInt(proxyList.size() + 1);
+        int index = random.nextInt(proxyList.size());
         String proxyServer = proxyList.get(index);
 
         String ip = createIpFromPairIP_Port(proxyServer);
@@ -140,6 +139,7 @@ public class PlProxyServer implements PliProxyServer {
         connection = openConnection(url, proxy);
 
         if (connection != null) {
+            logger.info("After openConnection() connection = " + connection.toString());
             stringDocument = createStringDocument(connection, stringDocument);
         }
 
@@ -148,8 +148,8 @@ public class PlProxyServer implements PliProxyServer {
             logger.info("Method getHttpDocumentFromInternetWithProxy() finished successful at " + LocalDateTime.now());
             return document;
         } else {
-            Document document = getHttpDocumentFromInternetWithProxy(url);
             logger.info("Method getHttpDocumentFromInternetWithProxy() fail at " + LocalDateTime.now() + " - let's start search with proxy");
+            Document document = getHttpDocumentFromInternetWithProxy(url);
             return document;
         }
 
@@ -159,9 +159,16 @@ public class PlProxyServer implements PliProxyServer {
     public boolean isCorrectDownloadDocument(String document) {
         logger.info("Start method isCorrectDownloadDocument() at " + LocalDateTime.now());
         //TODO: Посмотреть, какие сообщения могут выводиться, а так же сделать проверку на типы ссылок для парсеров и прочее.
-        if (document.contains("адрес заблокарован")) {
+        if (document.isEmpty() || document.contains("адрес заблокарован")
+                || document.contains("поступившие с вашего IP-адреса")
+                || document.contains("пожалуйста, введите символы")
+                || document.contains("запросы, поступившие с&nbsp;вашего IP-адреса")
+                || document.contains("Нам очень жаль, но")
+                || document.contains("продолжить поиск, пожалуйста, введите символы")) {
+            logger.info("Document is NOT correct!");
             return false;
         } else {
+            logger.info("Document is correct!");
             return true;
         }
     }
@@ -172,10 +179,12 @@ public class PlProxyServer implements PliProxyServer {
             if (proxy == null) {
                 return new URL(url).openConnection();
             } else {
-                return new URL(url).openConnection(proxy);
+                URL url_ = new URL(url);
+                return (HttpsURLConnection) url_.openConnection(proxy);
             }
         } catch (IOException e) {
             logger.error(e.getLocalizedMessage());
+            logger.info("Method openConnection() FAILED at" + LocalDateTime.now() + " - with url: " + url + ", proxy: " + proxy);
         }
         return null;
     }
@@ -185,14 +194,24 @@ public class PlProxyServer implements PliProxyServer {
         stringDocument = new StringBuilder();
         BufferedReader reader;
         try {
-            Random random = new Random(System.currentTimeMillis());
-            int version = random.nextInt(9);
-            connection.setRequestProperty("User-Agent", "Mozilla/5." + String.valueOf(version)
-                    + " (Windows NT 10.0; Win64; x64)" +  " AppleWebKit/53" + String.valueOf(version) + ".36 (KHTML, like Gecko)"
-                    + " Chrome/7" + String.valueOf(version) + ".0.37" + String.valueOf(version) + "0.100 Safari/5" + String.valueOf(version) + "7.36");
-            connection.setRequestProperty("Referer", "https://www.google.com/");
+//            connection.setRequestProperty("User-Agent", "Links (2.8; Linux 3.13.0-24-generic x86_64; GNU C 4.8.2; text)");
+//            connection.setRequestProperty("Referer", "https://www.google.com/");
+            /*
+            -------------------------------------------------------------------------------------
+             */
+//            connection.setRequestProperty("authority", "yandex.ru");
+//            connection.setRequestProperty("method", "GET");
+//            connection.setRequestProperty("scheme", "https");
+//            connection.setRequestProperty("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
+//            connection.setRequestProperty("accept-encoding", "gzip, deflate, br");
+//            connection.setRequestProperty("accept-language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
+//            connection.setRequestProperty("cookie", "");
+            connection.setRequestProperty("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36");
+            /*
+            --------------------------------------------------------------------------------------
+             */
             connection.connect();
-            Thread.sleep(15000);
+            //Thread.sleep(15000);
             reader  = new BufferedReader(new InputStreamReader(connection.getInputStream(), Charset.forName("UTF-8")));
 
             String line;
@@ -200,7 +219,8 @@ public class PlProxyServer implements PliProxyServer {
                 stringDocument.append(line);
             }
 
-        } catch (IOException | InterruptedException ex) {
+        } catch (IOException ex) {
+            logger.info("Method createStringDocument() is FAILED with proxy tunnel");
             logger.error(LocalDateTime.now() + ": " + ex.toString());
         }
         logger.info("End of method createStringDocument() at " + LocalDateTime.now());
@@ -210,7 +230,8 @@ public class PlProxyServer implements PliProxyServer {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         PlProxyServer p = new PlProxyServer();
-        System.out.println(p.getHttpDocumentFromInternet("https://www.kinopoisk.ru/film/1008445/"));
+        System.out.println(p.getHttpDocumentFromInternetWithProxy("https://2ip.ru"));
+        System.out.println(p.getHttpDocumentFromInternet("https://yandex.ru/search/?lr=213&text=Человек+паук+вдали+от+дома+afisha.ru"));
 
 //        Document googleHTMLdoc = Jsoup.connect("https://hidemyna.me/ru/proxy-list/")
 //                .userAgent("Mozilla/3.0 Chrome/32.0.3770.100 Safari/237.36")
