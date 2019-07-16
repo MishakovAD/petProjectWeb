@@ -4,6 +4,7 @@ import com.project.CinemaTickets.CinemaEntity.Cinema;
 import com.project.CinemaTickets.CinemaEntity.Movie;
 import com.project.CinemaTickets.CinemaEntity.Session;
 import com.project.CinemaTickets.CinemaEntity.Timetable;
+import com.project.CinemaTickets.backend.ProxyServer.PlProxyServer;
 import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
 import com.project.CinemaTickets.backend.UserLogic.PlUserLogicFromInternet;
 import org.jsoup.Jsoup;
@@ -18,9 +19,14 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Component
 public class PlParserAfisha implements PliParser {
+    public static String HELPER_FOR_QUERY_AFISHA = "https://afisha.ru ";
+    public String CITY_MOSCOW = "Москва";
+    public static Pattern PATTERN_CINEMA_AFISHA_FIRST = Pattern.compile("(https://www.afisha.ru/movie/[0-9]+)");
+    public static Pattern PATTERN_CINEMA_AFISHA_SECOND = Pattern.compile("(https://www.afisha.ru/\\w+/schedule_cinema_product/[0-9]+)");
     @Override
     public List<Cinema> parse(Document HTMLdoc) throws IOException {
         List<Movie> movieTimetableList = new ArrayList<>();
@@ -58,7 +64,9 @@ public class PlParserAfisha implements PliParser {
         int counterOfPage = 0;
         StringBuffer urlStr = new StringBuffer();
         //TODO: At this time, this work only for Moscow. At future change "msk" on other country.
-        urlStr.append("https://www.afisha.ru/msk/schedule_cinema_product/")
+        urlStr.append("https://www.afisha.ru/")
+                .append("msk") //CHANGE THERE
+                .append("/schedule_cinema_product/")
                 .append(filmId)
                 .append("/page");
 
@@ -82,20 +90,13 @@ public class PlParserAfisha implements PliParser {
     @Override
     public String createURLFromQueryWithGoogle(String query) throws IOException {
         String urlFromGoogle = null;
-        StringBuffer urlQueryForGoogle = new StringBuffer();
-        String[] wordsFromQuery = query.split(" ");
-        urlQueryForGoogle.append("https://www.google.com/search?q=");
 
-        for (String word : wordsFromQuery) {
-            urlQueryForGoogle.append(word + "+");
-        }
-        urlQueryForGoogle.append("afisha.ru");
-
-        Document googleHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(urlQueryForGoogle.toString());
+        Document googleHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(query);
         Elements elements = googleHTMLdoc.select("div#main");
         for (Element element : elements.select("div.ZINbbc.xpd.O9g5cc.uUPGi")) {
             urlFromGoogle = element.getElementsByTag("a").attr("href");
-            if (urlFromGoogle.contains("https://www.afisha.ru/movie/")){
+            if (PATTERN_CINEMA_AFISHA_FIRST.matcher(urlFromGoogle).matches() ||
+                    PATTERN_CINEMA_AFISHA_SECOND.matcher(urlFromGoogle).matches()){
                 int firstIndex = urlFromGoogle.indexOf("http");
                 int lastIndex = urlFromGoogle.indexOf("/&");
                 urlFromGoogle = urlFromGoogle.substring(firstIndex, lastIndex+1);
@@ -109,21 +110,13 @@ public class PlParserAfisha implements PliParser {
     @Override
     public String createURLFromQueryWithYandex(String query) throws IOException {
         String urlFromYandex = null;
-        StringBuffer urlQueryForYandex = new StringBuffer();
-        String[] wordsFromQuery = query.split(" ");
-        urlQueryForYandex.append("https://yandex.ru/search/?lr=213&text=");
 
-        for (String word : wordsFromQuery) {
-            urlQueryForYandex.append(word + "+");
-        }
-        urlQueryForYandex.append("afisha.ru");
-
-        Document yandexHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(urlQueryForYandex.toString());
+        Document yandexHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(query);
         Elements elements = yandexHTMLdoc.select("ul.serp-list.serp-list_left_yes");
         for (Element element : elements.select("li.serp-item").select("a.link.link_theme_outer.path__item.i-bem")) {
             urlFromYandex = element.getElementsByTag("a").attr("href");
-            if (urlFromYandex.contains("https://www.afisha.ru/") &&
-            urlFromYandex.contains("schedule_cinema_product")){
+            if (PATTERN_CINEMA_AFISHA_FIRST.matcher(urlFromYandex).matches() ||
+                    PATTERN_CINEMA_AFISHA_SECOND.matcher(urlFromYandex).matches()){
                 int firstIndex = urlFromYandex.indexOf("http");
                 urlFromYandex = urlFromYandex.substring(firstIndex);
                 break;
@@ -133,14 +126,33 @@ public class PlParserAfisha implements PliParser {
         return urlFromYandex;
     }
 
-    //TODO: Тут добавить проверку на корректность ссылки. Минимум https://www.аfиша.ru/movie/filmId/, ну или хотя бы просто афиша
+    //TODO: необходима проверка на входной запрос, если что убирать транслит, знаки препинания и тд
     @Override
     public String createUrlFromQuery(String queryForUrl) throws IOException {
         String urlFromGoogle = null;
         String urlFromYandex = null;
-        urlFromYandex = createURLFromQueryWithYandex(queryForUrl);
+
+        StringBuffer urlQueryForYandex = new StringBuffer();
+        String[] wordsFromQueryYandex = queryForUrl.split(" ");
+        urlQueryForYandex.append("https://yandex.ru/search/?lr=213&text=");
+
+        for (String word : wordsFromQueryYandex) {
+            urlQueryForYandex.append(word + "+");
+        }
+        urlQueryForYandex.append(HELPER_FOR_QUERY_AFISHA);
+
+        urlFromYandex = createURLFromQueryWithYandex(urlQueryForYandex.toString());
         if (urlFromYandex == null) {
-            urlFromGoogle = createURLFromQueryWithGoogle(queryForUrl);
+            StringBuffer urlQueryForGoogle = new StringBuffer();
+            String[] wordsFromQueryGoogle = queryForUrl.split(" ");
+            urlQueryForGoogle.append("https://www.google.com/search?q=");
+
+            for (String word : wordsFromQueryGoogle) {
+                urlQueryForGoogle.append(word + "+");
+            }
+            urlQueryForGoogle.append(HELPER_FOR_QUERY_AFISHA);
+
+            urlFromGoogle = createURLFromQueryWithGoogle(urlQueryForGoogle.toString());
         }
         return urlFromYandex != null ? urlFromYandex : urlFromGoogle;
     }
@@ -219,6 +231,7 @@ public class PlParserAfisha implements PliParser {
 
     public static void main(String[] args) throws IOException {
         PlParserAfisha p = new PlParserAfisha();
+        PliProxyServer pliProxyServer = new PlProxyServer();
         List<Cinema> cinemaListTest = new ArrayList<>();
 
         String urlWithFiltFromAfisha = p.createUrlFromQuery("Человек паук вдали от дома");
