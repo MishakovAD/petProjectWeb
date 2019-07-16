@@ -4,6 +4,7 @@ import com.project.CinemaTickets.CinemaEntity.Cinema;
 import com.project.CinemaTickets.CinemaEntity.Movie;
 import com.project.CinemaTickets.CinemaEntity.Session;
 import com.project.CinemaTickets.CinemaEntity.Timetable;
+import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
 import com.project.CinemaTickets.backend.UserLogic.PlUserLogicFromInternet;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,6 +12,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -48,13 +50,6 @@ public class PlParserAfisha implements PliParser {
             }
         }
 
-
-//        for (Cinema cinemaL : cinemaList) {
-//            System.out.println("В кинотеатре " + cinemaL.getName() + " можно увидеть следующие фильмы: ");
-//            for (Movie mov : cinemaL.getMovieList()) {
-//                System.out.println(mov.toString());
-//            }
-//        }
         return cinemaList;
     }
 
@@ -96,15 +91,11 @@ public class PlParserAfisha implements PliParser {
         }
         urlQueryForGoogle.append("afisha.ru");
 
-        Document googleHTMLdoc = Jsoup.connect(urlQueryForGoogle.toString())
-                .userAgent("Mozilla/5.0 Chrome/75.0.3770.100 Safari/537.36")
-                .referrer("http://www.google.com")
-                .get();
+        Document googleHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(urlQueryForGoogle.toString());
         Elements elements = googleHTMLdoc.select("div#main");
         for (Element element : elements.select("div.ZINbbc.xpd.O9g5cc.uUPGi")) {
             urlFromGoogle = element.getElementsByTag("a").attr("href");
             if (urlFromGoogle.contains("https://www.afisha.ru/movie/")){
-                //System.out.println(urlByTagFromGoogle);
                 int firstIndex = urlFromGoogle.indexOf("http");
                 int lastIndex = urlFromGoogle.indexOf("/&");
                 urlFromGoogle = urlFromGoogle.substring(firstIndex, lastIndex+1);
@@ -127,16 +118,12 @@ public class PlParserAfisha implements PliParser {
         }
         urlQueryForYandex.append("afisha.ru");
 
-        Document googleHTMLdoc = Jsoup.connect(urlQueryForYandex.toString())
-                .userAgent("Mozilla/5.0 Chrome/75.0.3770.100 Safari/537.36")
-                .referrer("http://www.yandex.ru")
-                .get();
-        Elements elements = googleHTMLdoc.select("ul.serp-list.serp-list_left_yes");
+        Document yandexHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(urlQueryForYandex.toString());
+        Elements elements = yandexHTMLdoc.select("ul.serp-list.serp-list_left_yes");
         for (Element element : elements.select("li.serp-item").select("a.link.link_theme_outer.path__item.i-bem")) {
             urlFromYandex = element.getElementsByTag("a").attr("href");
             if (urlFromYandex.contains("https://www.afisha.ru/") &&
             urlFromYandex.contains("schedule_cinema_product")){
-                //System.out.println(urlByTagFromYandex);
                 int firstIndex = urlFromYandex.indexOf("http");
                 urlFromYandex = urlFromYandex.substring(firstIndex);
                 break;
@@ -225,11 +212,8 @@ public class PlParserAfisha implements PliParser {
     //TODO: добавить кинотеатры в БД и сначала проверять в бД и если нету уже потом парсить страницу. Ускорит работу.
     //Так же можно метод переделать в метод получения информации о кинотеатре. Либо этот, либо getCinemaFromElement()
     private String getAddressCinemaFromUrlOrDB(String urlForAddress) throws IOException {
-        Document googleHTMLdoc = Jsoup.connect(urlForAddress)
-                .userAgent("Chrome/4.0.249.0 Safari/532.5")
-                .referrer("http://www.yandex.ru")
-                .get();
-        String address = googleHTMLdoc.select("label.unit__col-value-label").text();
+        Document cinemaHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(urlForAddress);
+        String address = cinemaHTMLdoc.select("label.unit__col-value-label").text();
         return address.isEmpty() ? "" : address;
     }
 
@@ -268,5 +252,12 @@ public class PlParserAfisha implements PliParser {
             }
         }
 
+    }
+
+    private PliProxyServer pliProxyServer;
+
+    @Inject
+    public void setPliProxyServer(PliProxyServer pliProxyServer) {
+        this.pliProxyServer = pliProxyServer;
     }
 }

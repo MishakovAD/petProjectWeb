@@ -5,6 +5,7 @@ import com.project.CinemaTickets.CinemaEntity.Movie;
 import com.project.CinemaTickets.backend.Parser.PlParserAfisha;
 import com.project.CinemaTickets.backend.Parser.PliParser;
 import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
+import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -52,10 +53,8 @@ public class PlUserLogicFromInternet implements PliUserLogic {
                         .append("/page")
                         .append(i);
 
-                Document HTMLdoc = Jsoup.connect(urlStr.toString())
-                        .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36")
-                        .referrer("http://www.google.com")
-                        .get();
+                Document HTMLdoc = pliProxyServer.getHttpDocumentFromInternet(urlStr.toString());
+
                 cinemaList.addAll(pliParserAfisha.parse(HTMLdoc));
             }
             /*
@@ -176,14 +175,20 @@ public class PlUserLogicFromInternet implements PliUserLogic {
 
     PliParser pliParserAfisha;
     PliParserKinopoisk pliParserKinopoisk;
+    private PliProxyServer pliProxyServer;
 
     @Inject
-    private void setPlParser (PliParser pliParser) {
+    public void setPliProxyServer(PliProxyServer pliProxyServer) {
+        this.pliProxyServer = pliProxyServer;
+    }
+
+    @Inject
+    public void setPlParser (PliParser pliParser) {
         this.pliParserAfisha = pliParser;
     }
 
     @Inject
-    private void setPliParserKinopoisk (PliParserKinopoisk pliParserKinopoisk1) {
+    public void setPliParserKinopoisk (PliParserKinopoisk pliParserKinopoisk1) {
         this.pliParserKinopoisk = pliParserKinopoisk1;
     }
 

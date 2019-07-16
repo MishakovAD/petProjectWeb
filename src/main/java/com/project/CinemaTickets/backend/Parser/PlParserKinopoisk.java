@@ -3,6 +3,7 @@ package com.project.CinemaTickets.backend.Parser;
 import com.project.CinemaTickets.CinemaEntity.Cinema;
 import com.project.CinemaTickets.CinemaEntity.Movie;
 import com.project.CinemaTickets.CinemaEntity.Session;
+import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,6 +11,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -46,11 +48,7 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         if (urlForCinema == null || urlForCinema.isEmpty()) {
             getUrlForBuyTickets(cinema, movie);
         }
-        System.out.println("################ counterUrlForBuyTickets= " + counterUrlForBuyTickets);
-        Document cinemaDocument = Jsoup.connect(urlForCinema)
-                .userAgent("Mozilla/4.1 Chrome/75.0.3760.120 Safari/517.36")
-                .referrer("http://www.google.com")
-                .get();
+        Document cinemaDocument = pliProxyServer.getHttpDocumentFromInternet(urlForCinema);
         System.out.println("############# Документ получен для кинотеатра " + cinema.getName());
 //TODO: обязательно добавить проверку на тип сеанса, если пользователь скажет. что это важно! Либо сделать так, чтобы sortedCinemaListFromTypeShow() метод выполнял ее.
         Elements elements = cinemaDocument.select("div.cinema-seances-page__seances");
@@ -71,10 +69,7 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
     @Override
     public String createURLFromQueryWithGoogle(String url) throws IOException {
         String urlFromGoogle = null;
-        Document googleHTMLdoc = Jsoup.connect(url)
-                .userAgent("Mozilla/5.2 Chrome/72.0.3770.100 Safari/337.36")
-                .referrer("http://www.google.com")
-                .get();
+        Document googleHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(url);
         Elements elements = googleHTMLdoc.select("div#main");
         for (Element element : elements.select("div.ZINbbc.xpd.O9g5cc.uUPGi")) {
             urlFromGoogle = element.getElementsByTag("a").attr("href");
@@ -93,11 +88,8 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
     @Override
     public String createURLFromQueryWithYandex(String url) throws IOException {
         String urlFromYandex = null;
-        Document googleHTMLdoc = Jsoup.connect(url)
-                .userAgent("Mozilla/2.0 Chrome/33.0.3770.100 Safari/337.36")
-                .referrer("http://www.google.ru")
-                .get();
-        Elements elements = googleHTMLdoc.select("ul.serp-list.serp-list_left_yes");
+        Document yandexHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(url);
+        Elements elements = yandexHTMLdoc.select("ul.serp-list.serp-list_left_yes");
         for (Element element : elements.select("li.serp-item").select("a.link.link_theme_outer.path__item.i-bem")) {
             urlFromYandex = element.getElementsByTag("a").attr("href");
             if (PATTERN_CINEMA_KINOPOISK.matcher(urlFromYandex).matches()){
@@ -138,7 +130,6 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
             for (String words : HELPER_FOR_QUERY_KINOPOISK.split(" ")) {
                 urlQueryForGoogle.append(words + "+");
             }
-            System.out.println("##createUrlFromQuery = " + urlQueryForGoogle.toString());
             urlFromGoogle = createURLFromQueryWithGoogle(urlQueryForGoogle.toString());
         }
 
@@ -165,5 +156,12 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         mov.setSession(ses);
         System.out.println(p.getUrlForBuyTickets(cin, mov));
         //System.out.println(p.createUrlFromQuery("космик"));
+    }
+
+    private PliProxyServer pliProxyServer;
+
+    @Inject
+    public void setPliProxyServer(PliProxyServer pliProxyServer) {
+        this.pliProxyServer = pliProxyServer;
     }
 }

@@ -62,10 +62,13 @@ public interface PliProxyServer {
     /**
      * Получение содержимого страницы, которая
      * находятся по передаваему url без помощи прокси
+     * NB! использовать только этот метод, т.к.
+     * в его теле при неудачном скачивании есть
+     * вызов метода с прокси.
      * @param url - сайт, который нужно распарсить при помощи Jsoup
      * @return - сайт в формате Document
      */
-    public Document getHttpDocumentFromInternetWithoutProxy(String url) throws IOException;
+    public Document getHttpDocumentFromInternet(String url) throws IOException;
 
     /**
      * Получение содержимого страницы, которая
