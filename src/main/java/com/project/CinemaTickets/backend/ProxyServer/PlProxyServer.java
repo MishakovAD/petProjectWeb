@@ -36,7 +36,7 @@ public class PlProxyServer implements PliProxyServer {
 
     @Override
     public List<String> getProxyFromDatabase() {
-        if (proxyListFromDatabase.size() == 0) {
+        if (proxyListFromDatabase.size() < 5) {
             //download from database and add to list
             //...
             return proxyListFromDatabase;
