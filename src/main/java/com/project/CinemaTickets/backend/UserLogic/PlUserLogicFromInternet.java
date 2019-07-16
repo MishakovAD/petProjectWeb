@@ -9,6 +9,8 @@ import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -29,10 +31,13 @@ public class PlUserLogicFromInternet implements PliUserLogic {
     public static Pattern PATTERN_CINEMA_KINOPOISK = Pattern.compile("(https://www.kinopoisk.ru/afisha/city/\\d+/cinema/[a-z0-9A-Zа-яА-Я -]+/?)");
     public static Pattern PATTERN_TIME = Pattern.compile("(\\d+):(\\d+)");
 
+    private Logger logger = LoggerFactory.getLogger(PlUserLogicFromInternet.class);
+
     private int counterTryGetFilmId = 0;
 
     @Override
     public List<Cinema> getCinemaListWithMovie(String userQuery) throws IOException {
+        logger.info("Start method getCinemaListWithMovie() at " + LocalDateTime.now() + " - with userQuery: " + userQuery);
         List<Cinema> cinemaList = new ArrayList<>();
         counterTryGetFilmId++;
         String urlWithFiltFromAfisha = pliParserAfisha.createUrlFromQuery(userQuery);
@@ -63,11 +68,13 @@ public class PlUserLogicFromInternet implements PliUserLogic {
              */
             //pliParserKinopoisk.getUrlForBuyTickets(cinemaList.get(0), cinemaList.get(0).getMovieList().get(0));
         }
+        logger.info("End of method getCinemaListWithMovie() at " + LocalDateTime.now() + " - with result.size(): " + cinemaList.size());
         return cinemaList;
     }
 
     @Override
     public List<Cinema> updateCinemaListFromTypeShow(List<Cinema> cinemaList, String type) {
+        logger.info("Start method updateCinemaListFromTypeShow() at " + LocalDateTime.now());
         //TODO: проверка на тип. Если пустой, то оставлять весь список, если несколько типов, то проверку по всем.
         List<Cinema> cinemaListNew = new ArrayList<>();
         List<Movie> movieListOld;
@@ -86,11 +93,13 @@ public class PlUserLogicFromInternet implements PliUserLogic {
                 cinemaListNew.add(cinema);
             }
         }
+        logger.info("End of method updateCinemaListFromTypeShow() at " + LocalDateTime.now() + " - with result.size(): " + cinemaListNew.size());
         return cinemaListNew;
     }
 
     @Override
     public List<Cinema> updateCinemaListFromTimeShow(List<Cinema> cinemaList, String userTime) {
+        logger.info("Start method updateCinemaListFromTimeShow() at " + LocalDateTime.now());
         List<Cinema> cinemaListNew = new ArrayList<>();
         List<Movie> movieListOld;
         List<Movie> movieListNew;
@@ -108,6 +117,7 @@ public class PlUserLogicFromInternet implements PliUserLogic {
                 cinemaListNew.add(cinema);
             }
         }
+        logger.info("End of method updateCinemaListFromTimeShow() at " + LocalDateTime.now() + " - with result.size(): " + cinemaListNew.size());
         return cinemaListNew;
     }
 
@@ -131,6 +141,7 @@ public class PlUserLogicFromInternet implements PliUserLogic {
      * @return - true, если время сеанса нам подходит и false - если нет.
      */
     private boolean isRrquiredPeriod (String userTime, String movieTime) {
+        logger.info("Start method isRrquiredPeriod() at " + LocalDateTime.now());
         //TODO: сделать возмость "сейчас", чтобы можно было купить билет на ближайший сеанс.
         Matcher mUser = PATTERN_TIME.matcher(userTime);
         Matcher mMovie = PATTERN_TIME.matcher(movieTime);

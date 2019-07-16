@@ -37,6 +37,7 @@ public class PlProxyServer implements PliProxyServer {
 
     @Override
     public List<String> getProxyFromDatabase() {
+        logger.info("Start method getProxyFromDatabase() at " + LocalDateTime.now());
         if (proxyListFromDatabase.size() < 5) {
             //download from database and add to list
             //...
@@ -49,6 +50,7 @@ public class PlProxyServer implements PliProxyServer {
 
     @Override
     public String createIpFromPairIP_Port(String ip_port) {
+        logger.info("Start method createIpFromPairIP_Port() at " + LocalDateTime.now());
         //TODO: сделать проверку на маску ip:port по паттерну
         if (ip_port.contains(":")) {
             return ip_port.substring(0, ip_port.indexOf(":"));
@@ -62,6 +64,7 @@ public class PlProxyServer implements PliProxyServer {
 
     @Override
     public String createPortFromPairIP_Port(String ip_port) {
+        logger.info("Start method createPortFromPairIP_Port() at " + LocalDateTime.now());
         if (ip_port.contains(":")) {
             return ip_port.substring(ip_port.indexOf(":") + 1);
         } else if (ip_port.contains(",")) {
@@ -88,6 +91,7 @@ public class PlProxyServer implements PliProxyServer {
 
     @Override
     public Document getHttpDocumentFromInternet(String url) {
+        logger.info("Start method getHttpDocumentFromInternet() at " + LocalDateTime.now() + " - with url: " + url);
         StringBuilder stringDocument = new StringBuilder();
         URLConnection connection;
 
@@ -105,8 +109,10 @@ public class PlProxyServer implements PliProxyServer {
 
     @Override
     public Document getHttpDocumentFromInternetWithProxy(String url) {
+        logger.info("Start method getHttpDocumentFromInternetWithProxy() at " + LocalDateTime.now() + " - with url: " + url);
         counterGetterDocumentWithProxy++;
         if (counterGetterDocumentWithProxy > 100) {
+            logger.error("Method fail! Document is not found!");
             //throw new DocumentNotFoundWithProxyException("Документ не найден");
             return Jsoup.parse("Документ не найден");
         }
@@ -114,6 +120,8 @@ public class PlProxyServer implements PliProxyServer {
         List<String> proxyList = getProxyFromDatabase();
         if (proxyList.size() < 2) {
             proxyList.add("1.0.177.41:8080");
+            proxyList.add("67.63.33.7:80");
+            proxyList.add("45.113.69.177:1080");
         }
 
         Random random = new Random(System.currentTimeMillis());
@@ -137,9 +145,11 @@ public class PlProxyServer implements PliProxyServer {
 
         if (isCorrectDownloadDocument(stringDocument.toString())) {
             Document document = Jsoup.parse(stringDocument.toString());
+            logger.info("Method getHttpDocumentFromInternetWithProxy() finished successful at " + LocalDateTime.now());
             return document;
         } else {
             Document document = getHttpDocumentFromInternetWithProxy(url);
+            logger.info("Method getHttpDocumentFromInternetWithProxy() fail at " + LocalDateTime.now() + " - let's start search with proxy");
             return document;
         }
 
@@ -147,6 +157,7 @@ public class PlProxyServer implements PliProxyServer {
 
     @Override
     public boolean isCorrectDownloadDocument(String document) {
+        logger.info("Start method isCorrectDownloadDocument() at " + LocalDateTime.now());
         //TODO: Посмотреть, какие сообщения могут выводиться, а так же сделать проверку на типы ссылок для парсеров и прочее.
         if (document.contains("адрес заблокарован")) {
             return false;
@@ -156,6 +167,7 @@ public class PlProxyServer implements PliProxyServer {
     }
 
     private URLConnection openConnection(String url, Proxy proxy) {
+        logger.info("Start method openConnection() at " + LocalDateTime.now() + " - with url: " + url + ", proxy: " + proxy);
         try {
             if (proxy == null) {
                 return new URL(url).openConnection();
@@ -169,6 +181,7 @@ public class PlProxyServer implements PliProxyServer {
     }
 
     private StringBuilder createStringDocument (URLConnection connection, StringBuilder stringDocument) {
+        logger.info("Start method createStringDocument() at " + LocalDateTime.now());
         stringDocument = new StringBuilder();
         BufferedReader reader;
         try {
@@ -190,6 +203,7 @@ public class PlProxyServer implements PliProxyServer {
         } catch (IOException | InterruptedException ex) {
             logger.error(LocalDateTime.now() + ": " + ex.toString());
         }
+        logger.info("End of method createStringDocument() at " + LocalDateTime.now());
         return stringDocument;
     }
 

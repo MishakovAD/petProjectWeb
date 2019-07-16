@@ -9,12 +9,15 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -25,6 +28,8 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
     public static String HELPER_FOR_BUY_TICKETS = "https://tickets.widget.kinopoisk.ru/w/sessions/";
     public String CITY_MOSCOW = "Москва";
     public static Pattern PATTERN_CINEMA_KINOPOISK = Pattern.compile("(https://www.kinopoisk.ru/afisha/city/\\d+/cinema/[a-z0-9A-Zа-яА-Я -]+/?)");
+
+    private Logger logger = LoggerFactory.getLogger(PlParserKinopoisk.class);
 
     /**
      * Поисковым запросом мы сразу должны получить страницу с кинотеатром,
@@ -39,8 +44,10 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
      */
     @Override
     public String getUrlForBuyTickets(Cinema cinema, Movie movie) throws IOException {
+        logger.info("Start method getUrlForBuyTickets() at " + LocalDateTime.now());
         counterUrlForBuyTickets++;
         if (counterUrlForBuyTickets > 25) {
+            logger.error("Method getUrlForBuyTickets() failed! " + LocalDateTime.now());
             return "Ссылка не найдена. Повторите попытку позже.";
         }
         StringBuffer urlForBuyTickets = new StringBuffer(HELPER_FOR_BUY_TICKETS);
@@ -57,17 +64,19 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
                 for (Element timeElement : element.select("span.schedule-item__session-button.schedule-item__session-button_active.js-yaticket-button")) {
                     if (StringUtils.equalsAnyIgnoreCase(timeElement.text(), movie.getSession().getTimeOfShow())) {
                         urlForBuyTickets.append(timeElement.attr("data-session-id"));
+                        logger.info("Method getUrlForBuyTickets() finished successful at " + LocalDateTime.now());
                         return urlForBuyTickets.toString();
                     }
                 }
             }
         }
-
+        logger.info("Method getUrlForBuyTickets() failed! " + LocalDateTime.now() + " - Session not found!");
         return "Сеанс не найден.";
     }
 
     @Override
     public String createURLFromQueryWithGoogle(String url) throws IOException {
+        logger.info("Start method createURLFromQueryWithGoogle() at " + LocalDateTime.now() + " - with url: " + url);
         String urlFromGoogle = null;
         Document googleHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(url);
         Elements elements = googleHTMLdoc.select("div#main");
@@ -81,12 +90,13 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
             }
             urlFromGoogle = null;
         }
-
+        logger.info("End of method createURLFromQueryWithGoogle() at " + LocalDateTime.now() + " - with result: " + urlFromGoogle);
         return urlFromGoogle;
     }
 
     @Override
     public String createURLFromQueryWithYandex(String url) throws IOException {
+        logger.info("Start method createURLFromQueryWithYandex() at " + LocalDateTime.now() + " - with query: " + url);
         String urlFromYandex = null;
         Document yandexHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(url);
         Elements elements = yandexHTMLdoc.select("ul.serp-list.serp-list_left_yes");
@@ -99,13 +109,13 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
             }
             urlFromYandex = null;
         }
-
+        logger.info("End of method createURLFromQueryWithYandex() at " + LocalDateTime.now() + " - with result: " + urlFromYandex);
         return urlFromYandex;
     }
 
     @Override
     public String createUrlFromQuery(String queryForUrl) throws IOException {
-        System.out.println("##createUrlFromQuery = " + queryForUrl);
+        logger.info("Start method createURLFromQuery() at " + LocalDateTime.now() + " - with queryForUrl: " + queryForUrl);
         String urlFromGoogle = null;
         String urlFromYandex = null;
 

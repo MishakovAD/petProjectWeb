@@ -11,12 +11,15 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -27,8 +30,12 @@ public class PlParserAfisha implements PliParser {
     public String CITY_MOSCOW = "Москва";
     public static Pattern PATTERN_CINEMA_AFISHA_FIRST = Pattern.compile("(https://www.afisha.ru/movie/[0-9]+)");
     public static Pattern PATTERN_CINEMA_AFISHA_SECOND = Pattern.compile("(https://www.afisha.ru/\\w+/schedule_cinema_product/[0-9]+)");
+
+    private Logger logger = LoggerFactory.getLogger(PlParserAfisha.class);
+
     @Override
     public List<Cinema> parse(Document HTMLdoc) throws IOException {
+        logger.info("Start method parse() at " + LocalDateTime.now());
         List<Movie> movieTimetableList = new ArrayList<>();
         List<Cinema> cinemaList = new ArrayList<>();
         Movie movie;
@@ -55,12 +62,13 @@ public class PlParserAfisha implements PliParser {
                 cinemaList.add(cinema);
             }
         }
-
+        logger.info("End of method createURLFromQueryWithGoogle() at " + LocalDateTime.now() + " - with result.size(): " + cinemaList.size());
         return cinemaList;
     }
 
     @Override
     public int counterOfPage(String filmId) throws IOException {
+        logger.info("Start method counterOfPage() at " + LocalDateTime.now());
         int counterOfPage = 0;
         StringBuffer urlStr = new StringBuffer();
         //TODO: At this time, this work only for Moscow. At future change "msk" on other country.
@@ -82,6 +90,7 @@ public class PlParserAfisha implements PliParser {
                 break;
             }
         }
+        logger.info("End of method counterOfPage() at " + LocalDateTime.now() + " - with result= " + counterOfPage);
         return counterOfPage;
     }
 
@@ -89,6 +98,7 @@ public class PlParserAfisha implements PliParser {
     //TODO: А так же необходимо для обоих методов сделать проверку на полученную ссылку согласно паттерну, чтобы не было левых ссылок
     @Override
     public String createURLFromQueryWithGoogle(String query) throws IOException {
+        logger.info("Start method createURLFromQueryWithGoogle() at " + LocalDateTime.now() + " - with query: " + query);
         String urlFromGoogle = null;
 
         Document googleHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(query);
@@ -103,12 +113,13 @@ public class PlParserAfisha implements PliParser {
                 break;
             }
         }
-
+        logger.info("End of method createURLFromQueryWithGoogle() at " + LocalDateTime.now() + " - with result: " + urlFromGoogle);
         return urlFromGoogle;
     }
 
     @Override
     public String createURLFromQueryWithYandex(String query) throws IOException {
+        logger.info("Start method createURLFromQueryWithYandex() at " + LocalDateTime.now() + " - with query: " + query);
         String urlFromYandex = null;
 
         Document yandexHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(query);
@@ -122,13 +133,14 @@ public class PlParserAfisha implements PliParser {
                 break;
             }
         }
-
+        logger.info("End of method createURLFromQueryWithYandex() at " + LocalDateTime.now() + " - with result: " + urlFromYandex);
         return urlFromYandex;
     }
 
     //TODO: необходима проверка на входной запрос, если что убирать транслит, знаки препинания и тд
     @Override
     public String createUrlFromQuery(String queryForUrl) throws IOException {
+        logger.info("Start method createURLFromQuery() at " + LocalDateTime.now() + " - with queryForUrl: " + queryForUrl);
         String urlFromGoogle = null;
         String urlFromYandex = null;
 
@@ -159,6 +171,7 @@ public class PlParserAfisha implements PliParser {
 
     @Override
     public String getFilmIdFromQuery(String query) {
+        logger.info("Start method getFilmIdFromQuery() at " + LocalDateTime.now() + " - with query: " + query);
         String filmId = "0";
         if (query.contains("movie")) {
             int firstIndex = query.indexOf("movie/");
@@ -171,11 +184,13 @@ public class PlParserAfisha implements PliParser {
         if (filmId.contains("/")) {
             filmId = filmId.replaceAll("/", "");
         }
+        logger.info("End of method getFilmIdFromQuery() at " + LocalDateTime.now() + " - with result: " + filmId);
         return filmId;
     }
 
     @Override
     public Cinema getCinemaFromElement(Element element) throws IOException {
+        logger.info("Start method getCinemaFromElement() at " + LocalDateTime.now());
         Cinema cinema = new Cinema();
         String nameCinema;
         String addressCinema;
@@ -205,6 +220,7 @@ public class PlParserAfisha implements PliParser {
 
     @Override
     public List<Session> getSessionFromElement(Element element) throws IOException {
+        logger.info("Start method getSessionFromElement() at " + LocalDateTime.now());
         List<Session> timetable = new ArrayList<>();
         Session session;
         String minPriceMovie;
@@ -224,6 +240,7 @@ public class PlParserAfisha implements PliParser {
     //TODO: добавить кинотеатры в БД и сначала проверять в бД и если нету уже потом парсить страницу. Ускорит работу.
     //Так же можно метод переделать в метод получения информации о кинотеатре. Либо этот, либо getCinemaFromElement()
     private String getAddressCinemaFromUrlOrDB(String urlForAddress) throws IOException {
+        logger.info("Start method getAddressCinemaFromUrlOrDB() at " + LocalDateTime.now());
         Document cinemaHTMLdoc = pliProxyServer.getHttpDocumentFromInternet(urlForAddress);
         String address = cinemaHTMLdoc.select("label.unit__col-value-label").text();
         return address.isEmpty() ? "" : address;

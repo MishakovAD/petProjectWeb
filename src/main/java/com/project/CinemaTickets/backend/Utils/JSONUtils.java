@@ -5,10 +5,17 @@ import com.project.CinemaTickets.CinemaEntity.Movie;
 import com.project.CinemaTickets.CinemaEntity.Session;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.LocalDateTime;
 
 
 public class JSONUtils {
+    private static Logger logger = LoggerFactory.getLogger(JSONUtils.class);
+
     public static JSONObject parseCinemaToJSON(Cinema cinema) {
+        logger.debug("Start method parseCinemaToJSON() at " + LocalDateTime.now());
         JSONObject cinemaJSON = new JSONObject();
         if(cinema.getCinemaId() != 0) {
             cinemaJSON.put("cinemaId", cinema.getCinemaId());
@@ -76,7 +83,8 @@ public class JSONUtils {
         }
 
         cinemaJSON.put("movieList", movieListJSON);
-        System.out.println(cinemaJSON.toString());
+        //System.out.println(cinemaJSON.toString());
+        logger.debug("End of method parseCinemaToJSON() at " + LocalDateTime.now());
         return cinemaJSON;
     }
 }

@@ -9,6 +9,8 @@ import com.project.CinemaTickets.backend.UserLogic.PliUserLogic;
 import com.project.CinemaTickets.backend.Utils.JSONUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,14 +35,18 @@ import java.util.List;
 public class TimesheetController {
     private List<Cinema> cinemaList;
 
+    private Logger logger = LoggerFactory.getLogger(TimesheetController.class);
+
     @GetMapping({"/cinema"})
     public String getTimesheetPage() {
+        logger.info("Start method getTimesheetPage() at " + LocalDateTime.now());
         return "timesheet";
     }
 
     //TODO: сделать потокобезопасную HashMap для многих пользователей, где ключ - сессия, которую получаем из реквест, а значение - List<Cinema>
     @RequestMapping("/timesheetquery")
     public void respTimesheet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("Start method respTimesheet() at " + LocalDateTime.now());
         if (request != null) {
             String timesheetquery = request.getParameter("timesheetquery").trim();
             String content = "timesheetquery: " + timesheetquery;
@@ -60,11 +67,13 @@ public class TimesheetController {
             writer.print(jsonObject);
             writer.flush();
             writer.close();
+            logger.info("End of method respTimesheet() at " + LocalDateTime.now() + " - with result.size()= " + cinemaList.size());
         }
     }
 
     @RequestMapping("/timesheetquery_time")
     public void respTimesheetTime(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("Start method respTimesheetTime() at " + LocalDateTime.now());
         if (request != null) {
             String timesheetquery_time = request.getParameter("timesheetquery").trim();
             String content = "timesheetquery_time: " + timesheetquery_time;
@@ -79,21 +88,15 @@ public class TimesheetController {
             writer.print(jsonObject);
             writer.flush();
             writer.close();
-
-//            response.setContentType("text/plain");
-//            response.setContentType("application/json");
-//            OutputStream outStream = response.getOutputStream();
-//            outStream.write(content.getBytes("UTF-8"));
-//            outStream.flush();
-//            outStream.close();
+            logger.info("End of method respTimesheetTime() at " + LocalDateTime.now() + " - with result.size()= " + secondIterationCinemaList.size());
         }
-
     }
 
 
 
     @RequestMapping("/timesheetquery_type")
     public void respTimesheetType(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("Start method respTimesheetType() at " + LocalDateTime.now());
         if (request != null) {
             String timesheetquery_type = request.getParameter("timesheetquery").trim();
 
@@ -110,30 +113,13 @@ public class TimesheetController {
             writer.print(jsonObject);
             writer.flush();
             writer.close();
-
-
-//            response.setContentType("application/json");
-//            PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
-//
-//            JSONArray jsonArray = new JSONArray();
-//            for (Cinema cinemaL : cinemaList) {
-//                JSONObject jsonObject = JSONUtils.parseCinemaToJSON(cinemaL);
-//                jsonArray.put(jsonObject);
-//                //System.out.println("В кинотеатре " + cinemaL.getName() + " можно увидеть следующие фильмы: ");
-//                for (Movie mov : cinemaL.getMovieList()) {
-//                    //System.out.println(mov.toString());
-//                }
-//            }
-//            writer.print(jsonArray);
-//            writer.flush();
-//            writer.close();
-
+            logger.info("End of method respTimesheetType() at " + LocalDateTime.now() + " - with result.size()= " + thirdIterationCinemaList.size());
         }
-
     }
 
     @RequestMapping("/timesheetquery_place")
     public void respTimesheetPlace(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("Start method respTimesheetPlace() at " + LocalDateTime.now());
         if (request != null) {
             String timesheetquery_place = request.getParameter("timesheetquery").trim();
 
@@ -163,7 +149,7 @@ public class TimesheetController {
             writer.print(jsonArray);
             writer.flush();
             writer.close();
-
+            logger.info("End of method respTimesheetPlace() at " + LocalDateTime.now() + " - with result.size()= " + foursIterationCinemaList.size());
         }
 
     }
