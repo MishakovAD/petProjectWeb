@@ -106,7 +106,7 @@ public class PlProxyServer implements PliProxyServer {
     public Document getHttpDocumentFromInternetWithProxy(String url) {
         counterGetterDocumentWithProxy++;
         if (counterGetterDocumentWithProxy > 100) {
-            //throw new DocumentNotFoundWithProxyException();
+            //throw new DocumentNotFoundWithProxyException("Документ не найден");
             return Jsoup.parse("Документ не найден");
         }
 
