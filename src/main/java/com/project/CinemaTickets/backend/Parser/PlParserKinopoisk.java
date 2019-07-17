@@ -56,7 +56,7 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
             getUrlForBuyTickets(cinema, movie);
         }
         Document cinemaDocument = pliProxyServer.getHttpDocumentFromInternet(urlForCinema);
-        System.out.println("############# Документ получен для кинотеатра " + cinema.getName());
+        logger.info("############# Документ получен для кинотеатра " + cinema.getName());
 //TODO: обязательно добавить проверку на тип сеанса, если пользователь скажет. что это важно! Либо сделать так, чтобы sortedCinemaListFromTypeShow() метод выполнял ее.
         Elements elements = cinemaDocument.select("div.cinema-seances-page__seances");
         for (Element element : elements.select("div.schedule-item.schedule-item_type_film")) {
