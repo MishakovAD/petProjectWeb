@@ -133,7 +133,6 @@ public class TimesheetController {
             PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
 
             JSONArray jsonArray = new JSONArray();
-            System.out.println("Start search url");
             for (Cinema cinemaL : cinemaList) {
                 for (Movie mov : cinemaL.getMovieList()) {
                     mov.getSession().setUrl(pliParserKinopoisk.getUrlForBuyTickets(cinemaL, mov));

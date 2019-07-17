@@ -1,5 +1,6 @@
 package com.project.CinemaTickets.backend.ProxyServer;
 
+import com.project.CinemaTickets.backend.ProxyServer.ProxyEntity.ProxyEntity;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
@@ -19,21 +20,21 @@ public interface PliProxyServer {
      * из Базы Данных (id - ip - port)
      * @return - список прокси серверов вида ip:port
      */
-    public List<String> getProxyFromDatabase();
+    public List<ProxyEntity> getProxyFromDatabase();
 
-    /**
-     * Получение ip адреса из пары ip:port
-     * @param ip_port - пара, вида "ip:port"
-     * @return ip адрес
-     */
-    public String createIpFromPairIP_Port(String ip_port);
-
-    /**
-     * Получение port адреса из пары ip:port
-     * @param ip_port - пара, вида "ip:port"
-     * @return порт
-     */
-    public String createPortFromPairIP_Port(String ip_port);
+//    /**
+//     * Получение ip адреса из пары ip:port
+//     * @param proxyEntity - элемент из БД
+//     * @return ip адрес
+//     */
+//    public String getIpFromProxy(ProxyEntity proxyEntity);
+//
+//    /**
+//     * Получение port адреса из пары ip:port
+//     * @param proxyEntity - элемент из БД
+//     * @return порт
+//     */
+//    public String getPortFromProxy(ProxyEntity proxyEntity);
 
     /**
      * Добавление прокси-листа в БД
