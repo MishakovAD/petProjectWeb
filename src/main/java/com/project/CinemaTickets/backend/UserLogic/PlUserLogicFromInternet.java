@@ -66,7 +66,7 @@ public class PlUserLogicFromInternet implements PliUserLogic {
             Какая то логика, которая будет выбирать подходящий сеанс. Возможно вынести это в отдельный метод.
             Пока передам просто 1 элемент из листа
              */
-            //pliParserKinopoisk.getUrlForBuyTickets(cinemaList.get(0), cinemaList.get(0).getMovieList().get(0));
+            //pliParserKinopoisk.getUrlForBuyTicketsFromInternet(cinemaList.get(0), cinemaList.get(0).getMovieList().get(0));
         }
         logger.info("End of method getCinemaListWithMovie() at " + LocalDateTime.now() + " - with result.size(): " + cinemaList.size());
         return cinemaList;

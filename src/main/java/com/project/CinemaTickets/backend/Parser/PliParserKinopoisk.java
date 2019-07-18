@@ -2,8 +2,12 @@ package com.project.CinemaTickets.backend.Parser;
 
 import com.project.CinemaTickets.CinemaEntity.Cinema;
 import com.project.CinemaTickets.CinemaEntity.Movie;
+import com.project.CinemaTickets.CinemaEntity.Session;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface PliParserKinopoisk {
     /**
@@ -16,7 +20,17 @@ public interface PliParserKinopoisk {
      * @return
      * @throws IOException
      */
-    public String getUrlForBuyTickets(Cinema cinema, Movie movie) throws IOException;
+    public String getUrlForBuyTicketsFromInternet(Cinema cinema, Movie movie) throws IOException;
+
+
+    public Cinema getCinemaFromDocument(Document document);
+
+    public List<Movie> getMovieListFromDocument(Document document);
+    public Movie getMovieFromElement(Element element);
+
+    public List<Session> getSessionListFromDocument(Document document);
+    public Session getSessionFromElement(Element element);
+
 
     public String createURLFromQueryWithGoogle(String url) throws IOException;
     public String createURLFromQueryWithYandex(String url) throws IOException;

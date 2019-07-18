@@ -2,9 +2,7 @@ package com.project.CinemaTickets.Controller;
 
 import com.project.CinemaTickets.CinemaEntity.Cinema;
 import com.project.CinemaTickets.CinemaEntity.Movie;
-import com.project.CinemaTickets.CinemaEntity.Session;
 import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
-import com.project.CinemaTickets.backend.UserLogic.PlUserLogicFromInternet;
 import com.project.CinemaTickets.backend.UserLogic.PliUserLogic;
 import com.project.CinemaTickets.backend.Utils.JSONUtils;
 import org.json.JSONArray;
@@ -19,7 +17,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -30,6 +27,7 @@ import java.util.List;
 /**
  * Сделать дополнительную проверку на запрос. возвращет ли он инужные данные или нет. Искать похожие запросы среди списка премьер
  * чтобы не было такого, что фильм: какая то часть при неуказании части, не искались ссылки. В данном случае нужно брать последнюю часть
+ * //TODO: Желательно из парсеров вообще убрать получение документа и передавать туда исключительно уже полученный документ.
  */
 @Controller
 public class TimesheetController {
@@ -135,7 +133,7 @@ public class TimesheetController {
             JSONArray jsonArray = new JSONArray();
             for (Cinema cinemaL : cinemaList) {
                 for (Movie mov : cinemaL.getMovieList()) {
-                    mov.getSession().setUrl(pliParserKinopoisk.getUrlForBuyTickets(cinemaL, mov));
+                    mov.getSession().setUrl(pliParserKinopoisk.getUrlForBuyTicketsFromInternet(cinemaL, mov));
                     try {
                         Thread.sleep(15000);
                     } catch (InterruptedException e) {

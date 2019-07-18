@@ -5,7 +5,6 @@ import com.project.CinemaTickets.CinemaEntity.Movie;
 import com.project.CinemaTickets.CinemaEntity.Session;
 import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -15,9 +14,8 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -31,48 +29,77 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
 
     private Logger logger = LoggerFactory.getLogger(PlParserKinopoisk.class);
 
-    /**
-     * Поисковым запросом мы сразу должны получить страницу с кинотеатром,
-     * где по элементам ищем название нашего фильма,
-     * а затем нужный сеанс и берем оттуда сессию и вставляем в ссылку
-     * Другой вариант: Сразу идти на сайт кинопоиска
-     * и там в поисковый запрос вставлять название, но это дольше. Не подходит.
-     * @param cinema
-     * @param movie
-     * @return
-     * @throws IOException
-     */
     @Override
-    public String getUrlForBuyTickets(Cinema cinema, Movie movie) throws IOException {
-        logger.info("Start method getUrlForBuyTickets() at " + LocalDateTime.now());
+    public String getUrlForBuyTicketsFromInternet(Cinema cinema, Movie movie) throws IOException {
+        logger.info("Start method getUrlForBuyTicketsFromInternet() at " + LocalDateTime.now());
         counterUrlForBuyTickets++;
         if (counterUrlForBuyTickets > 25) {
-            logger.error("Method getUrlForBuyTickets() failed! " + LocalDateTime.now());
+            logger.error("Method getUrlForBuyTicketsFromInternet() failed! " + LocalDateTime.now());
             return "Ссылка не найдена. Повторите попытку позже.";
         }
         StringBuffer urlForBuyTickets = new StringBuffer(HELPER_FOR_BUY_TICKETS);
         String urlForCinema = createUrlFromQuery(cinema.getName());
         if (urlForCinema == null || urlForCinema.isEmpty()) {
-            getUrlForBuyTickets(cinema, movie);
+            getUrlForBuyTicketsFromInternet(cinema, movie);
         }
         Document cinemaDocument = pliProxyServer.getHttpDocumentFromInternet(urlForCinema);
         logger.info("############# Документ получен для кинотеатра " + cinema.getName());
-//TODO: обязательно добавить проверку на тип сеанса, если пользователь скажет. что это важно! Либо сделать так, чтобы sortedCinemaListFromTypeShow() метод выполнял ее.
         Elements elements = cinemaDocument.select("div.cinema-seances-page__seances");
         for (Element element : elements.select("div.schedule-item.schedule-item_type_film")) {
             if (StringUtils.equalsAnyIgnoreCase(movie.getName(), element.select("a.link.schedule-film__title").text())) {
                 for (Element timeElement : element.select("span.schedule-item__session-button.schedule-item__session-button_active.js-yaticket-button")) {
                     if (StringUtils.equalsAnyIgnoreCase(timeElement.text(), movie.getSession().getTimeOfShow())) {
                         urlForBuyTickets.append(timeElement.attr("data-session-id"));
-                        logger.info("Method getUrlForBuyTickets() finished successful at " + LocalDateTime.now());
+                        logger.info("Method getUrlForBuyTicketsFromInternet() finished successful at " + LocalDateTime.now());
                         return urlForBuyTickets.toString();
                     }
                 }
             }
         }
-        logger.info("Method getUrlForBuyTickets() failed! " + LocalDateTime.now() + " - Session not found!");
+        logger.info("Method getUrlForBuyTicketsFromInternet() failed! " + LocalDateTime.now() + " - Session not found!");
         return "Сеанс не найден.";
     }
+
+    @Override
+    public Cinema getCinemaFromDocument(Document document) {
+        logger.info("Start method getCinemaFromDocument() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
+        Cinema cinema = new Cinema();
+        String cinemaName = document.select("h1.cinema-header__title").text();
+        String cinemaAddress = document.select("div.cinema-header__address").text();
+        String cinemaUnderground = document.select("div.cinema-header__metro").text();
+        String infoAboutCinema = "Рэйтинг: " + document.select("span.cinema-header__rating.cinema-header__rating_type_positive").text();
+        List<Movie> movies = getMovieListFromDocument(document);
+        return null;
+    }
+
+    @Override
+    public List<Movie> getMovieListFromDocument(Document document) {
+        logger.debug("Start method getMovieListFromDocument() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
+        List<Movie> movieList = new ArrayList<>();
+        return null;
+    }
+
+    @Override
+    public Movie getMovieFromElement(Element element) {
+        logger.debug("Start method getMovieFromElement() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
+        Movie movie = new Movie();
+        return null;
+    }
+
+    @Override
+    public List<Session> getSessionListFromDocument(Document document) {
+        logger.debug("Start method getSessionListFromDocument() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
+        List<Session> sessionList = new ArrayList<>();
+        return null;
+    }
+
+    @Override
+    public Session getSessionFromElement(Element element) {
+        logger.debug("Start method getSessionFromElement() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
+        Session session = new Session();
+        return null;
+    }
+
 
     @Override
     public String createURLFromQueryWithGoogle(String url) throws IOException {
@@ -146,14 +173,6 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         return urlFromYandex != null ? urlFromYandex : urlFromGoogle;
     }
 
-    public Cinema getCinemaFromElement(Element element) throws IOException {
-        return null;
-    }
-
-    public List<Session> getSessionFromElement(Element element) throws IOException {
-        return null;
-    }
-
     public static void main(String[] args) throws IOException {
         PlParserKinopoisk p = new PlParserKinopoisk();
         Cinema cin = new Cinema();
@@ -164,7 +183,7 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         ses.setTimeOfShow("22:20");
         ses.setTypeOfMovie("2D");
         mov.setSession(ses);
-        System.out.println(p.getUrlForBuyTickets(cin, mov));
+        System.out.println(p.getUrlForBuyTicketsFromInternet(cin, mov));
         //System.out.println(p.createUrlFromQuery("космик"));
     }
 
