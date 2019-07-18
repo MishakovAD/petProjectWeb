@@ -102,7 +102,7 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         if (movies != null) {
             cinema.setMovieList(movies);
         }
-
+        logger.info("End of method getCinemaFromDocument() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
         return cinema;
     }
 
