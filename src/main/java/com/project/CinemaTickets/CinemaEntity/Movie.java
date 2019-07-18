@@ -1,11 +1,14 @@
 package com.project.CinemaTickets.CinemaEntity;
 
+import java.util.List;
+
 public class Movie {
     private int movieId;
     private String name;
     private String rating;
     private Cinema cinema;
     private Session session;
+    private List<Session> sessionList;
     private Timetable timetable;
     private String dateFrom;
 
@@ -58,6 +61,14 @@ public class Movie {
 
     public void setSession(Session session) {
         this.session = session;
+    }
+
+    public List<Session> getSessionList() {
+        return sessionList;
+    }
+
+    public void setSessionList(List<Session> sessionList) {
+        this.sessionList = sessionList;
     }
 
     public Timetable getTimetable() {

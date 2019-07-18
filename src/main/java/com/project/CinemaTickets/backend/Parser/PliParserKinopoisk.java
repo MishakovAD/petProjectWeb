@@ -28,7 +28,7 @@ public interface PliParserKinopoisk {
     public List<Movie> getMovieListFromDocument(Document document);
     public Movie getMovieFromElement(Element element);
 
-    public List<Session> getSessionListFromDocument(Document document);
+    public List<Session> getSessionListFromElement(Element element);
     public Session getSessionFromElement(Element element);
 
 

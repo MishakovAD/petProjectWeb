@@ -6,6 +6,7 @@ public class Session {
     private String typeOfMovie; //2D,3D,IMax
     private String price;
     private String url;
+    private String movieDate;
 
     public Session() {
     }
@@ -63,12 +64,21 @@ public class Session {
         this.url = url;
     }
 
+    public String getMovieDate() {
+        return movieDate;
+    }
+
+    public void setMovieDate(String movieDate) {
+        this.movieDate = movieDate;
+    }
+
     @Override
     public String toString() {
         return "Расписание{" +
                 "Время='" + timeOfShow + '\'' +
                 ", Тип='" + typeOfMovie + '\'' +
                 ", Цена='" + price + '\'' +
+                ", Дата='" + movieDate + '\'' +
                 '}';
     }
 }

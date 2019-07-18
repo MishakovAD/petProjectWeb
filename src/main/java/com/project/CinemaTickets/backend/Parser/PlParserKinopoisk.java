@@ -5,6 +5,7 @@ import com.project.CinemaTickets.CinemaEntity.Movie;
 import com.project.CinemaTickets.CinemaEntity.Session;
 import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -14,7 +15,9 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -68,36 +71,142 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         String cinemaAddress = document.select("div.cinema-header__address").text();
         String cinemaUnderground = document.select("div.cinema-header__metro").text();
         String infoAboutCinema = "Рэйтинг: " + document.select("span.cinema-header__rating.cinema-header__rating_type_positive").text();
+        String urlToKinopoisk = document.location(); //TODO: придумать, как можно исключить добавление ссылок по датам и прочее. Только, чтобы добавлялась ссылка на кинотеатр с расписанием на сегодня
         List<Movie> movies = getMovieListFromDocument(document);
-        return null;
+
+        if (cinemaName != null) {
+            cinema.setName(cinemaName);
+        } else {
+            cinema.setName("Не найдено");
+        }
+        if (cinemaAddress != null) {
+            cinema.setAddress(cinemaAddress);
+        } else {
+            cinema.setAddress("Не найдено");
+        }
+        if (cinemaUnderground != null) {
+            cinema.setUnderground(cinemaUnderground);
+        } else {
+            cinema.setUnderground("Не найдено");
+        }
+        if (infoAboutCinema != null) {
+            cinema.setInfoAboutCinema(infoAboutCinema);
+        } else {
+            cinema.setInfoAboutCinema("Не найдено");
+        }
+        if (urlToKinopoisk != null) {
+            cinema.setUrlToKinopoisk(urlToKinopoisk);
+        } else {
+            cinema.setUrlToKinopoisk("Не найдено");
+        }
+        if (movies != null) {
+            cinema.setMovieList(movies);
+        }
+
+        return cinema;
     }
 
     @Override
     public List<Movie> getMovieListFromDocument(Document document) {
         logger.debug("Start method getMovieListFromDocument() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
         List<Movie> movieList = new ArrayList<>();
-        return null;
+        Movie movie;
+        Elements movieElements = document.select("div.schedule-item.schedule-item_type_film");
+        for (Element movieElement : movieElements) {
+            movie = getMovieFromElement(movieElement);
+            movieList.add(movie);
+        }
+        return movieList;
     }
 
     @Override
     public Movie getMovieFromElement(Element element) {
         logger.debug("Start method getMovieFromElement() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
         Movie movie = new Movie();
-        return null;
+        String movieName = element.select("a.link.schedule-film__title").text();
+        String movieRating = element.select("span.schedule-film__rating-value.schedule-film__rating-value_type_neutral").text();
+        List<Session> sessionList = getSessionListFromElement(element);
+
+        if (movieName != null) {
+            movie.setName(movieName);
+        } else {
+            movie.setName("Не найдено");
+        }
+        if (movieRating != null) {
+            movie.setRating(movieRating);
+        } else {
+            movie.setRating("Не найдено");
+        }
+        if (sessionList != null) {
+            movie.setSessionList(sessionList);
+        }
+
+        return movie;
     }
 
     @Override
-    public List<Session> getSessionListFromDocument(Document document) {
-        logger.debug("Start method getSessionListFromDocument() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
+    public List<Session> getSessionListFromElement(Element element) {
+        logger.debug("Start method getSessionListFromElement() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
         List<Session> sessionList = new ArrayList<>();
-        return null;
+        Session session;
+        Elements sessionElements = element.select("div.schedule-item__formats-row");
+        for (Element sessionElement : sessionElements) {
+            for (Element sessionRootElement : sessionElements.select("span.schedule-item__session-button-wrapper")) {
+                session = getSessionFromElement(sessionRootElement);
+
+                String typeMovie = sessionElement.select("span.schedule-item__formats-format").text();
+                if (typeMovie != null) {
+                    session.setTypeOfMovie(typeMovie);
+                } else {
+                    session.setTypeOfMovie("Не найдено");
+                }
+
+                sessionList.add(session);
+            }
+        }
+        return sessionList;
     }
 
     @Override
     public Session getSessionFromElement(Element element) {
         logger.debug("Start method getSessionFromElement() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
+        String pageUrl = element.baseUri();
         Session session = new Session();
-        return null;
+        String timeMovie = element.select("span.schedule-item__session-button.schedule-item__session-button_active.js-yaticket-button").text();
+
+        String price = element.select("span.schedule-item__price").text();
+        String urlForBuyTickets = HELPER_FOR_BUY_TICKETS + element
+                .select("span.schedule-item__session-button.schedule-item__session-button_active.js-yaticket-button")
+                .attr("data-session-id");
+        String movieDate;
+        if (pageUrl.contains("day_view")) {
+            movieDate = pageUrl.substring(pageUrl.indexOf("day_view/") + 9);
+        } else {
+            movieDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        }
+
+        if(timeMovie != null) {
+            session.setTimeOfShow(timeMovie);
+        } else {
+            session.setTimeOfShow("Не найдено");
+        }
+        if (price != null) {
+            session.setPrice(price);
+        } else {
+            session.setPrice("Не найдено");
+        }
+        if (urlForBuyTickets != null) {
+            session.setUrl(urlForBuyTickets);
+        } else {
+            session.setUrl("Не найдено");
+        }
+        if (movieDate != null) {
+            session.setMovieDate(movieDate.replaceAll("/", ""));
+        } else {
+            session.setMovieDate("Не найдено");
+        }
+
+        return session;
     }
 
 
@@ -183,7 +292,13 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         ses.setTimeOfShow("22:20");
         ses.setTypeOfMovie("2D");
         mov.setSession(ses);
-        System.out.println(p.getUrlForBuyTicketsFromInternet(cin, mov));
+
+
+        Document doc = Jsoup.connect("https://www.kinopoisk.ru/afisha/city/1/cinema/280891/day_view/2019-07-20/")
+                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36")
+                .get();
+        System.out.println(p.getCinemaFromDocument(doc));
+        //System.out.println(p.getUrlForBuyTicketsFromInternet(cin, mov));
         //System.out.println(p.createUrlFromQuery("космик"));
     }
 
