@@ -88,4 +88,8 @@ public interface PliProxyServer {
      * @return true - если страница корректна
      */
     public boolean isCorrectDownloadDocument(String document);
+
+    public String createURLFromQueryWithGoogleForProxyServer(String url, boolean forEmulationActivity) throws IOException;
+    public String createURLFromQueryWithYandexForProxyServer(String url, boolean forEmulationActivity) throws IOException;
+    public String createUrlFromQueryForProxyServer(String queryForUrl, boolean forEmulationActivity) throws IOException;
 }

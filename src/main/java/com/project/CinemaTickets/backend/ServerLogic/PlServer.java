@@ -48,7 +48,7 @@ public class PlServer implements PliServer {
             }
 
         }
-        return null;
+        return cinemasList;
     }
 
     @Override
@@ -57,7 +57,17 @@ public class PlServer implements PliServer {
     }
 
     @Override
-    public void emulationHumanActivity() {
+    public void emulationHumanActivity() throws IOException {
+        int counterCimulations = 0;
+        List<String> cimulationQueries = createCimulationQueries();
+        for (String query : cimulationQueries) {
+            counterCimulations++;
+            if (counterCimulations > 5) { //TODO: выбрать наиболее оптимальное число для симуляций
+                break;
+            }
+            String urlFromSearch = pliProxyServer.createUrlFromQueryForProxyServer(query, true);
+        }
+
 
     }
 
@@ -67,6 +77,65 @@ public class PlServer implements PliServer {
             idList.add(String.valueOf(i));
         }
         return idList;
+    }
+
+    private ArrayList<String> createCimulationQueries() {
+        ArrayList<String> cimulationQueries = new ArrayList<>();
+        ArrayList<String> cimulationQueriesFirstPart = new ArrayList<>();
+        cimulationQueriesFirstPart.add("Купить");
+        cimulationQueriesFirstPart.add("Смотреть онлайн");
+        cimulationQueriesFirstPart.add("Что делать, если");
+        cimulationQueriesFirstPart.add("болит горло");
+        cimulationQueriesFirstPart.add("алиэкспресс");
+        ArrayList<String> cimulationQueriesSecondPart = new ArrayList<>();
+        cimulationQueriesSecondPart.add("дешевую дрель");
+        cimulationQueriesSecondPart.add("классную стиральную машинку");
+        cimulationQueriesSecondPart.add("BMW х5");
+        cimulationQueriesSecondPart.add("переднеприводную машину");
+        cimulationQueriesSecondPart.add("грузовик");
+        cimulationQueriesSecondPart.add("билеты на самолет");
+        cimulationQueriesSecondPart.add("айфон 6");
+        cimulationQueriesSecondPart.add("квартиру в Москве дешево");
+        cimulationQueriesSecondPart.add("сервер по выгодной цене");
+        cimulationQueriesSecondPart.add("зимнюю резину для lada");
+        cimulationQueriesSecondPart.add("диски");
+        ArrayList<String> cimulationQueriesThirdPart = new ArrayList<>();
+        cimulationQueriesThirdPart.add("сериал Люцифер на русском");
+        cimulationQueriesThirdPart.add("погружение в хорошем качестве hd720");
+        cimulationQueriesThirdPart.add("трансляцию футбола");
+        cimulationQueriesThirdPart.add("курсы по java");
+        cimulationQueriesThirdPart.add("стрим WoW");
+        cimulationQueriesThirdPart.add("команда а");
+        cimulationQueriesThirdPart.add("");
+        cimulationQueriesThirdPart.add("россия 1");
+        cimulationQueriesThirdPart.add("дом 2");
+        ArrayList<String> cimulationQueriesFourPart = new ArrayList<>();
+        cimulationQueriesFourPart.add("умер хомячок");
+        cimulationQueriesFourPart.add("упал в колодец");
+        cimulationQueriesFourPart.add("украл миллион");
+        cimulationQueriesFourPart.add("получил приз");
+        cimulationQueriesFourPart.add("выпала 13 черное");
+        cimulationQueriesFourPart.add("прыгнул с обрыва");
+        cimulationQueriesFourPart.add("сломал кота");
+        ArrayList<String> cimulationQueriesFivesPart = new ArrayList<>();
+        cimulationQueriesFivesPart.add("у кота");
+        cimulationQueriesFivesPart.add("у ребенка");
+        cimulationQueriesFivesPart.add("у маленькой черепашки");
+        cimulationQueriesFivesPart.add("водопроводного крана");
+        cimulationQueriesFivesPart.add("у собаки");
+        cimulationQueriesFivesPart.add("у Леонида Николаевича");
+        ArrayList<String> cimulationQueriesSixPart = new ArrayList<>();
+        cimulationQueriesSixPart.add("купить китайские часы");
+        cimulationQueriesSixPart.add("купить китайский браслет");
+        cimulationQueriesSixPart.add("купить китайский айфон 5");
+        cimulationQueriesSixPart.add("купить тонировку для стекол");
+        cimulationQueriesSixPart.add("купить маленькую черепашку");
+        cimulationQueriesSixPart.add("купить много полезного");
+        cimulationQueriesSixPart.add("купить 5 лампочек");
+
+
+
+        return cimulationQueries;
     }
 
 

@@ -7,7 +7,6 @@ import com.project.CinemaTickets.backend.Parser.PliParser;
 import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
 import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,14 +18,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 //TODO: Все sout заменить на Logger
 @Component
-public class PlUserLogicFromInternet implements PliUserLogic {
+public class PlUserLogicFromInternet implements PliUserLogicFromInternet {
     public static String[] TYPES_OF_SHOW_FILM = {"2D", "3D", "IMax", "Dolby Atmos"};
     public static Pattern PATTERN_CINEMA_KINOPOISK = Pattern.compile("(https://www.kinopoisk.ru/afisha/city/\\d+/cinema/[a-z0-9A-Zа-яА-Я -]+/?)");
     public static Pattern PATTERN_TIME = Pattern.compile("(\\d+):(\\d+)");

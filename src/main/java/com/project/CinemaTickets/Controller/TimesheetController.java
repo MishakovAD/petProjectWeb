@@ -3,7 +3,7 @@ package com.project.CinemaTickets.Controller;
 import com.project.CinemaTickets.CinemaEntity.Cinema;
 import com.project.CinemaTickets.CinemaEntity.Movie;
 import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
-import com.project.CinemaTickets.backend.UserLogic.PliUserLogic;
+import com.project.CinemaTickets.backend.UserLogic.PliUserLogicFromInternet;
 import com.project.CinemaTickets.backend.Utils.JSONUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -151,7 +151,7 @@ public class TimesheetController {
 
     }
 
-    private PliUserLogic pliUserLogic;
+    private PliUserLogicFromInternet pliUserLogic;
     private PliParserKinopoisk pliParserKinopoisk;
 
     @Inject
@@ -160,7 +160,7 @@ public class TimesheetController {
     }
 
     @Inject
-    private void setPliUserLogic (PliUserLogic pliUserLogic) {
+    private void setPliUserLogic (PliUserLogicFromInternet pliUserLogic) {
         this.pliUserLogic = pliUserLogic;
     }
 }

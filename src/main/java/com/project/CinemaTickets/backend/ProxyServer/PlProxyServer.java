@@ -1,8 +1,11 @@
 package com.project.CinemaTickets.backend.ProxyServer;
 
 import com.project.CinemaTickets.backend.ProxyServer.ProxyEntity.ProxyEntity;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -167,6 +170,133 @@ public class PlProxyServer implements PliProxyServer {
             logger.info("Document is correct!");
             return true;
         }
+    }
+
+    @Override
+    public String createURLFromQueryWithGoogleForProxyServer(String url, boolean forEmulationActivity) throws IOException {
+        logger.info("Start method createURLFromQueryWithGoogleForProxyServer() at " + LocalDateTime.now() + " - with url: " + url);
+        String urlFromGoogle = null;
+        String titleQuery = null;
+        Document googleHTMLdoc = getHttpDocumentFromInternet(url);
+        Elements elements = googleHTMLdoc.select("div#main");
+        for (Element element : elements.select("div.ZINbbc.xpd.O9g5cc.uUPGi")) {
+            urlFromGoogle = element.getElementsByTag("a").attr("href");
+            titleQuery = element.select("h3.sA5rQ").text();
+            if (forEmulationActivity && isContains(urlFromGoogle, titleQuery)){
+                int firstIndex = urlFromGoogle.indexOf("http");
+                int lastIndex = urlFromGoogle.indexOf("/&");
+                urlFromGoogle = urlFromGoogle.substring(firstIndex, lastIndex+1);
+                return urlFromGoogle;
+            } else if (!forEmulationActivity) {
+                //TODO: продумать, для чего в прокси-сервере может понадобиться получение ссылки, кроме как для эмуляции активности
+            }
+            urlFromGoogle = null;
+        }
+        logger.info("End of method createURLFromQueryWithGoogleForProxyServer() at " + LocalDateTime.now() + " - with result: " + urlFromGoogle);
+        return urlFromGoogle;
+    }
+
+    @Override
+    public String createURLFromQueryWithYandexForProxyServer(String url, boolean forEmulationActivity) throws IOException {
+        logger.info("Start method createURLFromQueryWithYandexForProxyServer() at " + LocalDateTime.now() + " - with query: " + url);
+        String urlFromYandex = null;
+        String titleQuery = null;
+        Document yandexHTMLdoc = getHttpDocumentFromInternet(url);
+        Elements elements = yandexHTMLdoc.select("ul.serp-list.serp-list_left_yes");
+        for (Element element : elements.select("li.serp-item").select("a.link.link_theme_outer.path__item.i-bem")) {
+            urlFromYandex = element.getElementsByTag("a").attr("href");
+            titleQuery = element.select("organic__url-text").text();
+            if (forEmulationActivity && isContains(urlFromYandex, titleQuery)){
+                int firstIndex = urlFromYandex.indexOf("http");
+                urlFromYandex = urlFromYandex.substring(firstIndex);
+                return urlFromYandex;
+            } else if (!forEmulationActivity) {
+                //TODO: продумать, для чего в прокси-сервере может понадобиться получение ссылки, кроме как для эмуляции активности
+            }
+            urlFromYandex = null;
+        }
+        logger.info("End of method createURLFromQueryWithYandexForProxyServer() at " + LocalDateTime.now() + " - with result: " + urlFromYandex);
+        return urlFromYandex;
+    }
+
+    @Override
+    public String createUrlFromQueryForProxyServer(String queryForUrl, boolean forEmulationActivity) throws IOException {
+        logger.info("Start method createUrlFromQueryForProxyServer() at " + LocalDateTime.now() + " - with queryForUrl: " + queryForUrl);
+        String urlFromGoogle = null;
+        String urlFromYandex = null;
+
+        StringBuffer urlQueryForYandex = new StringBuffer();
+        String[] wordsFromQuery = queryForUrl.split(" ");
+        urlQueryForYandex.append("https://yandex.ru/search/?lr=213&text=");
+        for (String word : wordsFromQuery) {
+            urlQueryForYandex.append(word + "+");
+        }
+        System.out.println("##createUrlFromQuery = " + urlQueryForYandex.toString());
+        urlFromYandex = createURLFromQueryWithYandexForProxyServer(urlQueryForYandex.toString(), forEmulationActivity);
+
+        if (urlFromYandex == null) {
+            StringBuffer urlQueryForGoogle = new StringBuffer();
+            urlQueryForGoogle.append("https://www.google.com/search?q=");
+            for (String word : wordsFromQuery) {
+                urlQueryForGoogle.append(word + "+");
+            }
+            urlFromGoogle = createURLFromQueryWithGoogleForProxyServer(urlQueryForGoogle.toString(), forEmulationActivity);
+        }
+
+        return urlFromYandex != null ? urlFromYandex : urlFromGoogle;
+    }
+
+    private boolean isContains(String url, String titleQuery) {
+        if (StringUtils.contains(titleQuery,"-")) {
+            titleQuery.replaceAll("-", " ");
+        }
+        if (StringUtils.contains(titleQuery,":")) {
+            titleQuery.replaceAll(":", " ");
+        }
+        if (StringUtils.contains(titleQuery,".")) {
+            titleQuery.replaceAll(".", " ");
+        }
+        if (StringUtils.contains(titleQuery,",")) {
+            titleQuery.replaceAll(",", " ");
+        }
+        if (StringUtils.contains(titleQuery,"!")) {
+            titleQuery.replaceAll("!", " ");
+        }
+        if (StringUtils.contains(titleQuery,",")) {
+            titleQuery.replaceAll(",", " ");
+        }
+        if (StringUtils.contains(titleQuery,";")) {
+            titleQuery.replaceAll(";", " ");
+        }
+        if (StringUtils.contains(titleQuery,"/")) {
+            titleQuery.replaceAll("/", " ");
+        }
+        if (StringUtils.contains(titleQuery,"?")) {
+            titleQuery.replaceAll("\\?", " ");
+        }
+        if (StringUtils.contains(titleQuery,"\"")) {
+            titleQuery.replaceAll("\"", " ");
+        }
+        if (StringUtils.contains(titleQuery,"'")) {
+            titleQuery.replaceAll("'", " ");
+        }
+        if (StringUtils.contains(titleQuery,"+")) {
+            titleQuery.replaceAll("\\+", " ");
+        }
+        String[] titleAueryArray = titleQuery.split(" ");
+        if (url != null && !url.isEmpty()) {
+            url = url.substring(url.indexOf("="));
+        }
+        int counterMatching = 0;
+        for (String str : titleAueryArray) {
+            if (StringUtils.contains(url, str)) {
+                counterMatching++;
+            }
+            if (counterMatching == 2) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private URLConnection openConnection(String url, Proxy proxy) {

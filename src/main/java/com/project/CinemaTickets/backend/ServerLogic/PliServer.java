@@ -31,6 +31,6 @@ public interface PliServer {
      * автоматически переходит по ссылкам и ищет
      * различный контент. Тестовый метод.
      */
-    public void emulationHumanActivity();
+    public void emulationHumanActivity() throws IOException;
 
 }
