@@ -70,13 +70,13 @@ public class PlServer implements PliServer {
             int index = random.nextInt(cimulationQueries.size());
             String query = cimulationQueries.get(index);
             counterCimulations++;
-            if (counterCimulations > 5) { //TODO: выбрать наиболее оптимальное число для симуляций
+            if (counterCimulations > 3) { //TODO: выбрать наиболее оптимальное число для симуляций
                 break;
             }
             String urlFromSearch = pliProxyServer.createUrlFromQueryForProxyServer(query, true);
 
             timeout(random);
-            logger.info("####################### найденные url: " + urlFromSearch);
+            logger.info("####################### найденные url для эмуляции деятельности: " + urlFromSearch);
         }
 
         logger.info("Start method emulationHumanActivity() at " + LocalDateTime.now());

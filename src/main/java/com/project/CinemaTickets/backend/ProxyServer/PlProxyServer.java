@@ -93,7 +93,7 @@ public class PlProxyServer implements PliProxyServer {
         logger.info("Start method getHttpDocumentFromInternetWithProxy() at " + LocalDateTime.now() + " - with url: " + url);
 
         counterGetterDocumentWithProxy++;
-        if (counterGetterDocumentWithProxy > 100) {
+        if (counterGetterDocumentWithProxy > 20) {
             logger.error("Method fail! Document is not found!");
             //throw new DocumentNotFoundWithProxyException("Документ не найден");
             return Jsoup.parse("Документ не найден");
@@ -175,14 +175,16 @@ public class PlProxyServer implements PliProxyServer {
     @Override
     public String createURLFromQueryWithGoogleForProxyServer(String url, boolean forEmulationActivity) throws IOException {
         logger.info("Start method createURLFromQueryWithGoogleForProxyServer() at " + LocalDateTime.now() + " - with url: " + url);
+        int counter = 0; //необходим для выбора рандомной ссылки из поиска при эмуляции
         String urlFromGoogle = null;
         String titleQuery = null;
         Document googleHTMLdoc = getHttpDocumentFromInternet(url);
         Elements elements = googleHTMLdoc.select("div#search");
         for (Element element : elements.select("div.g")) {
+            counter++;
             urlFromGoogle = element.getElementsByTag("a").attr("href");
             titleQuery = element.select("div.s").text();
-            if (forEmulationActivity && isContains(url, titleQuery)){
+            if (forEmulationActivity && isContains(url, titleQuery) && (counter == new Random(System.currentTimeMillis()).nextInt(10))){
                 int firstIndex = urlFromGoogle.indexOf("http");
                 int lastIndex = urlFromGoogle.indexOf("/&");
                 urlFromGoogle = urlFromGoogle.substring(firstIndex, lastIndex+1);
@@ -199,14 +201,16 @@ public class PlProxyServer implements PliProxyServer {
     @Override
     public String createURLFromQueryWithYandexForProxyServer(String url, boolean forEmulationActivity) throws IOException {
         logger.info("Start method createURLFromQueryWithYandexForProxyServer() at " + LocalDateTime.now() + " - with query: " + url);
+        int counter = 0; //необходим для выбора рандомной ссылки из поиска при эмуляции
         String urlFromYandex = null;
         String titleQuery = null;
         Document yandexHTMLdoc = getHttpDocumentFromInternet(url);
         Elements elements = yandexHTMLdoc.select("ul.serp-list.serp-list_left_yes");
         for (Element element : elements.select("li.serp-item")) {
+            counter++;
             urlFromYandex = element.getElementsByTag("a").attr("href");
             titleQuery = element.select("span.extended-text__short").text();
-            if (forEmulationActivity && isContains(url, titleQuery)){
+            if (forEmulationActivity && isContains(url, titleQuery) && (counter == new Random(System.currentTimeMillis()).nextInt(10))){
                 int firstIndex = urlFromYandex.indexOf("http");
                 urlFromYandex = urlFromYandex.substring(firstIndex);
                 return urlFromYandex;
