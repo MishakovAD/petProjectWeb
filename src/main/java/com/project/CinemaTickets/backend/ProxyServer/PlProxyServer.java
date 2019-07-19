@@ -178,11 +178,11 @@ public class PlProxyServer implements PliProxyServer {
         String urlFromGoogle = null;
         String titleQuery = null;
         Document googleHTMLdoc = getHttpDocumentFromInternet(url);
-        Elements elements = googleHTMLdoc.select("div#main");
-        for (Element element : elements.select("div.ZINbbc.xpd.O9g5cc.uUPGi")) {
+        Elements elements = googleHTMLdoc.select("div#search");
+        for (Element element : elements.select("div.g")) {
             urlFromGoogle = element.getElementsByTag("a").attr("href");
-            titleQuery = element.select("h3.sA5rQ").text();
-            if (forEmulationActivity && isContains(urlFromGoogle, titleQuery)){
+            titleQuery = element.select("div.s").text();
+            if (forEmulationActivity && isContains(url, titleQuery)){
                 int firstIndex = urlFromGoogle.indexOf("http");
                 int lastIndex = urlFromGoogle.indexOf("/&");
                 urlFromGoogle = urlFromGoogle.substring(firstIndex, lastIndex+1);
@@ -203,14 +203,15 @@ public class PlProxyServer implements PliProxyServer {
         String titleQuery = null;
         Document yandexHTMLdoc = getHttpDocumentFromInternet(url);
         Elements elements = yandexHTMLdoc.select("ul.serp-list.serp-list_left_yes");
-        for (Element element : elements.select("li.serp-item").select("a.link.link_theme_outer.path__item.i-bem")) {
+        for (Element element : elements.select("li.serp-item")) {
             urlFromYandex = element.getElementsByTag("a").attr("href");
-            titleQuery = element.select("organic__url-text").text();
-            if (forEmulationActivity && isContains(urlFromYandex, titleQuery)){
+            titleQuery = element.select("span.extended-text__short").text();
+            if (forEmulationActivity && isContains(url, titleQuery)){
                 int firstIndex = urlFromYandex.indexOf("http");
                 urlFromYandex = urlFromYandex.substring(firstIndex);
                 return urlFromYandex;
             } else if (!forEmulationActivity) {
+                Elements secondElements = element.select("a.link.link_theme_outer.path__item.i-bem");
                 //TODO: продумать, для чего в прокси-сервере может понадобиться получение ссылки, кроме как для эмуляции активности
             }
             urlFromYandex = null;
@@ -231,7 +232,9 @@ public class PlProxyServer implements PliProxyServer {
         for (String word : wordsFromQuery) {
             urlQueryForYandex.append(word + "+");
         }
-        System.out.println("##createUrlFromQuery = " + urlQueryForYandex.toString());
+        Random random = new Random(System.currentTimeMillis());
+        int index = random.nextInt(99);
+        urlQueryForYandex.append("&lr=213&suggest_reqid=95075349" + String.valueOf(index) +"541506669920" + String.valueOf(index) + "069071226");
         urlFromYandex = createURLFromQueryWithYandexForProxyServer(urlQueryForYandex.toString(), forEmulationActivity);
 
         if (urlFromYandex == null) {
@@ -240,6 +243,8 @@ public class PlProxyServer implements PliProxyServer {
             for (String word : wordsFromQuery) {
                 urlQueryForGoogle.append(word + "+");
             }
+            urlQueryForGoogle.append("&rlz=1C1GCEU_ruRU8" + String.valueOf(index) +"RU823&oq=regbnm+ltitde.+lhtkm&aqs=chrome.1."
+                    + String.valueOf(index) +"i57j0j69i60.5128j0j4&sourceid=chrome&ie=UTF-8");
             urlFromGoogle = createURLFromQueryWithGoogleForProxyServer(urlQueryForGoogle.toString(), forEmulationActivity);
         }
 
@@ -324,7 +329,7 @@ public class PlProxyServer implements PliProxyServer {
             /*
             -------------------------------------------------------------------------------------
              */
-            Random random = new Random();
+            Random random = new Random(System.currentTimeMillis());
             int num = random.nextInt(10);
 //            connection.setRequestProperty("authority", "hidemyna.me");
 //            connection.setRequestProperty("method", "GET");

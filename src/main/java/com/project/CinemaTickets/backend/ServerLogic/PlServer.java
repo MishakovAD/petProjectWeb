@@ -2,7 +2,9 @@ package com.project.CinemaTickets.backend.ServerLogic;
 
 import com.project.CinemaTickets.CinemaEntity.Cinema;
 import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
+import com.project.CinemaTickets.backend.ProxyServer.PlProxyServer;
 import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +26,9 @@ public class PlServer implements PliServer {
         List<Cinema> cinemasList = new ArrayList<>();
         ArrayList<String> idCinemasList = createIdCinemas(); //TODO:сделать в дальнешем умный апдейт данного листа. То ест ьудалять айдишники, кинотеатров которых нет.
         ArrayList<String> notValidIdList = new ArrayList<>();
-        Random random = new Random();
         while (true) {
-            int index = random.nextInt(idCinemasList.size() + 1);
+            Random random = new Random(System.currentTimeMillis());
+            int index = random.nextInt(idCinemasList.size());
             Document document = pliProxyServer.getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/1/cinema/" + idCinemasList.get(index) + "/");
 
             if (document.text().contains("Файл не найден. Ошибка 404.")) {
@@ -48,27 +50,36 @@ public class PlServer implements PliServer {
             }
 
         }
+        logger.info("End of method getAllCinemasFromKinopoisk() at " + LocalDateTime.now());
         return cinemasList;
     }
 
     @Override
     public Cinema getCinemaForDBFromKinopoisk(int cinemaId, String date) {
+        logger.info("Start method getCinemaForDBFromKinopoisk() at " + LocalDateTime.now());
         return null;
     }
 
     @Override
     public void emulationHumanActivity() throws IOException {
+        logger.info("Start method emulationHumanActivity() at " + LocalDateTime.now());
         int counterCimulations = 0;
         List<String> cimulationQueries = createCimulationQueries();
-        for (String query : cimulationQueries) {
+        for (int i = 0; i < cimulationQueries.size(); i++) {
+            Random random = new Random(System.currentTimeMillis());
+            int index = random.nextInt(cimulationQueries.size());
+            String query = cimulationQueries.get(index);
             counterCimulations++;
             if (counterCimulations > 5) { //TODO: выбрать наиболее оптимальное число для симуляций
                 break;
             }
             String urlFromSearch = pliProxyServer.createUrlFromQueryForProxyServer(query, true);
+
+            timeout(random);
+            logger.info("####################### найденные url: " + urlFromSearch);
         }
 
-
+        logger.info("Start method emulationHumanActivity() at " + LocalDateTime.now());
     }
 
     private ArrayList<String> createIdCinemas() {
@@ -133,9 +144,53 @@ public class PlServer implements PliServer {
         cimulationQueriesSixPart.add("купить много полезного");
         cimulationQueriesSixPart.add("купить 5 лампочек");
 
+        for (String firstStr : cimulationQueriesFirstPart) {
+            if (StringUtils.equalsAnyIgnoreCase(firstStr, "Купить")) {
+                for (String secondStr : cimulationQueriesSecondPart) {
+                    cimulationQueries.add(firstStr + " " + secondStr);
+                }
+            }
+            if (StringUtils.equalsAnyIgnoreCase(firstStr, "Смотреть онлайн")) {
+                for (String secondStr : cimulationQueriesThirdPart) {
+                    cimulationQueries.add(firstStr + " " + secondStr);
+                }
+            }
+            if (StringUtils.equalsAnyIgnoreCase(firstStr, "Что делать, если")) {
+                for (String secondStr : cimulationQueriesFourPart) {
+                    cimulationQueries.add(firstStr + " " + secondStr);
+                }
+            }
+            if (StringUtils.equalsAnyIgnoreCase(firstStr, "болит горло")) {
+                for (String secondStr : cimulationQueriesFivesPart) {
+                    cimulationQueries.add(firstStr + " " + secondStr);
+                }
+            }
+            if (StringUtils.equalsAnyIgnoreCase(firstStr, "алиэкспресс")) {
+                for (String secondStr : cimulationQueriesSixPart) {
+                    cimulationQueries.add(firstStr + " " + secondStr);
+                }
+            }
+        }
+
 
 
         return cimulationQueries;
+    }
+
+    private void timeout(Random random) {
+        try {
+            int timeout = 5000 + random.nextInt(10000);
+            Thread.sleep(timeout);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void main(String[] args) throws IOException {
+        PlServer p = new PlServer();
+        p.setPliProxyServer(new PlProxyServer());
+        p.emulationHumanActivity();
     }
 
 
