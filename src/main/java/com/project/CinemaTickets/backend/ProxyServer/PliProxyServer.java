@@ -13,7 +13,7 @@ public interface PliProxyServer {
      * @param url - ссылка списка прокси-серверов
      * @return - список прокси серверов вида ip:port
      */
-    public List<String> getProxyFromInternet (String url);
+    public List<ProxyEntity> getProxyFromInternet (String url);
 
     /**
      * Метод, получающий список прокси-серверов (ip - port)

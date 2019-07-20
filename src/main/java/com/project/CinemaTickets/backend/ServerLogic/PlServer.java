@@ -6,10 +6,12 @@ import com.project.CinemaTickets.backend.ProxyServer.PlProxyServer;
 import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.print.Doc;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -63,6 +65,9 @@ public class PlServer implements PliServer {
     @Override
     public void emulationHumanActivity() throws IOException {
         logger.info("Start method emulationHumanActivity() at " + LocalDateTime.now());
+        if (PlProxyServer.proxyListFromInternet.size() == 0) {
+            PlProxyServer.proxyListFromInternet.addAll(pliProxyServer.getProxyFromInternet(null));
+        }
         int counterCimulations = 0;
         List<String> cimulationQueries = createCimulationQueries();
         for (int i = 0; i < cimulationQueries.size(); i++) {
@@ -76,6 +81,16 @@ public class PlServer implements PliServer {
             String urlFromSearch = pliProxyServer.createUrlFromQueryForProxyServer(query, true);
 
             timeout(random);
+
+            if (urlFromSearch != null) {
+                Document emulationDoc = pliProxyServer.getHttpDocumentFromInternet(urlFromSearch);
+                String urlFromDoc = emulationDoc.getElementsByAttribute("href").first().attributes().getIgnoreCase("href");
+                if (urlFromDoc != null) {
+                    Document lastDoc = pliProxyServer.getHttpDocumentFromInternet(urlFromDoc);
+                }
+            }
+
+
             logger.info("####################### найденные url для эмуляции деятельности: " + urlFromSearch);
         }
 
@@ -171,9 +186,6 @@ public class PlServer implements PliServer {
                 }
             }
         }
-
-
-
         return cimulationQueries;
     }
 
@@ -191,6 +203,7 @@ public class PlServer implements PliServer {
         PlServer p = new PlServer();
         p.setPliProxyServer(new PlProxyServer());
         p.emulationHumanActivity();
+        System.out.println("End emulation");
     }
 
 
