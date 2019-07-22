@@ -1,6 +1,7 @@
 package com.project.CinemaTickets.backend.ServerLogic;
 
 import com.project.CinemaTickets.CinemaEntity.Cinema;
+import com.project.CinemaTickets.backend.Parser.PlParserKinopoisk;
 import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
 import com.project.CinemaTickets.backend.ProxyServer.PlProxyServer;
 import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
@@ -13,7 +14,9 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.print.Doc;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -31,7 +34,15 @@ public class PlServer implements PliServer {
         while (true) {
             Random random = new Random(System.currentTimeMillis());
             int index = random.nextInt(idCinemasList.size());
-            Document document = pliProxyServer.getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/1/cinema/" + idCinemasList.get(index) + "/");
+            Document document;
+
+            if (date == null || date.isEmpty() || StringUtils.equals(date, "")) {
+                document = pliProxyServer.getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/1/cinema/" + idCinemasList.get(index) + "/");
+            } else {
+                document = pliProxyServer.getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/1/cinema/" + idCinemasList.get(index)
+                        + "/" + "day_view/" + LocalDate.parse(date).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/");
+            }
+
 
             if (document.text().contains("Файл не найден. Ошибка 404.")) {
                 notValidIdList.add(idCinemasList.get(index));
@@ -201,9 +212,11 @@ public class PlServer implements PliServer {
 
     public static void main(String[] args) throws IOException {
         PlServer p = new PlServer();
+        p.setPliParserKinopoisk(new PlParserKinopoisk());
         p.setPliProxyServer(new PlProxyServer());
-        p.emulationHumanActivity();
-        System.out.println("End emulation");
+        p.getAllCinemasFromKinopoisk("");
+//        p.emulationHumanActivity();
+//        System.out.println("End emulation");
     }
 
 

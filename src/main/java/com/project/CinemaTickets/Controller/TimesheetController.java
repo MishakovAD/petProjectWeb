@@ -1,7 +1,6 @@
 package com.project.CinemaTickets.Controller;
 
 import com.project.CinemaTickets.CinemaEntity.Cinema;
-import com.project.CinemaTickets.CinemaEntity.Movie;
 import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
 import com.project.CinemaTickets.backend.UserLogic.PliUserLogicFromInternet;
 import com.project.CinemaTickets.backend.Utils.JSONUtils;
@@ -45,109 +44,93 @@ public class TimesheetController {
     @RequestMapping("/timesheetquery")
     public void respTimesheet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.info("Start method respTimesheet() at " + LocalDateTime.now());
-        if (request != null) {
-            String timesheetquery = request.getParameter("timesheetquery").trim();
-            String content = "timesheetquery: " + timesheetquery;
+        String timesheetquery = request.getParameter("timesheetquery").trim();
+        String content = "timesheetquery: " + timesheetquery;
 
-            cinemaList = pliUserLogic.getCinemaListWithMovie(timesheetquery);
+        cinemaList = pliUserLogic.getCinemaListWithMovie(timesheetquery);
 
-//            for (Cinema cinemaL : cinemaList) {
-//                System.out.println("В кинотеатре " + cinemaL.getName() + " можно увидеть следующие фильмы: ");
-//                for (Movie mov : cinemaL.getMovieList()) {
-//                    System.out.println(mov.toString());
-//                }
-//            }
-
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("query", timesheetquery);
-            response.setContentType("application/json");
-            PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
-            writer.print(jsonObject);
-            writer.flush();
-            writer.close();
-            logger.info("End of method respTimesheet() at " + LocalDateTime.now() + " - with result.size()= " + cinemaList.size());
-        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("query", timesheetquery);
+        response.setContentType("application/json");
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
+        writer.print(jsonObject);
+        writer.flush();
+        writer.close();
+        logger.info("End of method respTimesheet() at " + LocalDateTime.now() + " - with result.size()= " + cinemaList.size());
     }
 
     @RequestMapping("/timesheetquery_time")
     public void respTimesheetTime(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.info("Start method respTimesheetTime() at " + LocalDateTime.now());
-        if (request != null) {
-            String timesheetquery_time = request.getParameter("timesheetquery").trim();
-            String content = "timesheetquery_time: " + timesheetquery_time;
+        String timesheetquery_time = request.getParameter("timesheetquery").trim();
+        String content = "timesheetquery_time: " + timesheetquery_time;
 
-            List<Cinema> secondIterationCinemaList = pliUserLogic.updateCinemaListFromTimeShow(cinemaList, timesheetquery_time);
-            cinemaList = new ArrayList<>(secondIterationCinemaList);
+        List<Cinema> secondIterationCinemaList = pliUserLogic.updateCinemaListFromTimeShow(cinemaList, timesheetquery_time);
+        cinemaList = new ArrayList<>(secondIterationCinemaList);
 
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("query", timesheetquery_time);
-            response.setContentType("application/json");
-            PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
-            writer.print(jsonObject);
-            writer.flush();
-            writer.close();
-            logger.info("End of method respTimesheetTime() at " + LocalDateTime.now() + " - with result.size()= " + secondIterationCinemaList.size());
-        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("query", timesheetquery_time);
+        response.setContentType("application/json");
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
+        writer.print(jsonObject);
+        writer.flush();
+        writer.close();
+        logger.info("End of method respTimesheetTime() at " + LocalDateTime.now() + " - with result.size()= " + secondIterationCinemaList.size());
     }
-
 
 
     @RequestMapping("/timesheetquery_type")
     public void respTimesheetType(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.info("Start method respTimesheetType() at " + LocalDateTime.now());
-        if (request != null) {
-            String timesheetquery_type = request.getParameter("timesheetquery").trim();
+        String timesheetquery_type = request.getParameter("timesheetquery").trim();
 
-            String content = "timesheetquery_type: " + timesheetquery_type;
+        String content = "timesheetquery_type: " + timesheetquery_type;
 
-            List<Cinema> thirdIterationCinemaList = pliUserLogic.updateCinemaListFromTypeShow(cinemaList, timesheetquery_type);
-            cinemaList = new ArrayList<>(thirdIterationCinemaList);
+        List<Cinema> thirdIterationCinemaList = pliUserLogic.updateCinemaListFromTypeShow(cinemaList, timesheetquery_type);
+        cinemaList = new ArrayList<>(thirdIterationCinemaList);
 
 
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("query", timesheetquery_type);
-            response.setContentType("application/json");
-            PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
-            writer.print(jsonObject);
-            writer.flush();
-            writer.close();
-            logger.info("End of method respTimesheetType() at " + LocalDateTime.now() + " - with result.size()= " + thirdIterationCinemaList.size());
-        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("query", timesheetquery_type);
+        response.setContentType("application/json");
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
+        writer.print(jsonObject);
+        writer.flush();
+        writer.close();
+        logger.info("End of method respTimesheetType() at " + LocalDateTime.now() + " - with result.size()= " + thirdIterationCinemaList.size());
     }
 
     @RequestMapping("/timesheetquery_place")
     public void respTimesheetPlace(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.info("Start method respTimesheetPlace() at " + LocalDateTime.now());
-        if (request != null) {
-            String timesheetquery_place = request.getParameter("timesheetquery").trim();
+        String timesheetquery_place = request.getParameter("timesheetquery").trim();
 
-            String content = "timesheetquery_type: " + timesheetquery_place;
+        String content = "timesheetquery_type: " + timesheetquery_place;
 
-            List<Cinema> foursIterationCinemaList = pliUserLogic.updateCinemaListFromPlace(cinemaList, timesheetquery_place);
-            cinemaList = new ArrayList<>(foursIterationCinemaList);
+        List<Cinema> foursIterationCinemaList = pliUserLogic.updateCinemaListFromPlace(cinemaList, timesheetquery_place);
+        cinemaList = new ArrayList<>(foursIterationCinemaList);
 
 
-            response.setContentType("application/json");
-            PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
+        response.setContentType("application/json");
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
 
-            JSONArray jsonArray = new JSONArray();
-            for (Cinema cinemaL : cinemaList) {
-                for (Movie mov : cinemaL.getMovieList()) {
-                    mov.getSession().setUrl(pliParserKinopoisk.getUrlForBuyTicketsFromInternet(cinemaL, mov));
-                    try {
-                        Thread.sleep(15000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+        JSONArray jsonArray = new JSONArray();
+        cinemaList.stream().forEach((cinema) -> {
+            cinema.getMovieList().stream().forEach((movie) -> {
+                try {
+                    movie.getSession().setUrl(pliParserKinopoisk.getUrlForBuyTicketsFromInternet(cinema, movie));
+                    Thread.sleep(15000);
+                    JSONObject jsonObject = JSONUtils.parseCinemaToJSON(cinema);
+                    jsonArray.put(jsonObject);
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
                 }
-                JSONObject jsonObject = JSONUtils.parseCinemaToJSON(cinemaL);
-                jsonArray.put(jsonObject);
-            }
-            writer.print(jsonArray);
-            writer.flush();
-            writer.close();
-            logger.info("End of method respTimesheetPlace() at " + LocalDateTime.now() + " - with result.size()= " + foursIterationCinemaList.size());
-        }
+            });
+        });
+        writer.print(jsonArray);
+        writer.flush();
+        writer.close();
+        logger.info("End of method respTimesheetPlace() at " + LocalDateTime.now() + " - with result.size()= " + foursIterationCinemaList.size());
 
     }
 
@@ -155,12 +138,12 @@ public class TimesheetController {
     private PliParserKinopoisk pliParserKinopoisk;
 
     @Inject
-    private void setPliParserKinopoisk (PliParserKinopoisk pliParserKinopoisk) {
+    private void setPliParserKinopoisk(PliParserKinopoisk pliParserKinopoisk) {
         this.pliParserKinopoisk = pliParserKinopoisk;
     }
 
     @Inject
-    private void setPliUserLogic (PliUserLogicFromInternet pliUserLogic) {
+    private void setPliUserLogic(PliUserLogicFromInternet pliUserLogic) {
         this.pliUserLogic = pliUserLogic;
     }
 }
