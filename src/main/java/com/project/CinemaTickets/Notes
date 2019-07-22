@@ -1,3 +1,71 @@
 Файл для заметок.
 1) Необходимо в парсерах проверить работоспособность создания ссылки с помощью Google, так как
 есть вероятность, что свои классы он меняет, но не меняет id. Пример есть в plProxyServer.
+
+
+-- auto-generated definition
+create table cinema
+(
+    cinema_id            serial       not null
+        constraint cinema_pk
+            primary key
+        constraint cinema_movie_id_fk
+            references movie
+            on update cascade on delete cascade,
+    cinema_name          varchar(100) not null,
+    cinema_address       varchar(200),
+    cinema_underground   varchar(100),
+    url_to_afisha        varchar(200),
+    url_to_yandex_afisha varchar(200),
+    url_to_kinopoisk     varchar(200),
+    info_about_cinema    varchar(200)
+);
+
+comment on table cinema is 'Таблица, содержащая все кинотеатры.';
+
+alter table cinema
+    owner to postgres;
+
+
+-- auto-generated definition
+create table movie
+(
+    movie_id     serial       not null
+        constraint movie_pk
+            primary key
+        constraint movie_cinema_id_fk
+            references cinema
+            on update cascade on delete cascade
+        constraint movie_session_id_fk
+            references session
+            on update cascade on delete cascade,
+    movie_name   varchar(100) not null,
+    movie_rating varchar(10),
+    movie_date   varchar(20)
+);
+
+comment on table movie is 'Таблица, содержащая все фильмы, идущие в кинотеатрах.';
+
+alter table movie
+    owner to postgres;
+
+
+-- auto-generated definition
+create table session
+(
+    session_id          serial      not null
+        constraint session_pk
+            primary key
+        constraint session_movie_id_fk
+            references movie
+            on update cascade on delete cascade,
+    time_of_show        varchar(10) not null,
+    type_of_show        varchar(10) not null,
+    price               varchar(20),
+    url_for_buy_tickets varchar(100),
+    session_date        varchar(20)
+);
+
+alter table session
+    owner to postgres;
+
