@@ -1,6 +1,6 @@
 package com.project.CinemaTickets.backend.UserLogic;
 
-import com.project.CinemaTickets.CinemaEntity.Cinema;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 
 import java.io.IOException;
 import java.util.List;

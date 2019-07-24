@@ -1,6 +1,6 @@
 package com.project.CinemaTickets.Controller;
 
-import com.project.CinemaTickets.CinemaEntity.Cinema;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
 import com.project.CinemaTickets.backend.UserLogic.PliUserLogicFromInternet;
 import com.project.CinemaTickets.backend.Utils.JSONUtils;
@@ -119,7 +119,7 @@ public class TimesheetController {
             cinema.getMovieList().stream().forEach((movie) -> {
                 try {
                     movie.getSession().setUrl(pliParserKinopoisk.getUrlForBuyTicketsFromInternet(cinema, movie));
-                    Thread.sleep(15000);
+                    Thread.sleep(5000);
                     JSONObject jsonObject = JSONUtils.parseCinemaToJSON(cinema);
                     jsonArray.put(jsonObject);
                 } catch (IOException | InterruptedException e) {

@@ -38,6 +38,16 @@ public class Movie {
     @JoinColumn (name="session_id")
     private List<Session> sessionList;
 
+    private Session session;
+
+    public Session getSession() {
+        return session;
+    }
+
+    public void setSession(Session session) {
+        this.session = session;
+    }
+
     public int getMovie_id() {
         return movie_id;
     }

@@ -1,8 +1,8 @@
 package com.project.CinemaTickets.backend.Parser;
 
-import com.project.CinemaTickets.CinemaEntity.Cinema;
-import com.project.CinemaTickets.CinemaEntity.Movie;
-import com.project.CinemaTickets.CinemaEntity.Session;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
 import com.project.CinemaTickets.CinemaEntity.Timetable;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -114,8 +114,8 @@ public class PlParserYandexAfisha extends PlParserAfisha implements PliParser {
 
         String addressCinema = cinemaInfoHTML.select("div.place-heading__address").text();
 
-        cinema.setName(nameCinema);
-        cinema.setAddress(addressCinema);
+        cinema.setCinemaName(nameCinema);
+        cinema.setCinemaAddress(addressCinema);
         cinema.setUrlToYandexAfisha(urlCinemaToAfishaYandex);
 
         List<Movie> movieList = new ArrayList<>();
@@ -127,7 +127,7 @@ public class PlParserYandexAfisha extends PlParserAfisha implements PliParser {
             for (Element movieElement : element.select("h3.schedule-event__title")) {
                 movie = new Movie();
                 timetable = new Timetable();
-                movie.setName(movieElement.select("h3.schedule-event__title").text());
+                movie.setMovieName(movieElement.select("h3.schedule-event__title").text());
                 movie.setCinema(cinema);
                 for (Element sessionElement : element.select("div.schedule-cinema-item-sessions.schedule-grid__subgroup")){
                     for (Element rootSessionElement : sessionElement.select("div.schedule-sessions")) {
@@ -146,7 +146,7 @@ public class PlParserYandexAfisha extends PlParserAfisha implements PliParser {
             }
         }
         cinema.setMovieList(movieList);
-            System.out.println("В кинотеатре " + cinema.getName() + " можно увидеть следующие фильмы: ");
+            System.out.println("В кинотеатре " + cinema.getCinemaName() + " можно увидеть следующие фильмы: ");
             for (Movie mov : cinema.getMovieList()) {
                 System.out.println(mov.toString());
             }

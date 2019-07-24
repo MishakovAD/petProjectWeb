@@ -1,8 +1,9 @@
 package com.project.CinemaTickets.backend.ServerLogic.DAO;
 
-import com.project.CinemaTickets.CinemaEntity.Cinema;
-import com.project.CinemaTickets.CinemaEntity.Movie;
-import com.project.CinemaTickets.CinemaEntity.Session;
+
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
 
 public interface DAOServerLogic {
 
@@ -17,16 +18,19 @@ public interface DAOServerLogic {
     /**
      * Добавляем кино в базу данных.
      * @param movie - Объект кино
+     * @param cinema - Объект кинотеатра
      * @return true, если добавление прошло успешно.
      */
-    boolean insertMovieToDB(Movie movie);
+    boolean insertMovieToDB(Cinema cinema, Movie movie);
 
     /**
      * Добавляем сессию в базу данных.
      * @param session - Объект сессии
+     * @param movie - Объект кино
+     * @param cinema - Объект кинотеатра
      * @return true, если добавление прошло успешно.
      */
-    boolean insertSessionToDB(Session session);
+    boolean insertSessionToDB(Cinema cinema, Movie movie, Session session);
 
     boolean updateCinema(Cinema cinema);
     boolean updateMovie(Movie movie);

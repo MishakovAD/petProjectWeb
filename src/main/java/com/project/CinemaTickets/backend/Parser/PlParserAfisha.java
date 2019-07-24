@@ -1,9 +1,9 @@
 package com.project.CinemaTickets.backend.Parser;
 
-import com.project.CinemaTickets.CinemaEntity.Cinema;
-import com.project.CinemaTickets.CinemaEntity.Movie;
-import com.project.CinemaTickets.CinemaEntity.Session;
 import com.project.CinemaTickets.CinemaEntity.Timetable;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
 import com.project.CinemaTickets.backend.ProxyServer.PlProxyServer;
 import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
 import com.project.CinemaTickets.backend.UserLogic.PlUserLogicFromInternet;
@@ -55,7 +55,12 @@ public class PlParserAfisha implements PliParser {
                 cinema = getCinemaFromElement(rootElement);
                 Timetable timetable = new Timetable(getSessionFromElement(rootElement));
                 for (Session session : timetable.getTimetable()) {
-                    movie = new Movie(nameMovie, ratingMovie, cinema, session, dateFromMovie);
+                    movie = new Movie();
+                    movie.setMovieName(nameMovie);
+                    movie.setMovieRating(ratingMovie);
+                    movie.setMovieDate(dateFromMovie);
+                    movie.setCinema(cinema);
+                    movie.setSession(session);
                     movieTimetableList.add(movie);
                 }
                 cinema.setMovieList(movieTimetableList);
@@ -230,9 +235,9 @@ public class PlParserAfisha implements PliParser {
         }
 
 
-        cinema.setName(nameCinema);
-        cinema.setUnderground(underground);
-        cinema.setAddress(addressCinema);
+        cinema.setCinemaName(nameCinema);
+        cinema.setCinemaUnderground(underground);
+        cinema.setCinemaAddress(addressCinema);
         cinema.setUrlToAfisha(urlAddressCinema.toString());
         return cinema;
     }
@@ -250,7 +255,10 @@ public class PlParserAfisha implements PliParser {
             minPriceMovie = elementTimetable.getElementsByAttributeValue("class", "timetable__item-price").text();
             movieTimeShow = elementTimetable.getElementsByAttributeValue("class", "timetable__item-time").text();
             typeOfMovieMovie = elementTimetable.getElementsByAttributeValue("class", "tooltip__body").text();
-            session = new Session(movieTimeShow, typeOfMovieMovie, minPriceMovie);
+            session = new Session();
+            session.setTimeOfShow(movieTimeShow);
+            session.setTypeOfMovie(typeOfMovieMovie);
+            session.setPrice(minPriceMovie);
             timetable.add(session);
         }
         return timetable;

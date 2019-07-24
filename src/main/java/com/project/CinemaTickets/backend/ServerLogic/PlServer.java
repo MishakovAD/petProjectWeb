@@ -1,10 +1,12 @@
 package com.project.CinemaTickets.backend.ServerLogic;
 
-import com.project.CinemaTickets.CinemaEntity.Cinema;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOServerLogicImpl;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.Parser.PlParserKinopoisk;
 import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
 import com.project.CinemaTickets.backend.ProxyServer.PlProxyServer;
 import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOServerLogic;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -35,12 +37,16 @@ public class PlServer implements PliServer {
             Random random = new Random(System.currentTimeMillis());
             int index = random.nextInt(idCinemasList.size());
             Document document;
+            String urlToKinopoisk;
 
             if (date == null || date.isEmpty() || StringUtils.equals(date, "")) {
-                document = pliProxyServer.getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/1/cinema/" + idCinemasList.get(index) + "/");
+                urlToKinopoisk = "https://www.kinopoisk.ru/afisha/city/1/cinema/" + idCinemasList.get(index) + "/";
+                document = pliProxyServer.getHttpDocumentFromInternet(urlToKinopoisk);
+                //TODO: не скачивает полностью документ со 2ми страницами. То есть у нас только первая страница фильмов. Как нибудь поправить.
             } else {
-                document = pliProxyServer.getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/1/cinema/" + idCinemasList.get(index)
-                        + "/" + "day_view/" + LocalDate.parse(date).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/");
+                urlToKinopoisk = "https://www.kinopoisk.ru/afisha/city/1/cinema/" + idCinemasList.get(index)
+                        + "/" + "day_view/" + LocalDate.parse(date).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/";
+                document = pliProxyServer.getHttpDocumentFromInternet(urlToKinopoisk);
             }
 
 
@@ -57,6 +63,8 @@ public class PlServer implements PliServer {
                 }
 
                 Cinema cinema = pliParserKinopoisk.getCinemaFromDocument(document);
+                cinema.setUrlToKinopoisk(urlToKinopoisk);
+                daoServerLogic.insertCinemaToDB(cinema);
                 cinemasList.add(cinema);
 
                 emulationHumanActivity();
@@ -105,7 +113,7 @@ public class PlServer implements PliServer {
             logger.info("####################### найденные url для эмуляции деятельности: " + urlFromSearch);
         }
 
-        logger.info("Start method emulationHumanActivity() at " + LocalDateTime.now());
+        logger.info("End of method emulationHumanActivity() at " + LocalDateTime.now());
     }
 
     private ArrayList<String> createIdCinemas() {
@@ -214,6 +222,7 @@ public class PlServer implements PliServer {
         PlServer p = new PlServer();
         p.setPliParserKinopoisk(new PlParserKinopoisk());
         p.setPliProxyServer(new PlProxyServer());
+        p.setDaoServerLogic(new DAOServerLogicImpl());
         p.getAllCinemasFromKinopoisk("");
 //        p.emulationHumanActivity();
 //        System.out.println("End emulation");
@@ -224,6 +233,7 @@ public class PlServer implements PliServer {
 //-----------------------Injections-----------------------------//
     private PliProxyServer pliProxyServer;
     private PliParserKinopoisk pliParserKinopoisk;
+    private DAOServerLogic daoServerLogic;
 
     @Inject
     public void setPliProxyServer(PliProxyServer pliProxyServer) {
@@ -232,5 +242,10 @@ public class PlServer implements PliServer {
     @Inject
     public void setPliParserKinopoisk (PliParserKinopoisk pliParserKinopoisk1) {
         this.pliParserKinopoisk = pliParserKinopoisk1;
+    }
+
+    @Inject
+    public void setDaoServerLogic (DAOServerLogic daoServerLogic) {
+        this.daoServerLogic = daoServerLogic;
     }
 }

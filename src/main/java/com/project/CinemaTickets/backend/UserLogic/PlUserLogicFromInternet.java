@@ -1,7 +1,7 @@
 package com.project.CinemaTickets.backend.UserLogic;
 
-import com.project.CinemaTickets.CinemaEntity.Cinema;
-import com.project.CinemaTickets.CinemaEntity.Movie;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
 import com.project.CinemaTickets.backend.Parser.PlParserAfisha;
 import com.project.CinemaTickets.backend.Parser.PliParser;
 import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
@@ -123,7 +123,7 @@ public class PlUserLogicFromInternet implements PliUserLogicFromInternet {
     public List<Cinema> updateCinemaListFromPlace(List<Cinema> cinemaList, String place) {
         List<Cinema> cinemaListNew = new ArrayList<>();
         for (Cinema cinema : cinemaList) {
-            if (StringUtils.contains(cinema.getUnderground(), place)) {
+            if (StringUtils.contains(cinema.getCinemaUnderground(), place)) {
                 cinemaListNew.add(cinema);
             }
         }
