@@ -110,6 +110,7 @@ public class PlProxyServer implements PliProxyServer {
 
         counterGetterDocumentWithProxy++;
         if (counterGetterDocumentWithProxy > 20) {
+            counterGetterDocumentWithProxy = 0;
             logger.error("Method fail! Document is not found!");
             //throw new DocumentNotFoundWithProxyException("Документ не найден");
             return Jsoup.parse("Документ не найден");
@@ -135,9 +136,9 @@ public class PlProxyServer implements PliProxyServer {
 
         SocketAddress proxyAddr = new InetSocketAddress(ip, Integer.parseInt(port));
 
-        if (StringUtils.contains("SOCKS", type)) {
+        if (StringUtils.contains(type, "SOCKS")) {
             proxy = new Proxy(Proxy.Type.SOCKS, proxyAddr);
-        } else if (StringUtils.contains("HTTP", type)) {
+        } else if (StringUtils.contains(type, "HTTP")) {
             proxy = new Proxy(Proxy.Type.HTTP, proxyAddr);
         }
 

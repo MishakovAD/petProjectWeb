@@ -16,9 +16,9 @@ import java.util.List;
 public class DAOServerLogicImpl implements DAOServerLogic {
     private Logger logger = LoggerFactory.getLogger(DAOServerLogicImpl.class);
 
-    private final String url = "jdbc:postgresql://localhost/petprojectweb";
-    private final String user = "postgres";
-    private final String password = "postgres";
+    private final String url = "jdbc:postgresql://localhost/petprojectweb?currentSchema=petproject";
+    private final String user = "home";
+    private final String password = "home";
 
 
 
@@ -54,7 +54,7 @@ public class DAOServerLogicImpl implements DAOServerLogic {
 
     @Override
     public boolean insertMovieToDB(Cinema cinema, Movie movie) {
-        logger.info("Start insert Movie to database in DAOServerLogicImpl.class");
+        logger.debug("Start insert Movie to database in DAOServerLogicImpl.class");
         String parent = cinema.getCinemaName();
         StringBuilder INSERT_MOVIE_SQL = new StringBuilder();
         String movieName = movie.getMovieName();
@@ -73,13 +73,13 @@ public class DAOServerLogicImpl implements DAOServerLogic {
             sessionList.stream().forEach( session -> insertSessionToDB(cinema, movie, session) );
         }
 
-        logger.info("End of insert Movie to database in DAOServerLogicImpl.class");
+        logger.debug("End of insert Movie to database in DAOServerLogicImpl.class");
         return false;
     }
 
     @Override
     public boolean insertSessionToDB(Cinema cinema, Movie movie, Session session) {
-        logger.info("Start insert Session to database in DAOServerLogicImpl.class");
+        logger.debug("Start insert Session to database in DAOServerLogicImpl.class");
         String cinemaName = cinema.getCinemaName();
         String movieName = movie.getMovieName();
         StringBuilder parentBuilder = new StringBuilder();
@@ -100,7 +100,7 @@ public class DAOServerLogicImpl implements DAOServerLogic {
             execureQuery(INSERT_SESSION_SQL.toString());
         }
 
-        logger.info("End of insert Session to database in DAOServerLogicImpl.class");
+        logger.debug("End of insert Session to database in DAOServerLogicImpl.class");
         return false;
     }
 

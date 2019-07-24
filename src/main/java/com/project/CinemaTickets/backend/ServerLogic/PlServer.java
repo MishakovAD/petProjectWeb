@@ -28,6 +28,9 @@ public class PlServer implements PliServer {
     @Override
     public List<Cinema> getAllCinemasFromKinopoisk(String date) throws IOException {
         logger.info("Start method getAllCinemasFromKinopoisk() at " + LocalDateTime.now());
+        if (PlProxyServer.proxyListFromInternet.size() == 0) {
+            PlProxyServer.proxyListFromInternet.addAll(pliProxyServer.getProxyFromInternet(null));
+        }
         List<Cinema> cinemasList = new ArrayList<>();
         ArrayList<String> idCinemasList = createIdCinemas(); //TODO:сделать в дальнешем умный апдейт данного листа. То ест ьудалять айдишники, кинотеатров которых нет.
         ArrayList<String> notValidIdList = new ArrayList<>();
@@ -40,7 +43,8 @@ public class PlServer implements PliServer {
             if (date == null || date.isEmpty() || StringUtils.equals(date, "")) {
                 urlToKinopoisk = "https://www.kinopoisk.ru/afisha/city/1/cinema/" + idCinemasList.get(index) + "/";
                 document = pliProxyServer.getHttpDocumentFromInternet(urlToKinopoisk);
-                //TODO: не скачивает полностью документ со 2ми страницами. То есть у нас только первая страница фильмов. Как нибудь поправить.
+                //TODO: не скачивает полностью документ со 2ми страницами. То есть у нас только первая страница фильмов.
+                // Как нибудь поправить.
             } else {
                 urlToKinopoisk = "https://www.kinopoisk.ru/afisha/city/1/cinema/" + idCinemasList.get(index)
                         + "/" + "day_view/" + LocalDate.parse(date).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/";
@@ -65,7 +69,7 @@ public class PlServer implements PliServer {
                 daoServerLogic.insertCinemaToDB(cinema);
                 cinemasList.add(cinema);
 
-                emulationHumanActivity();
+                //emulationHumanActivity();
             }
 
         }
@@ -82,9 +86,6 @@ public class PlServer implements PliServer {
     @Override
     public void emulationHumanActivity() throws IOException {
         logger.info("Start method emulationHumanActivity() at " + LocalDateTime.now());
-        if (PlProxyServer.proxyListFromInternet.size() == 0) {
-            PlProxyServer.proxyListFromInternet.addAll(pliProxyServer.getProxyFromInternet(null));
-        }
         int counterCimulations = 0;
         List<String> cimulationQueries = createCimulationQueries();
         for (int i = 0; i < cimulationQueries.size(); i++) {
@@ -221,8 +222,8 @@ public class PlServer implements PliServer {
         p.setPliParserKinopoisk(new PlParserKinopoisk());
         p.setPliProxyServer(new PlProxyServer());
         p.setDaoServerLogic(new DAOServerLogicImpl());
-        p.getAllCinemasFromKinopoisk("");
 //        p.emulationHumanActivity();
+        p.getAllCinemasFromKinopoisk("");
 //        System.out.println("End emulation");
     }
 
