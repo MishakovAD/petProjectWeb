@@ -9,12 +9,10 @@ import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOServerLogic;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.print.Doc;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

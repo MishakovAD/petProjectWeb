@@ -3,8 +3,6 @@ package com.project.CinemaTickets.backend.ServerLogic.DAO;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
-import com.project.CinemaTickets.backend.Utils.HibernateSessionFactoryUtil;
-import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +10,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: Добавить првоерку на существующий уже кинотеатр и повторяющиеся не добавлять.
+//А лучше брать список кинотеатров из БД. А так же подумать, как можно изменить методы добавления
+//Чтобы добавлялись, например, отдельно кинотеатр, отдельно кино, отдельно сессия. Как лучше это сделать?
 public class DAOServerLogicImpl implements DAOServerLogic {
     private Logger logger = LoggerFactory.getLogger(DAOServerLogicImpl.class);
 

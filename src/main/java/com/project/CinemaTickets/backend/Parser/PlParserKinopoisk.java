@@ -146,7 +146,8 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
 
     @Override
     public List<Session> getSessionListFromElement(Element element) {
-        //TODO: если билеты продаются только в кинотеатре, то сеанс находится неверно, так как неверно выбираются позиции. Нужно что то придумать с этим. Смысл искать кинотеатры не Москвы для проверки.
+        //TODO: если билеты продаются только в кинотеатре, то сеанс находится неверно, так как неверно выбираются позиции. Нужно что то придумать с этим.
+        // Смысл искать кинотеатры не Москвы для проверки. Там для них идет выборка span.schedule-item__session-button вместо -wrapper на конце. (такая выборка без цен)
         logger.debug("Start method getSessionListFromElement() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
         List<Session> sessionList = new ArrayList<>();
         Session session;
