@@ -1,12 +1,10 @@
 package com.project.CinemaTickets.backend.ServerLogic.DAO.Entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 public class Session {
     @Id
@@ -28,8 +26,8 @@ public class Session {
     @Column(name = "session_date")
     private String sessionDate;
 
-    @OneToOne(optional=false, cascade= CascadeType.ALL)
-    @JoinColumn (name="movie_id")
+    //    @OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Transient
     private Movie movie;
 
     public Session() {
