@@ -116,9 +116,20 @@ public class PlServer implements PliServer {
     }
 
     private ArrayList<String> createIdCinemas() {
+        List<Cinema> cinemaListFromBD = daoServerLogic.selectAllCinema();
+        List<String> idListFromDA = new ArrayList<>();
+        cinemaListFromBD.forEach( (cinema) -> {
+            String url = cinema.getUrlToKinopoisk();
+            if (url != null && !url.isEmpty() && !url.equals("")) {
+                idListFromDA.add(url.substring(url.indexOf("cinema/") + 7, url.length() - 1));
+            }
+        } );
         ArrayList<String> idList = new ArrayList<>();
         for (int i = 280268; i < 281250; i++){
-            idList.add(String.valueOf(i));
+            String generateId = String.valueOf(i);
+            if (!idListFromDA.contains(generateId)) {
+                idList.add(generateId);
+            }
         }
         return idList;
     }

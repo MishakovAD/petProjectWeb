@@ -5,4 +5,5 @@ package com.project.CinemaTickets.backend.ServerLogic.Worker;
  * по определенным условиям, а так же по расписанию.
  */
 public interface Worker {
+    public void start();
 }

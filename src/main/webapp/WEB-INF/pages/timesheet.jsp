@@ -20,6 +20,8 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath} webjars/bootstrap/4.1.1/css/bootstrap.min.css">
     <script src="${pageContext.request.contextPath} webjars/jquery/3.3.1-1/jquery.min.js"></script>
     <script src="js/timesheet/timesheet_script.js" type="text/javascript"></script>
+    <script src="js/timesheet/geolocation.js" type="text/javascript"></script>
+    <script src="js/timesheet/takeIP.js" type="text/javascript"></script>
 </head>
 <body>
 Тут билеты

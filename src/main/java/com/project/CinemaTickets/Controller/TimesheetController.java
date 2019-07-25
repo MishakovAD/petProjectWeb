@@ -134,6 +134,16 @@ public class TimesheetController {
 
     }
 
+    @RequestMapping("/getCurrentPosition")
+    public void getCurrentPosition(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("Start method getCurrentPosition() at " + LocalDateTime.now());
+        String position = request.getParameter("getCurrentPosition");
+
+
+        logger.info("End of method getCurrentPosition() at " + LocalDateTime.now() + " - with result= " + position);
+
+    }
+
     private PliUserLogicFromInternet pliUserLogic;
     private PliParserKinopoisk pliParserKinopoisk;
 

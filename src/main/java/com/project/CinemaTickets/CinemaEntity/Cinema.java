@@ -2,6 +2,7 @@ package com.project.CinemaTickets.CinemaEntity;
 
 import java.util.List;
 
+//TODO: сделать еще два поля: долгота и широта и заполнить их по адресу
 public class Cinema {
     private int cinemaId;
     private String name;

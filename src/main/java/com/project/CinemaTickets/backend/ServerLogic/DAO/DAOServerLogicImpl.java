@@ -16,9 +16,13 @@ import java.util.List;
 public class DAOServerLogicImpl implements DAOServerLogic {
     private Logger logger = LoggerFactory.getLogger(DAOServerLogicImpl.class);
 
-    private final String url = "jdbc:postgresql://localhost/petprojectweb?currentSchema=petproject";
-    private final String user = "home";
-    private final String password = "home";
+//    private final String url = "jdbc:postgresql://localhost/petprojectweb?currentSchema=petproject";
+//    private final String user = "home";
+//    private final String password = "home";
+
+    private final String url = "jdbc:postgresql://localhost/petprojectweb"; //WORK
+    private final String user = "postgres";
+    private final String password = "postgres";
 
 
 
@@ -162,6 +166,31 @@ public class DAOServerLogicImpl implements DAOServerLogic {
     @Override
     public boolean selectSession(Movie movie) {
         return false;
+    }
+
+    @Override
+    public List<Cinema> selectAllCinema() {
+        String SELECT_ALL_CINEMA_SQL = "SELECT * FROM cinmea;";
+        Statement stmnt = null;
+        List<Cinema> cinemaList = new ArrayList<>();
+        Cinema cinema;
+        try {
+            stmnt = connect().createStatement();
+            ResultSet resultSet = stmnt.executeQuery(SELECT_ALL_CINEMA_SQL);
+            while (resultSet.next()) {
+                cinema = new Cinema();
+                cinema.setCinemaName(resultSet.getString("cinema_name"));
+                cinema.setCinemaAddress(resultSet.getString("cinema_address"));
+                cinema.setCinemaUnderground(resultSet.getString("cinema_underground"));
+                cinema.setUrlToKinopoisk(resultSet.getString("url_to_kinopoisk"));
+                cinemaList.add(cinema);
+            }
+            stmnt.close();
+        } catch (SQLException e) {
+            logger.error("Error in DAOServerLogicImpl.class in exequte query", e);
+        }
+
+        return cinemaList;
     }
 
     private Connection connect() {

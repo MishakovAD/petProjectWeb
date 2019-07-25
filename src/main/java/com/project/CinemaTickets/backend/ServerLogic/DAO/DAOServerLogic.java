@@ -5,6 +5,8 @@ import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
 
+import java.util.List;
+
 public interface DAOServerLogic {
 
     /**
@@ -48,5 +50,7 @@ public interface DAOServerLogic {
 
     boolean selectSession(Cinema cinema);
     boolean selectSession(Movie movie);
+
+    List<Cinema> selectAllCinema();
 
 }

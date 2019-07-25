@@ -1,6 +1,7 @@
 package com.project.CinemaTickets.backend.ProxyServer;
 
 import com.project.CinemaTickets.backend.ProxyServer.ProxyEntity.ProxyEntity;
+import com.project.CinemaTickets.backend.ServerLogic.Worker.Worker;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -368,6 +370,11 @@ public class PlProxyServer implements PliProxyServer {
              */
 
             connection.connect();
+            if (connection.getURL().toString().contains("captcha")) {
+                String captchaUrl = connection.getURL().toString();
+                worker.start();
+                Thread.currentThread().notify();
+            }
             Thread.sleep(5000);
             try {
                 reader  = new BufferedReader(new InputStreamReader(connection.getInputStream(), Charset.forName("UTF-8")));
@@ -383,7 +390,7 @@ public class PlProxyServer implements PliProxyServer {
                 stringDocument.append(line);
             }
 
-        } catch (IOException | InterruptedException ex) {
+        } catch (IOException | InterruptedException | NullPointerException ex) {
             logger.info("Method createStringDocument() is FAILED with proxy tunnel");
             logger.error(LocalDateTime.now() + ": " + ex.toString());
         }
@@ -414,6 +421,13 @@ public class PlProxyServer implements PliProxyServer {
         } else {
             return type;
         }
+    }
+
+    private Worker worker;
+
+    @Inject
+    public void setWorker (Worker worker) {
+        this.worker = worker;
     }
 
 
