@@ -47,7 +47,7 @@ public class TimesheetController {
         String timesheetquery = request.getParameter("timesheetquery").trim();
         String content = "timesheetquery: " + timesheetquery;
 
-        cinemaList = pliUserLogic.getCinemaListWithMovie(timesheetquery);
+//        cinemaList = pliUserLogic.getCinemaListWithMovie(timesheetquery);
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("query", timesheetquery);
@@ -65,8 +65,8 @@ public class TimesheetController {
         String timesheetquery_time = request.getParameter("timesheetquery").trim();
         String content = "timesheetquery_time: " + timesheetquery_time;
 
-        List<Cinema> secondIterationCinemaList = pliUserLogic.updateCinemaListFromTimeShow(cinemaList, timesheetquery_time);
-        cinemaList = new ArrayList<>(secondIterationCinemaList);
+//        List<Cinema> secondIterationCinemaList = pliUserLogic.updateCinemaListFromTimeShow(cinemaList, timesheetquery_time);
+//        cinemaList = new ArrayList<>(secondIterationCinemaList);
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("query", timesheetquery_time);
@@ -75,7 +75,7 @@ public class TimesheetController {
         writer.print(jsonObject);
         writer.flush();
         writer.close();
-        logger.info("End of method respTimesheetTime() at " + LocalDateTime.now() + " - with result.size()= " + secondIterationCinemaList.size());
+//        logger.info("End of method respTimesheetTime() at " + LocalDateTime.now() + " - with result.size()= " + secondIterationCinemaList.size());
     }
 
 
@@ -86,8 +86,8 @@ public class TimesheetController {
 
         String content = "timesheetquery_type: " + timesheetquery_type;
 
-        List<Cinema> thirdIterationCinemaList = pliUserLogic.updateCinemaListFromTypeShow(cinemaList, timesheetquery_type);
-        cinemaList = new ArrayList<>(thirdIterationCinemaList);
+//        List<Cinema> thirdIterationCinemaList = pliUserLogic.updateCinemaListFromTypeShow(cinemaList, timesheetquery_type);
+//        cinemaList = new ArrayList<>(thirdIterationCinemaList);
 
 
         JSONObject jsonObject = new JSONObject();
@@ -97,7 +97,7 @@ public class TimesheetController {
         writer.print(jsonObject);
         writer.flush();
         writer.close();
-        logger.info("End of method respTimesheetType() at " + LocalDateTime.now() + " - with result.size()= " + thirdIterationCinemaList.size());
+//        logger.info("End of method respTimesheetType() at " + LocalDateTime.now() + " - with result.size()= " + thirdIterationCinemaList.size());
     }
 
     @RequestMapping("/timesheetquery_place")
@@ -107,30 +107,30 @@ public class TimesheetController {
 
         String content = "timesheetquery_type: " + timesheetquery_place;
 
-        List<Cinema> foursIterationCinemaList = pliUserLogic.updateCinemaListFromPlace(cinemaList, timesheetquery_place);
-        cinemaList = new ArrayList<>(foursIterationCinemaList);
+//        List<Cinema> foursIterationCinemaList = pliUserLogic.updateCinemaListFromPlace(cinemaList, timesheetquery_place);
+//        cinemaList = new ArrayList<>(foursIterationCinemaList);
 
 
         response.setContentType("application/json");
         PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
 
         JSONArray jsonArray = new JSONArray();
-        cinemaList.stream().forEach((cinema) -> {
-            cinema.getMovieList().stream().forEach((movie) -> {
-                try {
-                    movie.getSession().setUrl(pliParserKinopoisk.getUrlForBuyTicketsFromInternet(cinema, movie));
-                    Thread.sleep(5000);
-                    JSONObject jsonObject = JSONUtils.parseCinemaToJSON(cinema);
-                    jsonArray.put(jsonObject);
-                } catch (IOException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
-        });
+//        cinemaList.stream().forEach((cinema) -> {
+//            cinema.getMovieList().stream().forEach((movie) -> {
+//                try {
+//                    movie.getSession().setUrl(pliParserKinopoisk.getUrlForBuyTicketsFromInternet(cinema, movie));
+//                    Thread.sleep(5000);
+//                    JSONObject jsonObject = JSONUtils.parseCinemaToJSON(cinema);
+//                    jsonArray.put(jsonObject);
+//                } catch (IOException | InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            });
+//        });
         writer.print(jsonArray);
         writer.flush();
         writer.close();
-        logger.info("End of method respTimesheetPlace() at " + LocalDateTime.now() + " - with result.size()= " + foursIterationCinemaList.size());
+//        logger.info("End of method respTimesheetPlace() at " + LocalDateTime.now() + " - with result.size()= " + foursIterationCinemaList.size());
 
     }
 

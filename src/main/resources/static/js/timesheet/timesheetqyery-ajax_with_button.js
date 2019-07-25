@@ -7,12 +7,13 @@ var stage = 1;
 // Конечная стадия.
 var limit = 5;
 
+var dataQuery = ' { ';
+
 var sendUrl = "timesheetquery";
 
 $(document).ready(function() {
     $('input[name="timesheetquery_button"]').click(function() {
-        // Здесь лучше выполнить проверки на валидность поля.
-        // ... code.
+        createQueryBySteps (stage, $('input[name="timesheetquery"]').val());
 
         sendQuery(sendUrl, stage, {
             timesheetquery: $('input[name="timesheetquery"]').val()
@@ -60,8 +61,50 @@ $(document).ready(function() {
     });
 });
 
+function createQueryBySteps(stage, query) {
+    var name;
+    if (stage == 1) {
+        name = "movie"
+    }
+    if (stage == 2) {
+        name = "time"
+    }
+    if (stage == 3) {
+        name = "type"
+    }
+    if (stage == 4) {
+        name = "place"
+    }
+    dataQuery = dataQuery + ' "' + name +'" : "' + query + '", ';
+    if (stage == 4) {
+        dataQuery.substring(0, dataQuery.length - 1);
+        dataQuery = dataQuery + ' } '
+        console.log(dataQuery);
+        sendAllQuery("timesheet_all_query", dataQuery);
+    }
+}
+
 // Отправка запроса на сервер.
 function sendQuery(url, stage, data) {
+    return $.ajax({
+        url: url,
+        data: data,
+        datatype : "application/json",
+        // По умолчанию идет GET.
+        // method: 'POST',
+        // Отменим кеширование.
+        cache: false,
+        success: function (response) {
+            if (stage == 4) {
+                console.log("Succsess method")
+                getResponse(response);
+            }
+        }
+    });
+}
+
+// Отправка запроса на сервер.
+function sendAllQuery(url, data) {
     return $.ajax({
         url: url,
         data: data,
