@@ -19,7 +19,8 @@
 
     <link rel="stylesheet" href="${pageContext.request.contextPath} webjars/bootstrap/4.1.1/css/bootstrap.min.css">
     <script src="${pageContext.request.contextPath} webjars/jquery/3.3.1-1/jquery.min.js"></script>
-    <script src="js/timesheet/timesheet_script.js" type="text/javascript"></script>
+    <!-- <script src="js/timesheet/timesheet_script.js" type="text/javascript"></script> -->
+    <script src="js/timesheet/timesheetqyery-ajax_with_button.js" type="text/javascript"></script>
     <script src="js/timesheet/geolocation.js" type="text/javascript"></script>
     <script src="js/timesheet/takeIP.js" type="text/javascript"></script>
 </head>
@@ -29,6 +30,7 @@
 <div class="query">
     <h4 class="field_name" id="field_name">Название фильма: </h4>
     <input type="text" name="timesheetquery" id="timesheetquery"/><br/>
+    <input type="button" name="timesheetquery_button" id="timesheetquery_button" value="Далее"><br/>
 </div>
 
 <div class="response" id="response">

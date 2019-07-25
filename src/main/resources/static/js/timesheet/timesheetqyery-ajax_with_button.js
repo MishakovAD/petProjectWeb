@@ -1,6 +1,3 @@
-/*
-Скрипт работает в том случае, если мышка выходит за пределы поля ввода и кликает
- */
 // Номер текущей стадии.
 var stage = 1;
 //1 - введите название фильма
@@ -13,7 +10,7 @@ var limit = 5;
 var sendUrl = "timesheetquery";
 
 $(document).ready(function() {
-    $('input[name="timesheetquery"]').blur(function() {
+    $('input[name="timesheetquery_button"]').click(function() {
         // Здесь лучше выполнить проверки на валидность поля.
         // ... code.
 

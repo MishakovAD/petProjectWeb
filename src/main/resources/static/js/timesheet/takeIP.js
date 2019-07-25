@@ -2,6 +2,7 @@
  * Get the user IP throught the webkitRTCPeerConnection
  * @param onNewIP {Function} listener function to expose the IP locally
  * @return undefined
+ * http://geekhouse.tech/how-to-get-the-client-ip-address-with-javascript-only/
  */
 function getUserIP(onNewIP) { //  onNewIp - your listener function for new IPs
     //compatibility for firefox and chrome
