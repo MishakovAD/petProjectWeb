@@ -132,7 +132,7 @@ public class PlParserYandexAfisha extends PlParserAfisha implements PliParser {
                 for (Element sessionElement : element.select("div.schedule-cinema-item-sessions.schedule-grid__subgroup")){
                     for (Element rootSessionElement : sessionElement.select("div.schedule-sessions")) {
                         session = new Session();
-                        session.setTypeOfMovie(sessionElement.select("div.schedule-format").text());
+                        session.setTypeOfShow(sessionElement.select("div.schedule-format").text());
                         session.setTimeOfShow(rootSessionElement.select("span.button2__text").text());
                         session.setUrl(rootSessionElement
                                 .getElementsByAttributeValue("class", "yaticket i-stat__click i-bem yaticket_js_inited")

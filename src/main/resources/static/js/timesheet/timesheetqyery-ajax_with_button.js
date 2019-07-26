@@ -7,7 +7,7 @@ var stage = 1;
 // Конечная стадия.
 var limit = 5;
 
-var dataQuery = ' { ';
+var dataQuery = '';
 
 var sendUrl = "timesheetquery";
 
@@ -75,12 +75,13 @@ function createQueryBySteps(stage, query) {
     if (stage == 4) {
         name = "place"
     }
-    dataQuery = dataQuery + ' "' + name +'" : "' + query + '", ';
+    dataQuery = dataQuery + name +':' + query + ', ';
     if (stage == 4) {
-        dataQuery.substring(0, dataQuery.length - 1);
-        dataQuery = dataQuery + ' } '
+        dataQuery = dataQuery.substring(0, dataQuery.length - 2);
         console.log(dataQuery);
-        sendAllQuery("timesheet_all_query", dataQuery);
+        sendAllQuery("timesheet_all_query", {
+            allQuery : dataQuery
+        });
     }
 }
 

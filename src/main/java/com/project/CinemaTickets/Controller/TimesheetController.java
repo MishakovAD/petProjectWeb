@@ -40,6 +40,22 @@ public class TimesheetController {
         return "timesheet";
     }
 
+    @RequestMapping("/timesheet_all_query")
+    public void timesheetAllQuery(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("Start method timesheetAllQuery() at " + LocalDateTime.now());
+        String allQuery = request.getParameter("allQuery").trim();
+        String content = "allQuery: " + allQuery;
+        System.out.println(content);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("query", allQuery);
+        response.setContentType("application/json");
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
+        writer.print(jsonObject);
+        writer.flush();
+        writer.close();
+//        logger.info("End of method respTimesheet() at " + LocalDateTime.now() + " - with result.size()= " + cinemaList.size());
+    }
+
     //TODO: сделать потокобезопасную HashMap для многих пользователей, где ключ - сессия, которую получаем из реквест, а значение - List<Cinema>
     @RequestMapping("/timesheetquery")
     public void respTimesheet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -56,7 +72,7 @@ public class TimesheetController {
         writer.print(jsonObject);
         writer.flush();
         writer.close();
-        logger.info("End of method respTimesheet() at " + LocalDateTime.now() + " - with result.size()= " + cinemaList.size());
+//        logger.info("End of method respTimesheet() at " + LocalDateTime.now() + " - with result.size()= " + cinemaList.size());
     }
 
     @RequestMapping("/timesheetquery_time")

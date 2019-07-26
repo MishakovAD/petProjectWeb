@@ -13,6 +13,9 @@ import java.util.List;
 //TODO: Добавить првоерку на существующий уже кинотеатр и повторяющиеся не добавлять.
 //А лучше брать список кинотеатров из БД. А так же подумать, как можно изменить методы добавления
 //Чтобы добавлялись, например, отдельно кинотеатр, отдельно кино, отдельно сессия. Как лучше это сделать?
+
+//TODO: Сделать parent уникальным, так как parent по name может повторятся, необходимо так же добавить в него id элемента или еще что.
+// А так же в кинотеатр сущность добавить координаты их и можно использовать в parent. Либо urlToKinopoisk
 public class DAOServerLogicImpl implements DAOServerLogic {
     private Logger logger = LoggerFactory.getLogger(DAOServerLogicImpl.class);
 
@@ -91,7 +94,7 @@ public class DAOServerLogicImpl implements DAOServerLogic {
         String parent = parentBuilder.toString();
         StringBuilder INSERT_SESSION_SQL = new StringBuilder();
         String timeOfShow = session.getTimeOfShow(); //Time of Movie
-        String typeOfMovie = session.getTypeOfMovie(); //2D,3D,IMax
+        String typeOfMovie = session.getTypeOfShow(); //2D,3D,IMax
         String price = session.getPrice();
         String url = session.getUrl();
         String sessionDate = session.getSessionDate();
@@ -139,58 +142,106 @@ public class DAOServerLogicImpl implements DAOServerLogic {
     }
 
     @Override
-    public boolean selectCinema(String cinemaName) {
-        return false;
+    public Cinema selectCinema(String cinemaName) {
+        logger.debug("Start selectCinema() in DAOServerLogicImpl.class with name: " + cinemaName);
+        String SELECT_CINEMA_SQL = "SELECT * FROM cinema WHERE cinema_name = '" + cinemaName + "';";
+        List<Cinema> cinemaList = executeQuerySelectForCinema(SELECT_CINEMA_SQL);
+
+        if (cinemaList.size() > 1) {
+            cinemaList.forEach( (cinemaElem) -> {
+                if (cinemaList.size() == 1) {
+                    return;
+                }
+                removeCinema(cinemaElem);
+            });
+        }
+
+        logger.debug("End of selectCinema() in DAOServerLogicImpl.class");
+        return cinemaList.get(0);
     }
 
     @Override
-    public boolean selectCinema(int cinemaId) {
-        return false;
+    public Cinema selectCinema(int cinemaIdFromKinopoisk) {
+        logger.debug("Start selectCinema() in DAOServerLogicImpl.class with id: " + cinemaIdFromKinopoisk);
+
+        String url = "https://www.kinopoisk.ru/afisha/city/1/cinema/" + String.valueOf(cinemaIdFromKinopoisk) + "/";
+        String SELECT_CINEMA_SQL = "SELECT * FROM cinema WHERE url_to_kinopoisk = '" + url + "';";
+        List<Cinema> cinemaList = executeQuerySelectForCinema(SELECT_CINEMA_SQL);
+
+        if (cinemaList.size() > 1) {
+            cinemaList.forEach( (cinemaElem) -> {
+                if (cinemaList.size() == 1) {
+                    return;
+                }
+                removeCinema(cinemaElem);
+            });
+        }
+
+        logger.debug("End of selectCinema() in DAOServerLogicImpl.class");
+        return cinemaList.get(0);
     }
 
     @Override
-    public boolean selectMovie(String movieName) {
-        return false;
+    public List<Movie> selectMovie(String movieName, boolean selectFromName, boolean selectFromParent) {
+        logger.debug("Start selectCinema() in DAOServerLogicImpl.class");
+        StringBuilder SQL_SELECT_FOR_MOVIE = new StringBuilder();
+        List<Movie> movieList;
+
+        if (selectFromName) {
+            SQL_SELECT_FOR_MOVIE.append("");
+        } else if (selectFromParent) {
+            SQL_SELECT_FOR_MOVIE.append("");
+        } else if (selectFromName && selectFromParent) {
+            SQL_SELECT_FOR_MOVIE.append("");
+        }
+        movieList = executeQuerySelectForMovie(SQL_SELECT_FOR_MOVIE.toString());
+
+        logger.debug("End of selectCinema() in DAOServerLogicImpl.class");
+        return movieList;
+    }
+
+
+    @Override
+    public List<Session> selectSession(Cinema cinema) {
+        return null;
     }
 
     @Override
-    public boolean selectMovie(int movieId) {
-        return false;
-    }
-
-    @Override
-    public boolean selectSession(Cinema cinema) {
-        return false;
-    }
-
-    @Override
-    public boolean selectSession(Movie movie) {
-        return false;
+    public List<Session> selectSession(Movie movie) {
+        return null;
     }
 
     @Override
     public List<Cinema> selectAllCinema() {
-        String SELECT_ALL_CINEMA_SQL = "SELECT * FROM cinmea;";
-        Statement stmnt = null;
-        List<Cinema> cinemaList = new ArrayList<>();
-        Cinema cinema;
-        try {
-            stmnt = connect().createStatement();
-            ResultSet resultSet = stmnt.executeQuery(SELECT_ALL_CINEMA_SQL);
-            while (resultSet.next()) {
-                cinema = new Cinema();
-                cinema.setCinemaName(resultSet.getString("cinema_name"));
-                cinema.setCinemaAddress(resultSet.getString("cinema_address"));
-                cinema.setCinemaUnderground(resultSet.getString("cinema_underground"));
-                cinema.setUrlToKinopoisk(resultSet.getString("url_to_kinopoisk"));
-                cinemaList.add(cinema);
-            }
-            stmnt.close();
-        } catch (SQLException e) {
-            logger.error("Error in DAOServerLogicImpl.class in exequte query", e);
-        }
+        logger.debug("Start selectAllCinema() in DAOServerLogicImpl.class");
 
-        return cinemaList;
+        String SELECT_ALL_CINEMA_SQL = "SELECT * FROM cinema;";
+        List<Cinema> allCinemaList = executeQuerySelectForCinema(SELECT_ALL_CINEMA_SQL);
+
+        logger.debug("End of selectAllCinema() in DAOServerLogicImpl.class");
+        return allCinemaList;
+    }
+
+    @Override
+    public List<Movie> selectAllMovie() {
+        logger.debug("Start selectAllMovie() in DAOServerLogicImpl.class");
+
+        String SELECT_ALL_MOVIE_SQL = "SELECT DISTINCT * FROM movie;";
+        List<Movie> allMovieList = executeQuerySelectForMovie(SELECT_ALL_MOVIE_SQL);
+
+        logger.debug("End of selectAllMovie() in DAOServerLogicImpl.class");
+        return allMovieList;
+    }
+
+    @Override
+    public List<Session> selectAllSession() {
+        logger.debug("Start selectAllSession() in DAOServerLogicImpl.class");
+
+        String SELECT_ALL_SESSION_SQL = "SELECT * FROM session;";
+        List<Session> allSessionList = executeQuerySelectForSession(SELECT_ALL_SESSION_SQL);
+
+        logger.debug("End of selectAllSession() in DAOServerLogicImpl.class");
+        return allSessionList;
     }
 
     private Connection connect() {
@@ -218,6 +269,74 @@ public class DAOServerLogicImpl implements DAOServerLogic {
         }
     }
 
+    private List<Cinema> executeQuerySelectForCinema(String queryCinema) {
+        Statement stmnt = null;
+        List<Cinema> cinemaList = new ArrayList<>();
+        Cinema cinema;
+        try {
+            stmnt = connect().createStatement();
+            ResultSet resultSet = stmnt.executeQuery(queryCinema);
+            while (resultSet.next()) {
+                cinema = new Cinema();
+                cinema.setCinema_id(Integer.parseInt(resultSet.getString("cinema_id")));
+                cinema.setCinemaName(resultSet.getString("cinema_name"));
+                cinema.setCinemaAddress(resultSet.getString("cinema_address"));
+                cinema.setCinemaUnderground(resultSet.getString("cinema_underground"));
+                cinema.setUrlToKinopoisk(resultSet.getString("url_to_kinopoisk"));
+                cinemaList.add(cinema);
+            }
+            stmnt.close();
+        } catch (SQLException e) {
+            logger.error("Error in DAOServerLogicImpl.class in exequte query", e);
+        }
+        return cinemaList;
+    }
+
+    private List<Movie> executeQuerySelectForMovie(String queryMovie) {
+        Statement stmnt = null;
+        List<Movie> movieList = new ArrayList<>();
+        Movie movie;
+        try {
+            stmnt = connect().createStatement();
+            ResultSet resultSet = stmnt.executeQuery(queryMovie);
+            while (resultSet.next()) {
+                movie = new Movie();
+                movie.setMovieName(resultSet.getString("movie_name"));
+                movie.setMovieRating(resultSet.getString("movie_rating"));
+                movie.setParent(resultSet.getString("parent"));
+                movieList.add(movie);
+            }
+            stmnt.close();
+        } catch (SQLException e) {
+            logger.error("Error in DAOServerLogicImpl.class in exequte query", e);
+        }
+        return movieList;
+    }
+
+    private List<Session> executeQuerySelectForSession(String querySession) {
+        Statement stmnt = null;
+        List<Session> sessionList = new ArrayList<>();
+        Session session;
+        try {
+            stmnt = connect().createStatement();
+            ResultSet resultSet = stmnt.executeQuery(querySession);
+            while (resultSet.next()) {
+                session = new Session();
+                session.setTimeOfShow(resultSet.getString("time_of_show"));
+                session.setTypeOfShow(resultSet.getString("type_of_show"));
+                session.setPrice(resultSet.getString("price"));
+                session.setSessionDate(resultSet.getString("session_date"));
+                session.setUrl(resultSet.getString("url_for_buy_tickets"));
+                session.setParent(resultSet.getString("parent"));
+                sessionList.add(session);
+            }
+            stmnt.close();
+        } catch (SQLException e) {
+            logger.error("Error in DAOServerLogicImpl.class in exequte query", e);
+        }
+        return sessionList;
+    }
+
     public static void main(String[] args) throws SQLException {
         Cinema cinema = new Cinema();
         cinema.setCinemaName("Test");
@@ -237,7 +356,7 @@ public class DAOServerLogicImpl implements DAOServerLogic {
         session.setPrice("test");
         session.setSessionDate("test");
         session.setTimeOfShow("test");
-        session.setTypeOfMovie("test");
+        session.setTypeOfShow("test");
         session.setUrl("test");
 
         List<Session> sessionList = new ArrayList<>();
@@ -253,7 +372,10 @@ public class DAOServerLogicImpl implements DAOServerLogic {
 
         DAOServerLogicImpl dao = new DAOServerLogicImpl();
         Statement s = dao.connect().createStatement();
+        List<Cinema> cinemas = dao.selectAllCinema();
+        List<Movie> movies = dao.selectAllMovie();
+        List<Session> sessions = dao.selectAllSession();
         //s.execute("SELECT cinema_id FROM movie");
-        dao.insertCinemaToDB(cinema);
+        //dao.insertCinemaToDB(cinema);
     }
 }

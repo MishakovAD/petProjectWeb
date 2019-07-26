@@ -81,7 +81,7 @@ public class PlUserLogicFromInternet implements PliUserLogicFromInternet {
             movieListNew = new ArrayList<>(); //Сюда добавляем только те фильмы, что удовлетворяют условию
             movieListOld = cinema.getMovieList();
             for (Movie movie : movieListOld) {
-                if (movie.getSession().getTypeOfMovie().contains(type)) {
+                if (movie.getSession().getTypeOfShow().contains(type)) {
                     movieListNew.add(movie);
                 }
             }

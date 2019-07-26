@@ -38,6 +38,9 @@ public class Movie {
     @Transient
     private Session session;
 
+    @Transient
+    private String parent;
+
     public Session getSession() {
         return session;
     }
@@ -96,5 +99,13 @@ public class Movie {
 
     public void removeSession (Session session) {
         sessionList.remove(session);
+    }
+
+    public String getParent() {
+        return parent;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
     }
 }

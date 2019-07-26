@@ -158,9 +158,9 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
 
                 String typeMovie = sessionElement.select("span.schedule-item__formats-format").text();
                 if (typeMovie != null) {
-                    session.setTypeOfMovie(typeMovie);
+                    session.setTypeOfShow(typeMovie);
                 } else {
-                    session.setTypeOfMovie("Не найдено");
+                    session.setTypeOfShow("Не найдено");
                 }
 
                 sessionList.add(session);
@@ -292,7 +292,7 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         mov.setMovieName("Человек-паук: Вдали от дома");
         Session ses = new Session();
         ses.setTimeOfShow("22:20");
-        ses.setTypeOfMovie("2D");
+        ses.setTypeOfShow("2D");
         mov.setSession(ses);
 
 

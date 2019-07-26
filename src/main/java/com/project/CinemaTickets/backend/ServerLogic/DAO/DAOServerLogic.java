@@ -42,15 +42,16 @@ public interface DAOServerLogic {
     boolean removeMovie(Movie movie);
     boolean removeSession(Session session);
 
-    boolean selectCinema(String cinemaName);
-    boolean selectCinema(int cinemaId);
+    Cinema selectCinema(String cinemaName);
+    Cinema selectCinema(int cinemaIdFromKinopoisk);
 
-    boolean selectMovie(String movieName);
-    boolean selectMovie(int movieId);
+    List<Movie> selectMovie(String movieName, boolean selectFromName, boolean selectFromParent);
 
-    boolean selectSession(Cinema cinema);
-    boolean selectSession(Movie movie);
+    List<Session> selectSession(Cinema cinema);
+    List<Session> selectSession(Movie movie);
 
     List<Cinema> selectAllCinema();
+    List<Movie> selectAllMovie();
+    List<Session> selectAllSession();
 
 }

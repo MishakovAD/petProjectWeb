@@ -15,7 +15,7 @@ public class Session {
     private String timeOfShow; //Time of Movie
 
     @Column(name = "type_of_show")
-    private String typeOfMovie; //2D,3D,IMax
+    private String typeOfShow; //2D,3D,IMax
 
     @Column(name = "price")
     private String price;
@@ -29,6 +29,9 @@ public class Session {
     //    @OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
     @Transient
     private Movie movie;
+
+    @Transient
+    private String parent;
 
     public Session() {
     }
@@ -45,12 +48,12 @@ public class Session {
         this.timeOfShow = timeOfShow;
     }
 
-    public String getTypeOfMovie() {
-        return typeOfMovie;
+    public String getTypeOfShow() {
+        return typeOfShow;
     }
 
-    public void setTypeOfMovie(String typeOfMovie) {
-        this.typeOfMovie = typeOfMovie;
+    public void setTypeOfShow(String typeOfShow) {
+        this.typeOfShow = typeOfShow;
     }
 
     public String getPrice() {
@@ -83,5 +86,13 @@ public class Session {
 
     public void setMovie(Movie movie) {
         this.movie = movie;
+    }
+
+    public String getParent() {
+        return parent;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
     }
 }

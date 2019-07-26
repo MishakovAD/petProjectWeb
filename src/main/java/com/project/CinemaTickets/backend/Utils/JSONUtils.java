@@ -74,8 +74,8 @@ public class JSONUtils {
                         if (session.getTimeOfShow() != null && !session.getTimeOfShow().isEmpty()) {
                             sessionJSON.put("sessionTime", session.getTimeOfShow());
                         }
-                        if (session.getTypeOfMovie() != null && !session.getTypeOfMovie().isEmpty()) {
-                            sessionJSON.put("sessionType", session.getTypeOfMovie());
+                        if (session.getTypeOfShow() != null && !session.getTypeOfShow().isEmpty()) {
+                            sessionJSON.put("sessionType", session.getTypeOfShow());
                         }
                         if (session.getPrice() != null && !session.getPrice().isEmpty()) {
                             sessionJSON.put("sessionPrice", session.getPrice());
@@ -95,8 +95,8 @@ public class JSONUtils {
                     if (session.getTimeOfShow() != null && !session.getTimeOfShow().isEmpty()) {
                         sessionJSON.put("sessionTime", session.getTimeOfShow());
                     }
-                    if (session.getTypeOfMovie() != null && !session.getTypeOfMovie().isEmpty()) {
-                        sessionJSON.put("sessionType", session.getTypeOfMovie());
+                    if (session.getTypeOfShow() != null && !session.getTypeOfShow().isEmpty()) {
+                        sessionJSON.put("sessionType", session.getTypeOfShow());
                     }
                     if (session.getPrice() != null && !session.getPrice().isEmpty()) {
                         sessionJSON.put("sessionPrice", session.getPrice());

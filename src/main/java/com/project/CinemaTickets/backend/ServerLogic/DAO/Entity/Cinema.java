@@ -44,6 +44,10 @@ public class Cinema {
     public Cinema() {
     }
 
+    public void setCinema_id(int cinema_id) {
+        this.cinema_id = cinema_id;
+    }
+
     public int getCinema_id() {
         return cinema_id;
     }

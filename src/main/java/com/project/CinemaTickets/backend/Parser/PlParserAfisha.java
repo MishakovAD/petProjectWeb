@@ -6,8 +6,6 @@ import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
 import com.project.CinemaTickets.backend.ProxyServer.PlProxyServer;
 import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
-import com.project.CinemaTickets.backend.UserLogic.PlUserLogicFromInternet;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -257,7 +255,7 @@ public class PlParserAfisha implements PliParser {
             typeOfMovieMovie = elementTimetable.getElementsByAttributeValue("class", "tooltip__body").text();
             session = new Session();
             session.setTimeOfShow(movieTimeShow);
-            session.setTypeOfMovie(typeOfMovieMovie);
+            session.setTypeOfShow(typeOfMovieMovie);
             session.setPrice(minPriceMovie);
             timetable.add(session);
         }
