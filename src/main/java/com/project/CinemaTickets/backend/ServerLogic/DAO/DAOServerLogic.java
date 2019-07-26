@@ -58,8 +58,22 @@ public interface DAOServerLogic {
     List<Session> selectSession(Cinema cinema);
     List<Session> selectSession(Movie movie);
 
+    /**
+     * Возвращает ВСЕ записи с кинотеатрами из БД.
+     * @return лист кинотеатров
+     */
     List<Cinema> selectAllCinema();
+
+    /**
+     * Возвращает ВСЕ записи с фильмами из БД.
+     * @return лист фильмов
+     */
     List<Movie> selectAllMovie();
+
+    /**
+     * Возвращает ВСЕ сеансы из БД.
+     * @return лист сеансов
+     */
     List<Session> selectAllSession();
 
 }
