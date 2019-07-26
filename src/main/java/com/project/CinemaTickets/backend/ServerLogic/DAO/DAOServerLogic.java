@@ -42,9 +42,17 @@ public interface DAOServerLogic {
     boolean removeMovie(Movie movie);
     boolean removeSession(Session session);
 
-    Cinema selectCinema(String cinemaName);
+    List<Cinema> selectCinema(String cinemaName);
     Cinema selectCinema(int cinemaIdFromKinopoisk);
 
+    /**
+     * Метод, возвращающий список кино для определенного кинотеатра,
+     * либо список всех кинотеатров, в которых идет фильм.
+     * @param movieName - в зависимости от флага, либо название фильма, либо parent - отвечает за название кинотеатра.
+     * @param selectFromName - true, если хотим искать список кинотеатров по имени фильма
+     * @param selectFromParent  - true, если хотим искать список фильмов в кинотеатре
+     * @return список фильмов, согласно условию
+     */
     List<Movie> selectMovie(String movieName, boolean selectFromName, boolean selectFromParent);
 
     List<Session> selectSession(Cinema cinema);

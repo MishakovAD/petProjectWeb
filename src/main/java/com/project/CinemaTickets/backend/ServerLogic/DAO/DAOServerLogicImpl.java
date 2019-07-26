@@ -63,6 +63,10 @@ public class DAOServerLogicImpl implements DAOServerLogic {
     public boolean insertMovieToDB(Cinema cinema, Movie movie) {
         logger.debug("Start insert Movie to database in DAOServerLogicImpl.class");
         String parent = cinema.getCinemaName();
+        String urlFromKinopooisk = cinema.getUrlToKinopoisk();
+        if (urlFromKinopooisk != null && !urlFromKinopooisk.isEmpty() && !urlFromKinopooisk.equals("")) {
+            parent += "." + urlFromKinopooisk.substring(urlFromKinopooisk.indexOf("cinema/") + 7, urlFromKinopooisk.length() - 1);
+        }
         StringBuilder INSERT_MOVIE_SQL = new StringBuilder();
         String movieName = movie.getMovieName();
         String movieRating = movie.getMovieRating();
@@ -89,12 +93,19 @@ public class DAOServerLogicImpl implements DAOServerLogic {
         logger.debug("Start insert Session to database in DAOServerLogicImpl.class");
         String cinemaName = cinema.getCinemaName();
         String movieName = movie.getMovieName();
+        String urlFromKinopooisk = cinema.getUrlToKinopoisk();
+
         StringBuilder parentBuilder = new StringBuilder();
-        parentBuilder.append(cinemaName).append(".").append(movieName);
+        parentBuilder.append(cinemaName).append(".");
+        if (urlFromKinopooisk != null && !urlFromKinopooisk.isEmpty() && !urlFromKinopooisk.equals("")) {
+            parentBuilder.append(urlFromKinopooisk.substring(urlFromKinopooisk.indexOf("cinema/") + 7, urlFromKinopooisk.length() - 1));
+        }
+        parentBuilder.append(".").append(movieName);
+
         String parent = parentBuilder.toString();
         StringBuilder INSERT_SESSION_SQL = new StringBuilder();
         String timeOfShow = session.getTimeOfShow(); //Time of Movie
-        String typeOfMovie = session.getTypeOfShow(); //2D,3D,IMax
+        String typeOfShow = session.getTypeOfShow(); //2D,3D,IMax
         String price = session.getPrice();
         String url = session.getUrl();
         String sessionDate = session.getSessionDate();
@@ -102,7 +113,7 @@ public class DAOServerLogicImpl implements DAOServerLogic {
         if (timeOfShow != null && !timeOfShow.isEmpty() && !timeOfShow.equals("")) {
             INSERT_SESSION_SQL.append("INSERT INTO session (time_of_show, type_of_show, " +
                     "price, url_for_buy_tickets, session_date, parent) VALUES ('" + timeOfShow + "', '"
-                    + typeOfMovie + "', '" + price + "', '"
+                    + typeOfShow + "', '" + price + "', '"
                     + url + "', '" + sessionDate + "', '" + parent + "' );");
             execureQuery(INSERT_SESSION_SQL.toString());
         }
@@ -142,22 +153,14 @@ public class DAOServerLogicImpl implements DAOServerLogic {
     }
 
     @Override
-    public Cinema selectCinema(String cinemaName) {
+    public List<Cinema> selectCinema(String cinemaName) {
+        //TODO: Т.к. кинотеатров с одинаковым именем много, то будем возвращать список, а уже потом по месту находить нужные.
         logger.debug("Start selectCinema() in DAOServerLogicImpl.class with name: " + cinemaName);
         String SELECT_CINEMA_SQL = "SELECT * FROM cinema WHERE cinema_name = '" + cinemaName + "';";
         List<Cinema> cinemaList = executeQuerySelectForCinema(SELECT_CINEMA_SQL);
 
-        if (cinemaList.size() > 1) {
-            cinemaList.forEach( (cinemaElem) -> {
-                if (cinemaList.size() == 1) {
-                    return;
-                }
-                removeCinema(cinemaElem);
-            });
-        }
-
         logger.debug("End of selectCinema() in DAOServerLogicImpl.class");
-        return cinemaList.get(0);
+        return cinemaList;
     }
 
     @Override
@@ -174,6 +177,7 @@ public class DAOServerLogicImpl implements DAOServerLogic {
                     return;
                 }
                 removeCinema(cinemaElem);
+                cinemaList.remove(cinemaElem);
             });
         }
 
@@ -187,12 +191,13 @@ public class DAOServerLogicImpl implements DAOServerLogic {
         StringBuilder SQL_SELECT_FOR_MOVIE = new StringBuilder();
         List<Movie> movieList;
 
-        if (selectFromName) {
-            SQL_SELECT_FOR_MOVIE.append("");
+        if (selectFromName && selectFromParent) {
+            //так выставлять просто нельзя!
+            SQL_SELECT_FOR_MOVIE.append("SELECT * FROM movie WHERE movie_name = '" + movieName + "'");
         } else if (selectFromParent) {
-            SQL_SELECT_FOR_MOVIE.append("");
-        } else if (selectFromName && selectFromParent) {
-            SQL_SELECT_FOR_MOVIE.append("");
+            SQL_SELECT_FOR_MOVIE.append("SELECT * FROM movie WHERE parent LIKE '" + movieName + ".%'");
+        } else if (selectFromName) {
+            SQL_SELECT_FOR_MOVIE.append("SELECT * FROM movie WHERE movie_name = '" + movieName + "'");
         }
         movieList = executeQuerySelectForMovie(SQL_SELECT_FOR_MOVIE.toString());
 
@@ -203,12 +208,27 @@ public class DAOServerLogicImpl implements DAOServerLogic {
 
     @Override
     public List<Session> selectSession(Cinema cinema) {
-        return null;
+        logger.debug("Start selectSession() in DAOServerLogicImpl.class");
+        String urlFromKinopooisk = cinema.getUrlToKinopoisk();
+
+        String parentBuilder = "";
+        if (urlFromKinopooisk != null && !urlFromKinopooisk.isEmpty() && !urlFromKinopooisk.equals("")) {
+            parentBuilder = urlFromKinopooisk.substring(urlFromKinopooisk.indexOf("cinema/") + 7, urlFromKinopooisk.length() - 1);
+        }
+
+        String SQL_FOR_SELECT_SESSION = "SELECT * FROM session WHERE parent LIKE '%."+ parentBuilder + ".%'";
+        List<Session> sessionList = executeQuerySelectForSession(SQL_FOR_SELECT_SESSION);
+        logger.debug("End of selectSession() in DAOServerLogicImpl.class");
+        return sessionList;
     }
 
     @Override
     public List<Session> selectSession(Movie movie) {
-        return null;
+        logger.debug("Start selectSession() in DAOServerLogicImpl.class");
+        String SQL_FOR_SELECT_SESSION = "SELECT * FROM session WHERE parent LIKE '%." + movie.getMovieName() + "'";
+        List<Session> sessionList = executeQuerySelectForSession(SQL_FOR_SELECT_SESSION);
+        logger.debug("End of selectSession() in DAOServerLogicImpl.class");
+        return sessionList;
     }
 
     @Override
@@ -226,7 +246,7 @@ public class DAOServerLogicImpl implements DAOServerLogic {
     public List<Movie> selectAllMovie() {
         logger.debug("Start selectAllMovie() in DAOServerLogicImpl.class");
 
-        String SELECT_ALL_MOVIE_SQL = "SELECT DISTINCT * FROM movie;";
+        String SELECT_ALL_MOVIE_SQL = "SELECT DISTINCT ON (movie_name) movie_name, movie_rating, movie_date, parent FROM movie;";
         List<Movie> allMovieList = executeQuerySelectForMovie(SELECT_ALL_MOVIE_SQL);
 
         logger.debug("End of selectAllMovie() in DAOServerLogicImpl.class");
@@ -348,9 +368,10 @@ public class DAOServerLogicImpl implements DAOServerLogic {
         cinema.setUrlToYandexAfisha("Test");
 
         Movie movie = new Movie();
-        movie.setMovieName("test");
+        movie.setMovieName("Аладдин");
         movie.setMovieDate("test");
         movie.setMovieRating("test");
+        movie.setParent("Формула Кино Жемчужина");
 
         Session session = new Session();
         session.setPrice("test");
@@ -375,6 +396,7 @@ public class DAOServerLogicImpl implements DAOServerLogic {
         List<Cinema> cinemas = dao.selectAllCinema();
         List<Movie> movies = dao.selectAllMovie();
         List<Session> sessions = dao.selectAllSession();
+        List<Session> sessionsMovie = dao.selectSession(movie);
         //s.execute("SELECT cinema_id FROM movie");
         //dao.insertCinemaToDB(cinema);
     }
