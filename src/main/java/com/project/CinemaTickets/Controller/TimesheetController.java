@@ -160,6 +160,16 @@ public class TimesheetController {
 
     }
 
+    @RequestMapping("/getUserIP")
+    public void getUserIp(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("Start method getUserIp() at " + LocalDateTime.now());
+        String ip = request.getParameter("getUserIP");
+
+
+        logger.info("End of method getUserIp() at " + LocalDateTime.now() + " - with ip= " + ip);
+
+    }
+
     private PliUserLogicFromInternet pliUserLogic;
     private PliParserKinopoisk pliParserKinopoisk;
 

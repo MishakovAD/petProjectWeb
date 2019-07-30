@@ -42,7 +42,20 @@ public interface DAOServerLogic {
     boolean removeMovie(Movie movie);
     boolean removeSession(Session session);
 
-    List<Cinema> selectCinema(String cinemaName);
+    /**
+     * Выборка всех кинотеатров по имени или же по адресу.
+     * @param cinemaName имя кинотеатра/адрес
+     * @param selectFromName - выборка по имени
+     * @param selectFromAddress - выборка по адресу
+     * @return список кинотеатров, согласно условиям
+     */
+    List<Cinema> selectCinema(String cinemaName, boolean selectFromName, boolean selectFromAddress);
+
+    /**
+     * Выборка кинотеатра согласно его id на кинопоиске.
+     * @param cinemaIdFromKinopoisk - id на кинопоиске
+     * @return кинотеатр.
+     */
     Cinema selectCinema(int cinemaIdFromKinopoisk);
 
     /**

@@ -153,10 +153,16 @@ public class DAOServerLogicImpl implements DAOServerLogic {
     }
 
     @Override
-    public List<Cinema> selectCinema(String cinemaName) {
+    public List<Cinema> selectCinema(String cinemaName, boolean selectFromName, boolean selectFromAddress) {
         //TODO: Т.к. кинотеатров с одинаковым именем много, то будем возвращать список, а уже потом по месту находить нужные.
         logger.debug("Start selectCinema() in DAOServerLogicImpl.class with name: " + cinemaName);
-        String SELECT_CINEMA_SQL = "SELECT * FROM cinema WHERE cinema_name = '" + cinemaName + "';";
+        String SELECT_CINEMA_SQL = "";
+        if (selectFromName) {
+            SELECT_CINEMA_SQL = "SELECT * FROM cinema WHERE cinema_name = '" + cinemaName + "';";
+        } else if (selectFromAddress) {
+            SELECT_CINEMA_SQL = "SELECT * FROM cinema WHERE cinema_address LIKE 'г. " + cinemaName + "%';";
+        }
+
         List<Cinema> cinemaList = executeQuerySelectForCinema(SELECT_CINEMA_SQL);
 
         logger.debug("End of selectCinema() in DAOServerLogicImpl.class");
@@ -393,7 +399,7 @@ public class DAOServerLogicImpl implements DAOServerLogic {
 
         DAOServerLogicImpl dao = new DAOServerLogicImpl();
         Statement s = dao.connect().createStatement();
-        List<Cinema> cinemas = dao.selectAllCinema();
+        List<Cinema> cinemas = dao.selectCinema("Москва", false, true);
         List<Movie> movies = dao.selectAllMovie();
         List<Session> sessions = dao.selectAllSession();
         List<Session> sessionsMovie = dao.selectSession(movie);

@@ -1,3 +1,5 @@
+var urlSendingIP = "getUserIP"
+
 /**
  * Get the user IP throught the webkitRTCPeerConnection
  * @param onNewIP {Function} listener function to expose the IP locally
@@ -45,6 +47,25 @@ function getUserIP(onNewIP) { //  onNewIp - your listener function for new IPs
 // Usage
 
 getUserIP(function(ip){
+    sendIPToServer(urlSendingIP, {
+        getUserIP: ip
+    });
     alert("Ваш IP! :" + ip +
     "\n Если вы видите данное сообщение, то разработчику небедленно нужно его убрать.");
 });
+
+// Отправка запроса на сервер.
+function sendIPToServer(url, data) {
+    return $.ajax({
+        url: url,
+        data: data,
+        datatype : "application/json",
+        // По умолчанию идет GET.
+        // method: 'POST',
+        // Отменим кеширование.
+        cache: false,
+        success: function (response) {
+
+        }
+    });
+}
