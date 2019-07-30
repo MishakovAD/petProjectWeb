@@ -18,5 +18,29 @@ public interface Geolocation {
      */
     Map<String, Double> getCoordinatesFromAddress(String address);
 
-    boolean isClosesCoordinates (double latitude, double longitude);
+    /**
+     * Определяет, достаточно ли близко находится
+     *  объект к введенным координатам.
+     * @param userLatitude - широта пользователя
+     * @param userLongitude - долгота пользователя
+     * @param objectLatitude - широта объекта (кинотеатра)
+     * @param objectLongitude - долгота объекта (кинотеатра)
+     * @return true, если достаточно близко
+     */
+    boolean isClosesCoordinates (double userLatitude, double userLongitude, double objectLatitude, double objectLongitude);
+
+    /**
+     * Определяет город по долготе и широте.
+     * @param latitude
+     * @param longitude
+     * @return
+     */
+    String detectCity (double latitude, double longitude);
+//TODO: можно сделат ьпроверку результатов по ip и долготе и широте и если не совпадает спрашивать у пользователя, в том ли он городе.
+    /**
+     * Определяет город по ip адресу
+     * @param ip - ip адрес
+     * @return город пользователя
+     */
+    String detectCity (String ip);
 }

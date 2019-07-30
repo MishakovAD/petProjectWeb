@@ -70,6 +70,7 @@ public interface DAOServerLogic {
 
     List<Session> selectSession(Cinema cinema);
     List<Session> selectSession(Movie movie);
+    List<Session> selectSession(Movie movie, boolean forTypeAndPrice);
 
     /**
      * Возвращает ВСЕ записи с кинотеатрами из БД.

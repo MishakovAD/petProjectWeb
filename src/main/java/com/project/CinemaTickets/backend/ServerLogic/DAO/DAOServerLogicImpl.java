@@ -238,6 +238,21 @@ public class DAOServerLogicImpl implements DAOServerLogic {
     }
 
     @Override
+    public List<Session> selectSession(Movie movie, boolean forTypeAndPrice) {
+        logger.debug("Start selectSession() in DAOServerLogicImpl.class");
+        if (forTypeAndPrice) {
+            String SQL_FOR_SELECT_SESSION = "SELECT * FROM session WHERE " +
+                    "parent LIKE '" + movie.getParent() + "." + movie.getMovieName() + "'";
+            List<Session> sessionList = executeQuerySelectForSession(SQL_FOR_SELECT_SESSION);
+            logger.debug("End of selectSession() in DAOServerLogicImpl.class");
+            return sessionList;
+        } else {
+            return selectSession(movie);
+        }
+
+    }
+
+    @Override
     public List<Cinema> selectAllCinema() {
         logger.debug("Start selectAllCinema() in DAOServerLogicImpl.class");
 

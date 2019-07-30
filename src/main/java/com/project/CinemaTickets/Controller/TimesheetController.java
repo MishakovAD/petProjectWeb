@@ -170,6 +170,16 @@ public class TimesheetController {
 
     }
 
+    @RequestMapping("/getUserCityFromCite")
+    public void getUserCityFromCite(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("Start method getUserCityFromCite() at " + LocalDateTime.now());
+        String city = request.getParameter("getUserCityFromCite");
+
+
+        logger.info("End of method getUserCityFromCite() at " + LocalDateTime.now() + " - with city= " + city);
+
+    }
+
     private PliUserLogicFromInternet pliUserLogic;
     private PliParserKinopoisk pliParserKinopoisk;
 

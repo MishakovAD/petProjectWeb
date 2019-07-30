@@ -1,4 +1,5 @@
-var urlSendingIP = "getUserIP"
+//CКРИПТ НЕ РАБОТАЕТ. ПОЧЕМУ???
+var urlSendingIP = "getUserIP";
 
 /**
  * Get the user IP throught the webkitRTCPeerConnection
@@ -47,11 +48,11 @@ function getUserIP(onNewIP) { //  onNewIp - your listener function for new IPs
 // Usage
 
 getUserIP(function(ip){
+    console.log("getUserIp");
     sendIPToServer(urlSendingIP, {
         getUserIP: ip
     });
-    alert("Ваш IP! :" + ip +
-    "\n Если вы видите данное сообщение, то разработчику небедленно нужно его убрать.");
+
 });
 
 // Отправка запроса на сервер.
@@ -65,7 +66,7 @@ function sendIPToServer(url, data) {
         // Отменим кеширование.
         cache: false,
         success: function (response) {
-
+            //alert("Запрос на сервер отправлен успешно!");
         }
     });
 }
