@@ -1,10 +1,13 @@
 package com.project.CinemaTickets.backend.UserLogic;
 
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
 
 import java.util.List;
 
 public interface PliUserLogicFromDB {
+
+    List<Session> getSessionListForMovie (String movieName, String city);
 
     /**
      * Метод, который получает список кинотеатров из БД,
@@ -16,7 +19,7 @@ public interface PliUserLogicFromDB {
      * @param place - ближайшее место, адрес, метро
      * @return - список кинотеатров, удовлетворяющих запросу
      */
-    public List<Cinema> getCinemasListForUserFromDB (String movieName, String time, String type, String place);
+    List<Cinema> getCinemasListForUserFromDB (String movieName, String time, String type, String place);
 
     /**
      * Метод, который получает полное расписание всех фильмов
@@ -25,7 +28,7 @@ public interface PliUserLogicFromDB {
      * @param date - дата, для которой нужно получить расписание фильмов в кинотеатре
      * @return объект Cinema с заполненным расписанием
      */
-    public Cinema getCinemaFromDB(int cinemaId, String date);
+    Cinema getCinemaFromDB(int cinemaId, String date);
 
     /**
      * Метод, который получает полное расписание всех фильмов
@@ -34,5 +37,8 @@ public interface PliUserLogicFromDB {
      * @param date - дата, для которой нужно получить расписание фильмов в кинотеатре
      * @return объект Cinema с заполненным расписанием
      */
-    public Cinema getCinemaFromDB(String cinemaName, String date);
+    Cinema getCinemaFromDB(String cinemaName, String date);
+
+
+
 }

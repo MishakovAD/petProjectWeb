@@ -5,7 +5,9 @@ import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface DAOServerLogic {
 
@@ -46,10 +48,10 @@ public interface DAOServerLogic {
      * Выборка всех кинотеатров по имени или же по адресу.
      * @param cinemaName имя кинотеатра/адрес
      * @param selectFromName - выборка по имени
-     * @param selectFromAddress - выборка по адресу
+     * @param selectFromCity - выборка по городу
      * @return список кинотеатров, согласно условиям
      */
-    List<Cinema> selectCinema(String cinemaName, boolean selectFromName, boolean selectFromAddress);
+    List<Cinema> selectCinema(String cinemaName, boolean selectFromName, boolean selectFromCity);
 
     /**
      * Выборка кинотеатра согласно его id на кинопоиске.
@@ -71,6 +73,23 @@ public interface DAOServerLogic {
     List<Session> selectSession(Cinema cinema);
     List<Session> selectSession(Movie movie);
     List<Session> selectSession(Movie movie, boolean forTypeAndPrice);
+
+    /**
+     * Получаем список сеансов, когда знаем только имя фильма и город пользователя.
+     * Т.е. это самый первый запрос при первом обращении пользователя.
+     * @param cinemaKinopoiskId - id кинотеатра в кинопоиске (получаем путем выборки всех кинотеатров в указанном городе и с идущим фильмом)
+     * @param movieName - название фильма
+     * @return список сеансов всех для фильма в указанном городе.
+     */
+    List<Session> selectSessionListForMovie(String cinemaKinopoiskId, String movieName);
+
+    /**
+     * Получаем коллекцию сессия-соответсвующий ей кинотеатр
+     * для более удобной фильтрации по месту.
+     * @param sessionList - список сеансов, которые интересуют пользователя
+     * @return Коллекция (Сессия -> Кинотеатр)
+     */
+    Map<Session, Cinema> getCinemaWithSessions(List<Session> sessionList);
 
     /**
      * Возвращает ВСЕ записи с кинотеатрами из БД.

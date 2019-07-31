@@ -3,12 +3,20 @@ package com.project.CinemaTickets.backend.ServerLogic.DAO;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 //TODO: Добавить првоерку на существующий уже кинотеатр и повторяющиеся не добавлять.
 //А лучше брать список кинотеатров из БД. А так же подумать, как можно изменить методы добавления
@@ -18,14 +26,15 @@ import java.util.List;
 // А так же в кинотеатр сущность добавить координаты их и можно использовать в parent. Либо urlToKinopoisk
 public class DAOServerLogicImpl implements DAOServerLogic {
     private Logger logger = LoggerFactory.getLogger(DAOServerLogicImpl.class);
+    public static List<Cinema> staticCinemaList = new ArrayList<>();
 
-//    private final String url = "jdbc:postgresql://localhost/petprojectweb?currentSchema=petproject";
-//    private final String user = "home";
-//    private final String password = "home";
+    private final String url = "jdbc:postgresql://localhost/petprojectweb?currentSchema=petproject";
+    private final String user = "home";
+    private final String password = "home";
 
-    private final String url = "jdbc:postgresql://localhost/petprojectweb"; //WORK
-    private final String user = "postgres";
-    private final String password = "postgres";
+//    private final String url = "jdbc:postgresql://localhost/petprojectweb"; //WORK
+//    private final String user = "postgres";
+//    private final String password = "postgres";
 
 
 
@@ -153,13 +162,13 @@ public class DAOServerLogicImpl implements DAOServerLogic {
     }
 
     @Override
-    public List<Cinema> selectCinema(String cinemaName, boolean selectFromName, boolean selectFromAddress) {
+    public List<Cinema> selectCinema(String cinemaName, boolean selectFromName, boolean selectFromCity) {
         //TODO: Т.к. кинотеатров с одинаковым именем много, то будем возвращать список, а уже потом по месту находить нужные.
         logger.debug("Start selectCinema() in DAOServerLogicImpl.class with name: " + cinemaName);
         String SELECT_CINEMA_SQL = "";
         if (selectFromName) {
             SELECT_CINEMA_SQL = "SELECT * FROM cinema WHERE cinema_name = '" + cinemaName + "';";
-        } else if (selectFromAddress) {
+        } else if (selectFromCity) {
             SELECT_CINEMA_SQL = "SELECT * FROM cinema WHERE cinema_address LIKE 'г. " + cinemaName + "%';";
         }
 
@@ -238,6 +247,14 @@ public class DAOServerLogicImpl implements DAOServerLogic {
     }
 
     @Override
+    public List<Session> selectSessionListForMovie(String cinemaKinopoiskId, String movieName) {
+        String SQL_FOR_SELECT_SESSION_FOR_MOVIE = "SELECT * FROM session WHERE session.parent LIKE '%."
+                + cinemaKinopoiskId + "." + movieName + "'";
+        List<Session> sessionList = executeQuerySelectForSession(SQL_FOR_SELECT_SESSION_FOR_MOVIE);
+        return sessionList;
+    }
+
+    @Override
     public List<Session> selectSession(Movie movie, boolean forTypeAndPrice) {
         logger.debug("Start selectSession() in DAOServerLogicImpl.class");
         if (forTypeAndPrice) {
@@ -250,6 +267,26 @@ public class DAOServerLogicImpl implements DAOServerLogic {
             return selectSession(movie);
         }
 
+    }
+
+    @Override
+    public Map<Session, Cinema> getCinemaWithSessions(List<Session> sessionList) {
+        if (staticCinemaList.size() == 0) {
+            staticCinemaList = selectAllCinema();
+        }
+        Map<Session, Cinema> sessionCinemaMap = new HashMap<>();
+        sessionList.forEach( session -> {
+            List<Cinema> cinemaForMap = staticCinemaList.stream().
+                    filter(cinema -> StringUtils.contains(
+                            session.getParent(), cinema.getUrlToKinopoisk().
+                            substring(cinema.getUrlToKinopoisk().indexOf("cinema/")).
+                            replaceAll("\\D", ""))
+                          ).collect(Collectors.toList());
+            if (cinemaForMap != null && cinemaForMap.size() > 0) {
+                sessionCinemaMap.put(session, cinemaForMap.get(0));
+            }
+        });
+        return sessionCinemaMap;
     }
 
     @Override
@@ -414,10 +451,12 @@ public class DAOServerLogicImpl implements DAOServerLogic {
 
         DAOServerLogicImpl dao = new DAOServerLogicImpl();
         Statement s = dao.connect().createStatement();
+        List<Session> sList = dao.selectSessionListForMovie("281234", "Король Лев");
         List<Cinema> cinemas = dao.selectCinema("Москва", false, true);
-        List<Movie> movies = dao.selectAllMovie();
-        List<Session> sessions = dao.selectAllSession();
-        List<Session> sessionsMovie = dao.selectSession(movie);
+//        List<Movie> movies = dao.selectAllMovie();
+//        List<Session> sessions = dao.selectAllSession();
+//        Map<Session, Cinema> map = dao.getCinemaWithSessions(sessions);
+//        List<Session> sessionsMovie = dao.selectSession(movie);
         //s.execute("SELECT cinema_id FROM movie");
         //dao.insertCinemaToDB(cinema);
     }
