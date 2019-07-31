@@ -21,8 +21,8 @@ public interface Geolocation {
     /**
      * Определяет, достаточно ли близко находится
      *  объект к введенным координатам.
-     * @param userLatitude - широта пользователя
-     * @param userLongitude - долгота пользователя
+     * @param userLatitude - широта пользователя/центра города
+     * @param userLongitude - долгота пользователя/центра города
      * @param objectLatitude - широта объекта (кинотеатра)
      * @param objectLongitude - долгота объекта (кинотеатра)
      * @return true, если достаточно близко

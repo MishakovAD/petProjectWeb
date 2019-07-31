@@ -2,19 +2,21 @@ package com.project.CinemaTickets.backend.ServerLogic.Geolocation;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.lang.Math.acos;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 public class GeolocationImpl implements Geolocation {
     private Logger logger = LoggerFactory.getLogger(GeolocationImpl.class);
@@ -59,9 +61,19 @@ public class GeolocationImpl implements Geolocation {
     @Override
     public boolean isClosesCoordinates(double userLatitude, double userLongitude, double objectLatitude, double objectLongitude) {
         logger.info("Start isClosesCoordinates() in GeolocationImpl.class");
+        boolean close = false;
+        int R_EARTH = 6371; //km
+        double d;
+        double L;
+        d = acos(sin(userLatitude) * sin(objectLatitude) + cos(userLatitude) * cos(objectLatitude) * cos(userLongitude - objectLongitude));
+        L = R_EARTH * Math.toRadians(d);
+        System.out.println(L);
+        if (L < 20) { //TODO: определить как нибудь данный параметр. Либо сделат ьего настраиваемым.
+            close = true;
+        }
 
         logger.info("End of detectCity() in GeolocationImpl.class");
-        return false;
+        return close;
     }
 
     @Override
@@ -119,6 +131,7 @@ public class GeolocationImpl implements Geolocation {
     public static void main(String[] args) {
         GeolocationImpl g = new GeolocationImpl();
         //g.getCoordinatesFromAddress("г. Сочи, пос. Адлер, ул. Ульянова, 58");
-        g.detectCity(43.428802, 39.924095);
+        //g.detectCity(43.428802, 39.924095);
+        g.isClosesCoordinates(55.6580783,37.5143356, 55.6821594,37.5621831);
     }
 }
