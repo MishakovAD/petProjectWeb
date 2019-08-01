@@ -3,11 +3,13 @@ package com.project.CinemaTickets.backend.UserLogic;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOServerLogic;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
+import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class PlUserLogicFromDB implements PliUserLogicFromDB {
     @Override
     public List<Session> getSessionListForMovie(String movieName, String city) {

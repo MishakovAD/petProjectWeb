@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//TODO: Все sout заменить на Logger
 @Component
 public class PlUserLogicFromInternet implements PliUserLogicFromInternet {
     public static String[] TYPES_OF_SHOW_FILM = {"2D", "3D", "IMax", "Dolby Atmos"};

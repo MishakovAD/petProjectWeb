@@ -6,12 +6,14 @@ var stage = 1;
 //4- введите место
 // Конечная стадия.
 var limit = 5;
+var city = '';
 
 var dataQuery = '';
 
 var sendUrl = "timesheetquery";
 
 $(document).ready(function() {
+    city = ymaps.geolocation.city;
     $('input[name="timesheetquery_button"]').click(function() {
         createQueryBySteps (stage, $('input[name="timesheetquery"]').val());
 
@@ -64,6 +66,7 @@ $(document).ready(function() {
 function createQueryBySteps(stage, query) {
     var name;
     if (stage == 1) {
+        dataQuery = dataQuery + 'city' +':' + city + ', ';
         name = "movie"
     }
     if (stage == 2) {

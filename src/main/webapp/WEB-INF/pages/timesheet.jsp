@@ -53,25 +53,8 @@
 <!-- Для определения города по IP -->
 
 <!-- Пользовательские скрипты -->
-<script src="js/timesheet/timesheetqyery-ajax_with_button.js" type="text/javascript"></script>
-<script src="js/timesheet/geolocation.js" type="text/javascript"></script>
-<script src="js/timesheet/takeIP.js" type="text/javascript"></script> <!-- TODO: разобраться, почему не работает скрипт. Раньше работал. -->
-<script src="js/timesheet/getUserCountry.js" type="text/javascript"></script>
+<script src="js/timesheet/timesheet_controller.js" type="text/javascript"></script>
 <!-- Пользовательские скрипты -->
-
-<!-- Получение IP пользователя через сторонний сервис -->
-<script type="application/javascript">
-    function getIP(json) {
-        console.log("My public IP address is: ", json.ip);
-        sendIPToServer("getUserIP", {
-            getUserIP : json.ip
-        });
-    }
-</script>
-
-<script type="application/javascript" src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
-<!-- Получение IP пользователя через сторонний сервис -->
-
 <!-- ####################### Скрипты ####################### -->
 
 </html>

@@ -6,6 +6,7 @@ import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 //TODO: Сделать parent уникальным, так как parent по name может повторятся, необходимо так же добавить в него id элемента или еще что.
 // А так же в кинотеатр сущность добавить координаты их и можно использовать в parent. Либо urlToKinopoisk
+@Component
 public class DAOServerLogicImpl implements DAOServerLogic {
     private Logger logger = LoggerFactory.getLogger(DAOServerLogicImpl.class);
     public static List<Cinema> staticCinemaList = new ArrayList<>();
@@ -208,11 +210,11 @@ public class DAOServerLogicImpl implements DAOServerLogic {
 
         if (selectFromName && selectFromParent) {
             //так выставлять просто нельзя!
-            SQL_SELECT_FOR_MOVIE.append("SELECT * FROM movie WHERE movie_name = '" + movieName + "'");
+            SQL_SELECT_FOR_MOVIE.append("SELECT * FROM movie WHERE lower(movie_name) = LOWER('" + movieName + "')");
         } else if (selectFromParent) {
             SQL_SELECT_FOR_MOVIE.append("SELECT * FROM movie WHERE parent LIKE '" + movieName + ".%'");
         } else if (selectFromName) {
-            SQL_SELECT_FOR_MOVIE.append("SELECT * FROM movie WHERE movie_name = '" + movieName + "'");
+            SQL_SELECT_FOR_MOVIE.append("SELECT * FROM movie WHERE lower(movie_name) = LOWER('" + movieName + "')");
         }
         movieList = executeQuerySelectForMovie(SQL_SELECT_FOR_MOVIE.toString());
 

@@ -6,6 +6,7 @@ import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Component
 public class UpdaterResultImpl implements UpdaterResult {
     public static Pattern PATTERN_TIME = Pattern.compile("(\\d+):(\\d+)");
     private Logger logger = LoggerFactory.getLogger(UpdaterResultImpl.class);
@@ -38,7 +40,7 @@ public class UpdaterResultImpl implements UpdaterResult {
         List<Session> resultList;
         if (StringUtils.contains(type, "2")) {
             resultList = sessionList.stream().filter( session -> StringUtils.equalsAnyIgnoreCase(session.getTypeOfShow(), "2D")).collect(Collectors.toList());
-        } else if (StringUtils.contains(type, "IMAX")) {
+        } else if (StringUtils.containsIgnoreCase(type, "IMAX")) {
             resultList = sessionList.stream().filter( session -> StringUtils.equalsAnyIgnoreCase(session.getTypeOfShow(), "IMAX")).collect(Collectors.toList());
         } else if (StringUtils.contains(type, "3")) {
             resultList = sessionList.stream().filter( session -> StringUtils.equalsAnyIgnoreCase(session.getTypeOfShow(), "3D")).collect(Collectors.toList());
@@ -66,13 +68,22 @@ public class UpdaterResultImpl implements UpdaterResult {
         Map<Session, Cinema> sessionCinemaMap = daoServerLogic.getCinemaWithSessions(sessionList);
 
         Iterator iterator = sessionCinemaMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry pair = (Map.Entry) iterator.next();
-            Cinema cinema = (Cinema) pair.getValue();
-            Session session = (Session) pair.getKey();
-            if (StringUtils.containsIgnoreCase(cinema.getCinemaAddress(), place)) {
-                resultMap.put(session, cinema);
-            } else if (StringUtils.containsIgnoreCase(cinema.getCinemaUnderground(), place)) {
+        if (place != null && !place.isEmpty() && !place.equals("")) {
+            while (iterator.hasNext()) {
+                Map.Entry pair = (Map.Entry) iterator.next();
+                Cinema cinema = (Cinema) pair.getValue();
+                Session session = (Session) pair.getKey();
+                if (StringUtils.containsIgnoreCase(cinema.getCinemaAddress(), place)) {
+                    resultMap.put(session, cinema);
+                } else if (StringUtils.containsIgnoreCase(cinema.getCinemaUnderground(), place)) {
+                    resultMap.put(session, cinema);
+                }
+            }
+        } else {
+            while (iterator.hasNext()) {
+                Map.Entry pair = (Map.Entry) iterator.next();
+                Cinema cinema = (Cinema) pair.getValue();
+                Session session = (Session) pair.getKey();
                 resultMap.put(session, cinema);
             }
         }
