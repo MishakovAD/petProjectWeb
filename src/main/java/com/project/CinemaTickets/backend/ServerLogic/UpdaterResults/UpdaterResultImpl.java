@@ -112,7 +112,7 @@ public class UpdaterResultImpl implements UpdaterResult {
      * @return - true, если время сеанса нам подходит и false - если нет.
      */
     private boolean isRrquiredPeriod (String userTime, String movieTime) {
-        logger.info("Start method isRrquiredPeriod() at " + LocalDateTime.now());
+        logger.debug("Start method isRrquiredPeriod() in UpdaterResultImpl.class at " + LocalDateTime.now());
         //TODO: сделать возмость "сейчас", чтобы можно было купить билет на ближайший сеанс.
         //TODO: Так же необходимо сделать проверку на время 00.00, 00 00, 00-00 и другие возможные варианты
         // и если что, подгонять под них именно в этом меоде. чтобы не заюотиться об этом раньше

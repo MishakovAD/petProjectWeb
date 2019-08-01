@@ -15,6 +15,7 @@ import java.util.List;
 public class JSONUtils {
     private static Logger logger = LoggerFactory.getLogger(JSONUtils.class);
 
+    //TODO: разделить на 3 разных метода
     public static JSONObject parseCinemaToJSON(Cinema cinema) {
         logger.debug("Start method parseCinemaToJSON() at " + LocalDateTime.now());
         JSONObject cinemaJSON = new JSONObject();

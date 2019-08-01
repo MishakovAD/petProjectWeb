@@ -169,9 +169,9 @@ public class DAOServerLogicImpl implements DAOServerLogic {
         logger.debug("Start selectCinema() in DAOServerLogicImpl.class with name: " + cinemaName);
         String SELECT_CINEMA_SQL = "";
         if (selectFromName) {
-            SELECT_CINEMA_SQL = "SELECT * FROM cinema WHERE cinema_name = '" + cinemaName + "';";
+            SELECT_CINEMA_SQL = "SELECT * FROM cinema WHERE LOWER(cinema_name) = lower('" + cinemaName + "');";
         } else if (selectFromCity) {
-            SELECT_CINEMA_SQL = "SELECT * FROM cinema WHERE cinema_address LIKE 'г. " + cinemaName + "%';";
+            SELECT_CINEMA_SQL = "SELECT * FROM cinema WHERE LOWER(cinema_address) LIKE lower('г. " + cinemaName + "%');";
         }
 
         List<Cinema> cinemaList = executeQuerySelectForCinema(SELECT_CINEMA_SQL);
@@ -210,11 +210,11 @@ public class DAOServerLogicImpl implements DAOServerLogic {
 
         if (selectFromName && selectFromParent) {
             //так выставлять просто нельзя!
-            SQL_SELECT_FOR_MOVIE.append("SELECT * FROM movie WHERE lower(movie_name) = LOWER('" + movieName + "')");
+            SQL_SELECT_FOR_MOVIE.append("SELECT * FROM movie WHERE LOWER(movie_name) = lower('" + movieName + "')");
         } else if (selectFromParent) {
-            SQL_SELECT_FOR_MOVIE.append("SELECT * FROM movie WHERE parent LIKE '" + movieName + ".%'");
+            SQL_SELECT_FOR_MOVIE.append("SELECT * FROM movie WHERE LOWER(parent) LIKE lower('" + movieName + ".%')");
         } else if (selectFromName) {
-            SQL_SELECT_FOR_MOVIE.append("SELECT * FROM movie WHERE lower(movie_name) = LOWER('" + movieName + "')");
+            SQL_SELECT_FOR_MOVIE.append("SELECT * FROM movie WHERE LOWER(movie_name) = lower('" + movieName + "')");
         }
         movieList = executeQuerySelectForMovie(SQL_SELECT_FOR_MOVIE.toString());
 
@@ -242,7 +242,7 @@ public class DAOServerLogicImpl implements DAOServerLogic {
     @Override
     public List<Session> selectSession(Movie movie) {
         logger.debug("Start selectSession() in DAOServerLogicImpl.class");
-        String SQL_FOR_SELECT_SESSION = "SELECT * FROM session WHERE parent LIKE '%." + movie.getMovieName() + "'";
+        String SQL_FOR_SELECT_SESSION = "SELECT * FROM session WHERE LOWER(parent) LIKE lower('%." + movie.getMovieName() + "')";
         List<Session> sessionList = executeQuerySelectForSession(SQL_FOR_SELECT_SESSION);
         logger.debug("End of selectSession() in DAOServerLogicImpl.class");
         return sessionList;
@@ -250,8 +250,8 @@ public class DAOServerLogicImpl implements DAOServerLogic {
 
     @Override
     public List<Session> selectSessionListForMovie(String cinemaKinopoiskId, String movieName) {
-        String SQL_FOR_SELECT_SESSION_FOR_MOVIE = "SELECT * FROM session WHERE session.parent LIKE '%."
-                + cinemaKinopoiskId + "." + movieName + "'";
+        String SQL_FOR_SELECT_SESSION_FOR_MOVIE = "SELECT * FROM session WHERE LOWER(session.parent) LIKE lower('%."
+                + cinemaKinopoiskId + "." + movieName + "')";
         List<Session> sessionList = executeQuerySelectForSession(SQL_FOR_SELECT_SESSION_FOR_MOVIE);
         return sessionList;
     }
@@ -261,7 +261,7 @@ public class DAOServerLogicImpl implements DAOServerLogic {
         logger.debug("Start selectSession() in DAOServerLogicImpl.class");
         if (forTypeAndPrice) {
             String SQL_FOR_SELECT_SESSION = "SELECT * FROM session WHERE " +
-                    "parent LIKE '" + movie.getParent() + "." + movie.getMovieName() + "'";
+                    "LOWER(parent) LIKE lower('" + movie.getParent() + "." + movie.getMovieName() + "')";
             List<Session> sessionList = executeQuerySelectForSession(SQL_FOR_SELECT_SESSION);
             logger.debug("End of selectSession() in DAOServerLogicImpl.class");
             return sessionList;

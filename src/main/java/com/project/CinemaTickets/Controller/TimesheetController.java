@@ -23,6 +23,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class TimesheetController {
     private List<Cinema> cinemaList;
     private List<Movie> movieList;
     private List<Session> sessionList;
-    Map<Session, Cinema> sessionCinemaMap;
+    Map<Session, Cinema> sessionCinemaMap = new HashMap<>();
 
     private Logger logger = LoggerFactory.getLogger(TimesheetController.class);
 
@@ -51,33 +52,37 @@ public class TimesheetController {
         logger.info("Start method timesheetAllQuery() at " + LocalDateTime.now());
         String allQuery = request.getParameter("allQuery").trim();
         String content = "allQuery: " + allQuery;
-        System.out.println(content);
 
         Map<String, String> queryMapAfterAnalys = QueryАnalysis.parseQuerye(allQuery);
-        queryMapAfterAnalys.forEach((key, value) -> {
-            if (key.equals("movie")) {
-                String movieName = queryMapAfterAnalys.get("movie");
-                String city = queryMapAfterAnalys.get("city");
+        queryMapAfterAnalys.forEach((key, value) -> System.out.println(key + "-" + value));
 
-                if (city != null && !city.isEmpty() && !city.equals("")) {
-                   sessionList = pliUserLogicFromDB.getSessionListForMovie(movieName, city);
-                }
+        String movieName = queryMapAfterAnalys.get("movie");
+        String city = queryMapAfterAnalys.get("user_city");
 
-            } else if (key.equals("time")) {
-                String time = queryMapAfterAnalys.get("time");
-                sessionList = updaterResult.updateFromTime(sessionList, time);
-            } else if (key.equals("type")) {
-                String type = queryMapAfterAnalys.get("type");
-                sessionList = updaterResult.updateFromType(sessionList, type);
-            } else if (key.equals("place")) {
-                String place = queryMapAfterAnalys.get("place");
-                sessionCinemaMap = updaterResult.updateFromPlace(sessionList, place);
-            }
+        if (city != null && !city.isEmpty() && !city.equals("")) {
+            sessionList = pliUserLogicFromDB.getSessionListForMovie(movieName, city);
+            System.out.println("###################" + sessionList.size());
+        }
 
-            double latitude = Double.parseDouble(queryMapAfterAnalys.get("latitude"));
-            double longitude = Double.parseDouble(queryMapAfterAnalys.get("longitude"));
+        String time = queryMapAfterAnalys.get("time");
+        if (time != null && !time.isEmpty() && !time.equals("")) {
+            sessionList = updaterResult.updateFromTime(sessionList, time);
+        }
 
-        });
+        String type = queryMapAfterAnalys.get("type");
+        if (type != null && !type.isEmpty() && !type.equals("")) {
+            sessionList = updaterResult.updateFromType(sessionList, type);
+        }
+        System.out.println("###################" + sessionList.size());
+
+        String place = queryMapAfterAnalys.get("place");
+        if (place != null && !place.isEmpty() && !place.equals("")) {
+            sessionCinemaMap = updaterResult.updateFromPlace(sessionList, place);
+        }
+
+        double latitude = Double.parseDouble(queryMapAfterAnalys.get("latitude"));
+        double longitude = Double.parseDouble(queryMapAfterAnalys.get("longitude"));
+
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("query", allQuery);
@@ -86,7 +91,7 @@ public class TimesheetController {
         writer.print(jsonObject);
         writer.flush();
         writer.close();
-//        logger.info("End of method respTimesheet() at " + LocalDateTime.now() + " - with result.size()= " + cinemaList.size());
+        logger.info("End of method respTimesheet() at " + LocalDateTime.now() + " - with sessionCinemaMap.size()= " + sessionCinemaMap.size());
     }
 
 

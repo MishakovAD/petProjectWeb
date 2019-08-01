@@ -1,6 +1,7 @@
 package com.project.CinemaTickets.backend.UserLogic;
 
 import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOServerLogic;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOServerLogicImpl;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
 import org.springframework.stereotype.Component;
@@ -38,6 +39,12 @@ public class PlUserLogicFromDB implements PliUserLogicFromDB {
     @Override
     public Cinema getCinemaFromDB(String cinemaName, String date) {
         return null;
+    }
+
+    public static void main(String[] args) {
+        PlUserLogicFromDB p = new PlUserLogicFromDB();
+        p.setDaoServerLogic(new DAOServerLogicImpl());
+        p.getSessionListForMovie("анна", "Москва");
     }
 
 

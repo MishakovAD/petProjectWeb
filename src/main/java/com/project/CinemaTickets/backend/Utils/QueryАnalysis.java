@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 public class QueryАnalysis {
     private static Logger logger = LoggerFactory.getLogger(QueryАnalysis.class);
+    private static int counterForVreakRecursion = 0;
 
     public static Pattern PATTERN_IP_ADDRESS = Pattern.compile("[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}");
 
@@ -45,6 +46,21 @@ public class QueryАnalysis {
                 String value = queryPart.replaceAll(key + ":", "");
                 String movieName = formatMovieName(value);
                 queryesMap.put(key, movieName);
+            } else if (queryPart.contains("time")) {
+                String key = queryPart.split(":")[0];
+                String value = queryPart.replaceAll(key + ":", "");
+                String time = formatTime(value);
+                queryesMap.put(key, time);
+            } else if (queryPart.contains("type")) {
+                String key = queryPart.split(":")[0];
+                String value = queryPart.replaceAll(key + ":", "");
+                String type = formatType(value);
+                queryesMap.put(key, type);
+            } else if (queryPart.contains("place")) {
+                String key = queryPart.split(":")[0];
+                String value = queryPart.replaceAll(key + ":", "");
+                String place = formatPlace(value);
+                queryesMap.put(key, place);
             }
         });
         logger.debug("End of method parseQuerye() at " + LocalDateTime.now());
@@ -66,15 +82,34 @@ public class QueryАnalysis {
     }
 
     private static String formatTime (String time) {
-        return null;
+        counterForVreakRecursion++;
+        if (counterForVreakRecursion > 3) {
+            time = time.substring(0, 4);
+        }
+        String resultTime = time.trim();
+        if (resultTime.length() > 5) {
+            resultTime = resultTime.replaceAll("\\D", "");
+            resultTime = formatTime(resultTime);
+        } else if (resultTime.length() == 3) {
+            char[] timeArr = resultTime.toCharArray();
+            resultTime = timeArr[0] + ":" + timeArr[1] + "" + timeArr[2];
+        } else if (resultTime.length() == 4) {
+            char[] timeArr = resultTime.toCharArray();
+            resultTime = timeArr[0] + "" + timeArr[1] + ":" + timeArr[2] + "" + timeArr[3];
+        }
+        return resultTime;
     }
 
     private static String formatType (String type) {
-        return null;
+        //TODO: придумать, как можно форматировать тип
+        String resultType = type;
+        return resultType;
     }
 
     private static String formatPlace (String place) {
-        return null;
+        //TODO: придумать, как можно форматировать место
+        String resultPlase = place;
+        return resultPlase;
     }
 
     private static String formatCoordinates (String coordinates) {
@@ -82,8 +117,9 @@ public class QueryАnalysis {
     }
 
     public static void main(String[] args) {
-        Map<String, String> map = parseQuerye("lat : 55.6844903, lng : 37.5954383}user_ip:185.89.8.146}user_city:Москва}movie:54321}time:54321}type:54321}place:54321}");
-        map.forEach( (key, value) -> System.out.println(key + "-" + value) );
-        System.out.println(PATTERN_IP_ADDRESS.matcher("192.1388.2.2").matches());
+//        Map<String, String> map = parseQuerye("lat : 55.6844903, lng : 37.5954383}user_ip:185.89.8.146}user_city:Москва}movie:54321}time:54321}type:54321}place:54321}");
+//        map.forEach( (key, value) -> System.out.println(key + "-" + value) );
+//        System.out.println(PATTERN_IP_ADDRESS.matcher("192.1388.2.2").matches());
+        System.out.println(formatTime("123456"));
     }
 }
