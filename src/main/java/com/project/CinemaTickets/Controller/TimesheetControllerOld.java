@@ -1,7 +1,9 @@
 package com.project.CinemaTickets.Controller;
 
 import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.UserLogic.PliUserLogicFromInternet;
+import com.project.CinemaTickets.backend.Utils.JSONUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -16,9 +18,12 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TimesheetControllerOld {
     private Logger logger = LoggerFactory.getLogger(TimesheetControllerOld.class);
+    private List<Cinema> cinemaList;
 
     //TODO: сделать потокобезопасную HashMap для многих пользователей, где ключ - сессия, которую получаем из реквест, а значение - List<Cinema>
     @RequestMapping("/timesheetquery")
@@ -87,30 +92,30 @@ public class TimesheetControllerOld {
 
         String content = "timesheetquery_type: " + timesheetquery_place;
 
-//        List<Cinema> foursIterationCinemaList = pliUserLogic.updateCinemaListFromPlace(cinemaList, timesheetquery_place);
-//        cinemaList = new ArrayList<>(foursIterationCinemaList);
+        List<Cinema> foursIterationCinemaList = pliUserLogic.updateCinemaListFromPlace(cinemaList, timesheetquery_place);
+        cinemaList = new ArrayList<>(foursIterationCinemaList);
 
 
         response.setContentType("application/json");
         PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
 
         JSONArray jsonArray = new JSONArray();
-//        cinemaList.stream().forEach((cinema) -> {
-//            cinema.getMovieList().stream().forEach((movie) -> {
-//                try {
-//                    movie.getSession().setUrl(pliParserKinopoisk.getUrlForBuyTicketsFromInternet(cinema, movie));
-//                    Thread.sleep(5000);
-//                    JSONObject jsonObject = JSONUtils.parseCinemaToJSON(cinema);
-//                    jsonArray.put(jsonObject);
-//                } catch (IOException | InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            });
-//        });
+        cinemaList.stream().forEach((cinema) -> {
+            cinema.getMovieList().stream().forEach((movie) -> {
+                try {
+                    movie.getSession().setUrl(pliParserKinopoisk.getUrlForBuyTicketsFromInternet(cinema, movie));
+                    Thread.sleep(5000);
+                    JSONObject jsonObject = JSONUtils.parseCinemaToJSONFromInternet(cinema);
+                    jsonArray.put(jsonObject);
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        });
         writer.print(jsonArray);
         writer.flush();
         writer.close();
-//        logger.info("End of method respTimesheetPlace() at " + LocalDateTime.now() + " - with result.size()= " + foursIterationCinemaList.size());
+        logger.info("End of method respTimesheetPlace() at " + LocalDateTime.now() + " - with result.size()= " + foursIterationCinemaList.size());
 
     }
 

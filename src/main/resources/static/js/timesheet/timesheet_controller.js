@@ -115,10 +115,67 @@ function sendAllQuery(url, data) {
         // Отменим кеширование.
         cache: false,
         success: function (response) {
-            if (stage == 4) {
-                console.log("Succsess method")
-                getResponse(response);
-            }
+            console.log("Succsess method")
+            getResponse(response);
         }
     });
+}
+
+function getResponse(response) {
+    try {
+        console.log("Length of Array: " + response.length);
+        console.log(response);
+        var JSONresponse = JSON.parse(response);
+        console.log("@@@@@@JSON@@@@@@@@@ " + JSONresponse);
+        var count = 0;
+        for (var i = 0; i < response.length; i++) {
+            console.log("####Counter#### : " + count);
+            var data = response[i];
+
+            var cinemaName = data["cinemaName"];
+            var underground = data["cinemaUnderground"];
+            var movieList = data["movieList"];
+
+
+            //var session = data["movieList"].session;
+            var movieName = [];
+            var price = [];
+            var type = [];
+            var time = [];
+            var url = [];
+
+            for (var j = 0; j < movieList.length; j++) {
+                var session = movieList[j]["session"];
+                movieName[j] = movieList[j]["movieName"];
+                price[j] = session["sessionPrice"];
+                type[j] = session["sessionType"];
+                time[j] = session["sessionTime"];
+                url[j] = session["sessionUrl"];
+
+                // элемент-список UL
+                var list = document.getElementById('list');
+
+                // новый элемент
+                var li = document.createElement('LI');
+                li.innerHTML = cinemaName + " - " + underground + " - " + " - " + movieName[j]
+                    + " - " + price[j] + " - " + type[j] + " - " + time[j] + url[j];
+                var liUrl = document.createElement('li');
+                liUrl.href = url[j];
+
+                // добавление в конец
+                list.appendChild(li);
+                list.appendChild(liUrl);
+
+
+                console.log(cinemaName + " - " + underground + " - " + " - " + movieName[j]
+                    + " - " + price[j] + " - " + type[j] + " - " + time[j] + "\n");
+            }
+            count++;
+
+        }
+    } catch(err) {
+        console.log(err.message + " in " + response);
+        return;
+    }
+
 }

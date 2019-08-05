@@ -1,5 +1,6 @@
 package com.project.CinemaTickets.backend.Utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,9 +73,32 @@ public class QueryАnalysis {
     }
 
     private static String formatMovieName (String value) {
-        //TODO: добавить проверку на случайный английский текст и перевод на русский
-        String movieName = value;
+        //TODO: добавить проверку на случайный английский текст и перевод на русский.
+        // Лучше сделать на стороне клиента, или же вообще просто предоставить выбор из всех возможных, а не заставлять вводить как угодно
+        String movieName;
+        boolean russianText = isRussiaText(value);
+        if (russianText) {
+            movieName = value;
+        } else {
+            movieName = "Текст введен на английском, повторите попытку";
+        }
         return movieName;
+    }
+
+    private static boolean isRussiaText(String text) {
+        int counterOfRussianChars = 0;
+        char[] charArr = text.toCharArray();
+        for (char c : charArr) {
+            String chars = c + "";
+            if (chars.matches("[а-яА-Я]")) {
+                counterOfRussianChars++;
+            }
+        }
+
+        if (counterOfRussianChars > 3) {
+            return true;
+        }
+        return false;
     }
 
     private static String formatDate (String date) {
@@ -101,8 +125,18 @@ public class QueryАnalysis {
     }
 
     private static String formatType (String type) {
-        //TODO: придумать, как можно форматировать тип
-        String resultType = type;
+        String resultType;
+        if (StringUtils.containsIgnoreCase(type, "max")) {
+            resultType = "IMax";
+        } else if (StringUtils.containsIgnoreCase(type, "3")) {
+            resultType = "3D";
+        } else if (StringUtils.containsIgnoreCase(type, "2")) {
+            resultType = "2D";
+        } else if (StringUtils.containsIgnoreCase(type, "dolby")) {
+            resultType = "Dolby";
+        } else {
+            resultType = "2D";
+        }
         return resultType;
     }
 
@@ -121,5 +155,6 @@ public class QueryАnalysis {
 //        map.forEach( (key, value) -> System.out.println(key + "-" + value) );
 //        System.out.println(PATTERN_IP_ADDRESS.matcher("192.1388.2.2").matches());
         System.out.println(formatTime("123456"));
+        System.out.println(isRussiaText("asdsfrefdsf"));
     }
 }

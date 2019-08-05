@@ -237,8 +237,13 @@ public class PlServer implements PliServer {
         p.setPliProxyServer(new PlProxyServer());
         p.setDaoServerLogic(new DAOServerLogicImpl());
 //        p.emulationHumanActivity();
-        p.getAllCinemasFromKinopoisk("");
+//        p.getAllCinemasFromKinopoisk("");
 //        System.out.println("End emulation");
+        for (int i = 0; i <4 ; i++) {
+            Document document = new PlProxyServer().getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/1/cinema/280891/");
+            Cinema cinema = new PlParserKinopoisk().getCinemaFromDocument(document);
+            new DAOServerLogicImpl().insertCinemaToDB(cinema);
+        }
     }
 
 

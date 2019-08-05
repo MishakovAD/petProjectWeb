@@ -95,4 +95,18 @@ public class Session {
     public void setParent(String parent) {
         this.parent = parent;
     }
+
+    @Override
+    public String toString() {
+        return "Session{" +
+                "session_id=" + session_id +
+                ", timeOfShow='" + timeOfShow + '\'' +
+                ", typeOfShow='" + typeOfShow + '\'' +
+                ", price='" + price + '\'' +
+                ", url='" + url + '\'' +
+                ", sessionDate='" + sessionDate + '\'' +
+                ", movie=" + movie +
+                ", parent='" + parent + '\'' +
+                '}';
+    }
 }

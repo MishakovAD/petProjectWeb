@@ -124,4 +124,18 @@ public class Cinema {
         movieList.remove(movie);
     }
 
+    @Override
+    public String toString() {
+        return "Cinema{" +
+                "cinema_id=" + cinema_id +
+                ", cinemaName='" + cinemaName + '\'' +
+                ", cinemaAddress='" + cinemaAddress + '\'' +
+                ", cinemaUnderground='" + cinemaUnderground + '\'' +
+                ", urlToAfisha='" + urlToAfisha + '\'' +
+                ", urlToYandexAfisha='" + urlToYandexAfisha + '\'' +
+                ", urlToKinopoisk='" + urlToKinopoisk + '\'' +
+                ", infoAboutCinema='" + infoAboutCinema + '\'' +
+                ", movieList=" + movieList +
+                '}';
+    }
 }

@@ -30,13 +30,13 @@ public class DAOServerLogicImpl implements DAOServerLogic {
     private Logger logger = LoggerFactory.getLogger(DAOServerLogicImpl.class);
     public static List<Cinema> staticCinemaList = new ArrayList<>();
 
-    private final String url = "jdbc:postgresql://localhost/petprojectweb?currentSchema=petproject";
-    private final String user = "home";
-    private final String password = "home";
+//    private final String url = "jdbc:postgresql://localhost/petprojectweb?currentSchema=petproject";
+//    private final String user = "home";
+//    private final String password = "home";
 
-//    private final String url = "jdbc:postgresql://localhost/petprojectweb"; //WORK
-//    private final String user = "postgres";
-//    private final String password = "postgres";
+    private final String url = "jdbc:postgresql://localhost/petprojectweb"; //WORK
+    private final String user = "postgres";
+    private final String password = "postgres";
 
 
 
@@ -334,16 +334,18 @@ public class DAOServerLogicImpl implements DAOServerLogic {
         } catch (SQLException e) {
             logger.error("Error in DAOServerLogicImpl.class", e);
         }
-
         return conn;
     }
 
     private void execureQuery (String query) {
         Statement stmnt = null;
+        Connection connection = null;
         try {
-            stmnt = connect().createStatement();
+            connection = connect();
+            stmnt = connection.createStatement();
             stmnt.execute(query);
             stmnt.close();
+            connection.close();
         } catch (SQLException e) {
             logger.error("Error in DAOServerLogicImpl.class in exequte query", e);
         }
@@ -353,8 +355,10 @@ public class DAOServerLogicImpl implements DAOServerLogic {
         Statement stmnt = null;
         List<Cinema> cinemaList = new ArrayList<>();
         Cinema cinema;
+        Connection connection = null;
         try {
-            stmnt = connect().createStatement();
+            connection = connect();
+            stmnt = connection.createStatement();
             ResultSet resultSet = stmnt.executeQuery(queryCinema);
             while (resultSet.next()) {
                 cinema = new Cinema();
@@ -366,6 +370,7 @@ public class DAOServerLogicImpl implements DAOServerLogic {
                 cinemaList.add(cinema);
             }
             stmnt.close();
+            connection.close();
         } catch (SQLException e) {
             logger.error("Error in DAOServerLogicImpl.class in exequte query", e);
         }
@@ -373,11 +378,13 @@ public class DAOServerLogicImpl implements DAOServerLogic {
     }
 
     private List<Movie> executeQuerySelectForMovie(String queryMovie) {
+        Connection connection = null;
         Statement stmnt = null;
         List<Movie> movieList = new ArrayList<>();
         Movie movie;
         try {
-            stmnt = connect().createStatement();
+            connection = connect();
+            stmnt = connection.createStatement();
             ResultSet resultSet = stmnt.executeQuery(queryMovie);
             while (resultSet.next()) {
                 movie = new Movie();
@@ -387,6 +394,7 @@ public class DAOServerLogicImpl implements DAOServerLogic {
                 movieList.add(movie);
             }
             stmnt.close();
+            connection.close();
         } catch (SQLException e) {
             logger.error("Error in DAOServerLogicImpl.class in exequte query", e);
         }
@@ -394,11 +402,13 @@ public class DAOServerLogicImpl implements DAOServerLogic {
     }
 
     private List<Session> executeQuerySelectForSession(String querySession) {
+        Connection connection = null;
         Statement stmnt = null;
         List<Session> sessionList = new ArrayList<>();
         Session session;
         try {
-            stmnt = connect().createStatement();
+            connection = connect();
+            stmnt = connection.createStatement();
             ResultSet resultSet = stmnt.executeQuery(querySession);
             while (resultSet.next()) {
                 session = new Session();
@@ -411,6 +421,7 @@ public class DAOServerLogicImpl implements DAOServerLogic {
                 sessionList.add(session);
             }
             stmnt.close();
+            connection.close();
         } catch (SQLException e) {
             logger.error("Error in DAOServerLogicImpl.class in exequte query", e);
         }
