@@ -15,6 +15,26 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- ####################### Скрипты ####################### -->
+    <!-- Подключение библиотек -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath} webjars/bootstrap/4.1.1/css/bootstrap.min.css">
+    <script src="${pageContext.request.contextPath} webjars/jquery/3.3.1-1/jquery.min.js"></script>
+    <!--<script src="js/timesheet/src/jquery.autocomplete.js" type="text/javascript"></script> -->
+    <script src="js/timesheet/src/jquery.suggest.js" type="text/javascript"></script>
+    <script src="js/timesheet/src/jquery-ui.js" type="text/javascript"></script>
+    <!-- Подключение библиотек -->
+
+    <!-- Для определения города по IP -->
+    <script src="http://api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+    <!-- Для определения города по IP -->
+
+    <!-- Пользовательские скрипты -->
+    <script src="js/timesheet/timesheet_controller.js" type="text/javascript"></script>
+    <script src="js/timesheet/timesheet_autocomplete.js" type="text/javascript"></script>
+    <script src="js/timesheet/timesheet_user_interface.js" type="text/javascript"></script>
+    <!-- Пользовательские скрипты -->
+    <!-- ####################### Скрипты ####################### -->
+
     <title>Билеты в кино</title>
 </head>
 <body>
@@ -27,12 +47,14 @@
 </div>
 
 <div class="test_query">
-    <!--https://netpeak.net/ru/blog/sign_ups_and_log_ins/-->
-    <input id="query" name="q" type="text" /></pre>
-
+    <!--https://netpeak.net/ru/blog/sign_ups_and_log_ins/
+    https://api.jqueryui.com/autocomplete/#entry-examples
+    suggest????-->
+    <input class="query" id="query" name="q" type="text" /></pre>
 </div>
 
-<div class="response" id="response">
+
+<!-- <div class="response" id="response">
     <strong>Ответ сервлета </strong>:
     <span id="ajaxTimesheetQuery"></span>
     <br/>
@@ -40,30 +62,12 @@
     <ul id="list">
 
     </ul>
-</div>
+</div> -->
 
 <div id="user-city"></div>
 <div id="user-region"></div>
 <div id="user-country"></div>
 
 </body>
-
-<!-- ####################### Скрипты ####################### -->
-<!-- Подключение библиотек -->
-<link rel="stylesheet" href="${pageContext.request.contextPath} webjars/bootstrap/4.1.1/css/bootstrap.min.css">
-<script src="${pageContext.request.contextPath} webjars/jquery/3.3.1-1/jquery.min.js"></script>
-<script src="js/timesheet/src/jquery.autocomplete.js" type="text/javascript"></script>
-<!-- Подключение библиотек -->
-
-<!-- Для определения города по IP -->
-<script src="http://api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
-<!-- Для определения города по IP -->
-
-<!-- Пользовательские скрипты -->
-<script src="js/timesheet/timesheet_controller.js" type="text/javascript"></script>
-<script src="js/timesheet/timesheet_autocomplete.js" type="text/javascript"></script>
-<script src="js/timesheet/timesheet_user_interface.js" type="text/javascript"></script>
-<!-- Пользовательские скрипты -->
-<!-- ####################### Скрипты ####################### -->
 
 </html>
