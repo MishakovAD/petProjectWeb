@@ -85,26 +85,77 @@ public class TimesheetController {
         double latitude = Double.parseDouble(queryMapAfterAnalys.get("latitude"));
         double longitude = Double.parseDouble(queryMapAfterAnalys.get("longitude"));
 
-        JSONArray sessionCinemaArray = new JSONArray();
-        Map<JSONObject, JSONObject> jsonMapCinemaSession = new HashMap<>();
+        JSONObject responseObject;
+        JSONArray responseArray = new JSONArray();
+
         for (Map.Entry entrySet : sessionCinemaMap.entrySet()) {
+            responseObject = new JSONObject();
             Session session = (Session) entrySet.getKey();
             Cinema cinema = (Cinema) entrySet.getValue();
-            JSONObject cinemaObject = JSONUtils.parseCinemaToJSON(cinema);
-            JSONObject sessionObject = JSONUtils.parseSessionToJSON(session);
-            jsonMapCinemaSession.put(sessionObject, cinemaObject);
+            responseObject.put("cinemaName", cinema.getCinemaName());
+            responseObject.put("cinemaAddress", cinema.getCinemaAddress());
+            responseObject.put("cinemaUnderground", cinema.getCinemaUnderground());
+            responseObject.put("cinemaUrl", cinema.getUrlToKinopoisk());
+            responseObject.put("sessionType", session.getTypeOfShow());
+            responseObject.put("sessionTime", session.getTimeOfShow());
+            responseObject.put("sessionPrice", session.getPrice());
+            responseObject.put("sessionDate", session.getSessionDate());
+            responseObject.put("sesssionUrl", session.getUrl());
+            responseObject.put("sesssionParent", session.getParent());
+            responseArray.put(responseObject);
         }
-        sessionCinemaArray.put(jsonMapCinemaSession);
-
-        sessionCinemaMap.forEach( (key, value) -> System.out.println(key.toString() + " \n " + value.toString() + "\n-----------------\n"));
-
 
         response.setContentType("application/json");
         PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
-        writer.print(sessionCinemaArray);
+        writer.print(responseArray);
         writer.flush();
         writer.close();
         logger.info("End of method respTimesheet() at " + LocalDateTime.now() + " - with sessionCinemaMap.size()= " + sessionCinemaMap.size());
+    }
+
+    @RequestMapping("/get_available_movie")
+    public void getAvailableMovie(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("Start method getAvailableMovie() at " + LocalDateTime.now());
+        String city = request.getParameter("user_city");
+
+        JSONObject obj = new JSONObject();
+        obj.put("movies", "доступные фильмы,Форсаж,Человек паук"); //перечесление без пробелов для корректного разделения.
+
+        response.setContentType("application/json");
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
+        writer.print(obj);
+        writer.flush();
+        writer.close();
+        logger.info("End of method getAvailableMovie() at " + LocalDateTime.now());
+    }
+
+    @RequestMapping("/timesheet_autocomplete_movie")
+    public void autocompleteMovie(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("Start method getAvailableMovie() at " + LocalDateTime.now());
+        String city = request.getParameter("user_city");
+
+        JSONObject obj = new JSONObject();
+        obj.put("movies", "доступные фильмы,Форсаж,Человек паук"); //перечесление без пробелов для корректного разделения.
+
+        response.setContentType("application/json");
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
+        writer.print(obj);
+        writer.flush();
+        writer.close();
+        logger.info("End of method getAvailableMovie() at " + LocalDateTime.now());
+    }
+
+    @RequestMapping("/get_cinema_in_city")
+    public void getCinemaInUserCity(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("Start method getCinemaInUserCity() at " + LocalDateTime.now());
+        String city = request.getParameter("user_city");
+
+        response.setContentType("application/json");
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
+        writer.print("доступные кинотеатры");
+        writer.flush();
+        writer.close();
+        logger.info("End of method getCinemaInUserCity() at " + LocalDateTime.now());
     }
 
 

@@ -35,7 +35,7 @@ function getGeolocation() {
                 console.log("В доступе отказано!");
                 var latitude = 0;
                 var longitude = 0;
-                var data = 'lat : "' + latitude + '", lng : ' + longitude + '}';
+                var data = 'lat : ' + latitude + ', lng : ' + longitude + '}';
                 dataQuery = dataQuery + data;
             }
         });

@@ -277,11 +277,12 @@ public class DAOServerLogicImpl implements DAOServerLogic {
             staticCinemaList = selectAllCinema();
         }
         Map<Session, Cinema> sessionCinemaMap = new HashMap<>();
+        //TODO: очень долгий метод. Переделать структуру БД со ссылками друг на друга. Плюс падает ошибка, если urlToKinopoisk пустой.
         sessionList.forEach( session -> {
             List<Cinema> cinemaForMap = staticCinemaList.stream().
                     filter(cinema -> StringUtils.contains(
-                            session.getParent(), cinema.getUrlToKinopoisk().
-                            substring(cinema.getUrlToKinopoisk().indexOf("cinema/")).
+                            session.getParent(),
+                            StringUtils.substring(cinema.getUrlToKinopoisk(), cinema.getUrlToKinopoisk().indexOf("cinema/")).
                             replaceAll("\\D", ""))
                           ).collect(Collectors.toList());
             if (cinemaForMap != null && cinemaForMap.size() > 0) {

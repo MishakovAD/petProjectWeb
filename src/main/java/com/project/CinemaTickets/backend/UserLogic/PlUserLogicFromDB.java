@@ -3,6 +3,7 @@ package com.project.CinemaTickets.backend.UserLogic;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOServerLogic;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOServerLogicImpl;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,16 @@ public class PlUserLogicFromDB implements PliUserLogicFromDB {
             }
         });
         return sessionListForStart;
+    }
+
+    @Override
+    public List<Movie> getMovieListForUserCity(String city) {
+        return null;
+    }
+
+    @Override
+    public List<Cinema> getCinemaListForUserCity(String city) {
+        return null;
     }
 
     @Override
