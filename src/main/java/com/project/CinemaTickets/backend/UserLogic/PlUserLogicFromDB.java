@@ -29,7 +29,14 @@ public class PlUserLogicFromDB implements PliUserLogicFromDB {
 
     @Override
     public List<Movie> getMovieListForUserCity(String city) {
-        return null;
+        List<Movie> movieList = null; //Реализовать, когда будут связи в таблицах
+        return movieList;
+    }
+
+    @Override
+    public List<Movie> getMovieListForUser() {
+        List<Movie> movieList = daoServerLogic.selectAllMovie();
+        return movieList;
     }
 
     @Override

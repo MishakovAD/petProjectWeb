@@ -24,6 +24,12 @@ public interface PliUserLogicFromDB {
     List<Movie> getMovieListForUserCity (String city);
 
     /**
+     * Возвращает список всех доступных фильмов в БД.
+     * @return список фильмов
+     */
+    List<Movie> getMovieListForUser ();
+
+    /**
      * Возвращает список всех доступных кинотеатров в городе.
      * @param city - город пользователя
      * @return список кинотеатров

@@ -1,15 +1,15 @@
 function autocompleteMovie() {
     $(function(){
-        $('input#query').autocomplete({
+        $('input#movieName').autocomplete({
             source: available_movie
         });
     });
 }
 
 function autocompleteSuggestMovie() {
-    var haystack = ["ActionScript", "AppleScript", "Asp", "BASIC"];
+    var haystack = available_movie;
     $(function(){
-        $('input#query').suggest(haystack, {
+        $('input#movieName').suggest(haystack, {
             suggestionColor   : '#cccccc',
             moreIndicatorClass: 'suggest-more',
             moreIndicatorText : '&hellip;'

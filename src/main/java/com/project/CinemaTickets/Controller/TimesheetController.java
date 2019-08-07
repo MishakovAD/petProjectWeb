@@ -118,24 +118,14 @@ public class TimesheetController {
         logger.info("Start method getAvailableMovie() at " + LocalDateTime.now());
         String city = request.getParameter("user_city");
 
-        JSONObject obj = new JSONObject();
-        obj.put("movies", "доступные фильмы,Форсаж,Человек паук"); //перечесление без пробелов для корректного разделения.
-
-        response.setContentType("application/json");
-        PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
-        writer.print(obj);
-        writer.flush();
-        writer.close();
-        logger.info("End of method getAvailableMovie() at " + LocalDateTime.now());
-    }
-
-    @RequestMapping("/timesheet_autocomplete_movie")
-    public void autocompleteMovie(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        logger.info("Start method getAvailableMovie() at " + LocalDateTime.now());
-        String city = request.getParameter("user_city");
+        if (movieList == null || movieList.size() == 0) {
+            movieList = pliUserLogicFromDB.getMovieListForUser();
+        }
+        StringBuilder movieNames = new StringBuilder();
+        movieList.forEach( movie -> movieNames.append(movie.getMovieName()).append("}"));
 
         JSONObject obj = new JSONObject();
-        obj.put("movies", "доступные фильмы,Форсаж,Человек паук"); //перечесление без пробелов для корректного разделения.
+        obj.put("movies", movieNames.toString()); //перечесление без пробелов для корректного разделения.
 
         response.setContentType("application/json");
         PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));

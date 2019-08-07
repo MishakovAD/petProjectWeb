@@ -43,6 +43,7 @@ public class QueryАnalysis {
                 String value = queryPart.replaceAll(key + ":", "");
                 queryesMap.put(key, value);
             } else if (queryPart.contains("movie")) {
+                //TODO: возможно стоит сделать trim, проверить
                 String key = queryPart.split(":")[0];
                 String value = queryPart.replaceAll(key + ":", "");
                 String movieName = formatMovieName(value);
