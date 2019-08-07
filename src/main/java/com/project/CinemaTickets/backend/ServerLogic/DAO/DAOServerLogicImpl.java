@@ -30,13 +30,13 @@ public class DAOServerLogicImpl implements DAOServerLogic {
     private Logger logger = LoggerFactory.getLogger(DAOServerLogicImpl.class);
     public static List<Cinema> staticCinemaList = new ArrayList<>();
 
-//    private final String url = "jdbc:postgresql://localhost/petprojectweb?currentSchema=petproject";
-//    private final String user = "home";
-//    private final String password = "home";
+    private final String url = "jdbc:postgresql://localhost/petprojectweb?currentSchema=petproject";
+    private final String user = "home";
+    private final String password = "home";
 
-    private final String url = "jdbc:postgresql://localhost/petprojectweb"; //WORK
-    private final String user = "postgres";
-    private final String password = "postgres";
+//    private final String url = "jdbc:postgresql://localhost/petprojectweb"; //WORK
+//    private final String user = "postgres";
+//    private final String password = "postgres";
 
 
 

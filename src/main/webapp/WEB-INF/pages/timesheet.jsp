@@ -45,6 +45,7 @@
     <title>Билеты в кино</title>
 </head>
 <body>
+<!--
 Тут билеты
 <br/>
 <div class="query">
@@ -52,7 +53,7 @@
     <input type="text" name="timesheetquery" id="timesheetquery"/><br/>
     <input type="button" name="timesheetquery_button" id="timesheetquery_button" value="Далее"><br/>
 </div>
-
+-->
 <form>
     <div class="form-row">
         <div class="col-2">
@@ -61,7 +62,6 @@
             <!-- timesheet_user_interface.js createDynamicInterface() -->
             <label for="movieName">Название фильма:</label>
             <input type="text" class="form-control" id="movieName" aria-describedby="movieName" placeholder="Введите название фильма..">
-            <small id="movieNameHelp" class="form-text text-muted">Введите фильм, который Вы хотели бы посмотреть в кинотеатре.</small>
             <br>
         </div>
         <div class="col-3">
@@ -82,6 +82,7 @@
                     <a class="dropdown-item" href="#">3D</a>
                     <a class="dropdown-item" href="#">IMax 3D</a>
                     <a class="dropdown-item" href="#">Dolby Atmos</a>
+                    <a class="dropdown-item" href="#">D-Box</a>
                 </div>
             </div>
             <br>
@@ -95,7 +96,8 @@
         <div class="col-3">
             <label for="moviePrice">Максимальная стоимость билета:</label>
             <input type="text" class="form-control" id="moviePrice" aria-describedby="moviePrice" placeholder="Введите стоимость..">
-            <small id="moviePriceHelp" class="form-text text-muted">Введите максимальную стоимость билета.</small>
+            <input type="range" class="custom-range" min="0" max="2000" step="50" value="0" id="moviePriceRange">
+            <small id="moviePriceHelp" class="form-text text-muted">Введите/выберете максимальную стоимость билета.</small>
             <br>
         </div>
         <div class="col-3">

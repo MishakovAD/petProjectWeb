@@ -12,6 +12,7 @@ function paint() {
         sendAjax("get_cinema_in_city", user_city);
         chooseType();
         filltime();
+        createPriceRange();
         //chooseTime();
     };
 }
@@ -48,12 +49,37 @@ function chooseType() {
 
 function filltime() {
     var date = new Date();
-    var day = date.getDay();
-    var month = date.getMonth();
-    var year = date.getFullYear();
-    var hour = new Date().getHours();
-    var minutes = new Date().getMinutes();
-    $('#movieTime').val(day + '-' + month + '-' + year + 'T' + hour + ':' + minutes);
+    var dateArr = date.toLocaleDateString().split(".");
+    var day = dateArr[0];
+    var month = dateArr[1];
+    var year = dateArr[2];
+    if (day.length == 1) {
+        day = '0' + day;
+    }
+    if (month.length == 1) {
+        month = '0' + month;
+    }
+    var hour = new Date().getHours().toString();
+    var minutes = new Date().getMinutes().toString();
+    if (hour.length == 1) {
+        hour = '0' + hour;
+    }
+    if (minutes.length == 1) {
+        minutes = '0' + minutes;
+    }
+    $('#movieTime').val(year + '-' + month + '-' + day + 'T' + hour + ':' + minutes);
+}
+
+function createPriceRange() {
+    var x = document.getElementById("moviePriceRange").value;
+    document.getElementById("moviePrice").value = x;
+    $('#moviePriceRange').on("input", function () {
+        $('#moviePrice').val(this.value)
+    });
+
+    $('#moviePrice').on("input", function () {
+        $('#moviePriceRange').val(this.value)
+    });
 }
 
 function chooseTime() {
