@@ -18,8 +18,8 @@ public class JSONUtils {
     public static JSONObject parseCinemaToJSON(Cinema cinema) {
         logger.debug("Start method parseCinemaToJSON() at " + LocalDateTime.now());
         JSONObject cinemaJSON = new JSONObject();
-        if(cinema.getCinema_id() != 0) {
-            cinemaJSON.put("cinemaId", cinema.getCinema_id());
+        if(cinema.getId() != 0) {
+            cinemaJSON.put("cinemaId", cinema.getId());
         }
         if (cinema.getCinemaName() != null && !cinema.getCinemaName().isEmpty()) {
             cinemaJSON.put("cinemaName", cinema.getCinemaName());
@@ -49,8 +49,8 @@ public class JSONUtils {
     public static JSONObject parseMovieToJSON(Movie movie) {
         logger.debug("Start method parseMovieToJSON() at " + LocalDateTime.now());
         JSONObject movieJSON = new JSONObject();
-        if (movie.getMovie_id() != 0) {
-            movieJSON.put("movieId", movie.getMovie_id());
+        if (movie.getId() != 0) {
+            movieJSON.put("movieId", movie.getId());
         }
         if (movie.getMovieName() != null && !movie.getMovieName().isEmpty()) {
             movieJSON.put("movieName", movie.getMovieName());
@@ -68,8 +68,8 @@ public class JSONUtils {
     public static JSONObject parseSessionToJSON(Session session) {
         logger.debug("Start method parseMovieToJSON() at " + LocalDateTime.now());
         JSONObject sessionJSON = new JSONObject();
-        if (session.getSession_id() != 0) {
-            sessionJSON.put("sessionId", session.getSession_id());
+        if (session.getId() != 0) {
+            sessionJSON.put("sessionId", session.getId());
         }
         if (session.getTimeOfShow() != null && !session.getTimeOfShow().isEmpty()) {
             sessionJSON.put("sessionTime", session.getTimeOfShow());
@@ -91,8 +91,8 @@ public class JSONUtils {
     public static JSONObject parseCinemaToJSONFromInternet(Cinema cinema) {
         logger.debug("Start method parseCinemaToJSONFromInternet() at " + LocalDateTime.now());
         JSONObject cinemaJSON = new JSONObject();
-        if(cinema.getCinema_id() != 0) {
-            cinemaJSON.put("cinemaId", cinema.getCinema_id());
+        if(cinema.getId() != 0) {
+            cinemaJSON.put("cinemaId", cinema.getId());
         }
         if (cinema.getCinemaName() != null && !cinema.getCinemaName().isEmpty()) {
             cinemaJSON.put("cinemaName", cinema.getCinemaName());
@@ -122,8 +122,8 @@ public class JSONUtils {
         if (movieList != null && movieList.size() > 0) {
             for (Movie movie : movieList) {
                 movieJSON = new JSONObject();
-                if (movie.getMovie_id() != 0) {
-                    movieJSON.put("movieId", movie.getMovie_id());
+                if (movie.getId() != 0) {
+                    movieJSON.put("movieId", movie.getId());
                 }
                 if (movie.getMovieName() != null && !movie.getMovieName().isEmpty()) {
                     movieJSON.put("movieName", movie.getMovieName());
@@ -141,8 +141,8 @@ public class JSONUtils {
                 if (sessionList != null && sessionList.size() > 0) {
                     for (Session session : sessionList) {
                         sessionJSON = new JSONObject();
-                        if (session.getSession_id() != 0) {
-                            sessionJSON.put("sessionId", session.getSession_id());
+                        if (session.getId() != 0) {
+                            sessionJSON.put("sessionId", session.getId());
                         }
                         if (session.getTimeOfShow() != null && !session.getTimeOfShow().isEmpty()) {
                             sessionJSON.put("sessionTime", session.getTimeOfShow());
@@ -162,8 +162,8 @@ public class JSONUtils {
                 } else {
                     Session session = movie.getSession();
                     sessionJSON = new JSONObject();
-                    if (session.getSession_id() != 0) {
-                        sessionJSON.put("sessionId", session.getSession_id());
+                    if (session.getId() != 0) {
+                        sessionJSON.put("sessionId", session.getId());
                     }
                     if (session.getTimeOfShow() != null && !session.getTimeOfShow().isEmpty()) {
                         sessionJSON.put("sessionTime", session.getTimeOfShow());

@@ -47,41 +47,6 @@ function getCity() {
     };
 }
 
-$('input[name="timesheetquery_button"]').click(function () {
-    createQueryBySteps(stage, $('input[name="timesheetquery"]').val());
-    // а) увеличиваем номер шага.
-    stage++;
-
-    // б) меняем подписи у кнопочек.
-    if (stage == 2) {
-        var fieldName = document.getElementById("field_name");
-        fieldName.innerHTML = "Желаемое время фильма: ";
-
-        var inputQuery = document.getElementById("timesheetquery");
-        inputQuery.id = "timesheet_time";
-
-        sendUrl = "timesheetquery_time";
-
-    } else if (stage == 3) {
-        var fieldName = document.getElementById("field_name");
-        fieldName.innerHTML = "Желаемое тип сеанса: ";
-
-        var inputQuery = document.getElementById("timesheet_time");
-        inputQuery.id = "timesheet_type";
-
-        sendUrl = "timesheetquery_type";
-
-    } else if (stage == 4) {
-        var fieldName = document.getElementById("field_name");
-        fieldName.innerHTML = "Ближайшее место: ";
-
-        var inputQuery = document.getElementById("timesheet_type");
-        inputQuery.id = "timesheet_place";
-
-        sendUrl = "timesheetquery_place";
-    }
-});
-
 function createQueryBySteps(stage, query) {
     var name;
     if (stage == 1) {

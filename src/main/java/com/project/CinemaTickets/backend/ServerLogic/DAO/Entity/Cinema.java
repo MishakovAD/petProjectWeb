@@ -14,7 +14,7 @@ import java.util.List;
 public class Cinema {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int cinema_id;
+    private int id;
 
     @Column(name = "cinema_name")
     private String cinemaName;
@@ -24,6 +24,9 @@ public class Cinema {
 
     @Column(name = "cinema_underground")
     private String cinemaUnderground;
+
+    @Column(name = "cinema_city")
+    private String cinemaCity;
 
     @Column(name = "url_to_afisha")
     private String urlToAfisha;
@@ -37,6 +40,9 @@ public class Cinema {
     @Column(name = "info_about_cinema")
     private String infoAboutCinema;
 
+    @Transient
+    private String cinema_id;
+
     //    @OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
     @Transient
     private List<Movie> movieList;
@@ -44,12 +50,12 @@ public class Cinema {
     public Cinema() {
     }
 
-    public void setCinema_id(int cinema_id) {
-        this.cinema_id = cinema_id;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public int getCinema_id() {
-        return cinema_id;
+    public int getId() {
+        return id;
     }
 
     public String getCinemaName() {
@@ -127,7 +133,7 @@ public class Cinema {
     @Override
     public String toString() {
         return "Cinema{" +
-                "cinema_id=" + cinema_id +
+                "id=" + id +
                 ", cinemaName='" + cinemaName + '\'' +
                 ", cinemaAddress='" + cinemaAddress + '\'' +
                 ", cinemaUnderground='" + cinemaUnderground + '\'' +

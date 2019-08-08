@@ -9,7 +9,7 @@ import javax.persistence.Transient;
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int session_id;
+    private int id;
 
     @Column(name = "time_of_show")
     private String timeOfShow; //Time of Movie
@@ -26,6 +26,15 @@ public class Session {
     @Column(name = "session_date")
     private String sessionDate;
 
+    @Transient
+    private String session_id;
+
+    @Transient
+    private String movie_id;
+
+    @Transient
+    private String cinema_id;
+
     //    @OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
     @Transient
     private Movie movie;
@@ -36,8 +45,8 @@ public class Session {
     public Session() {
     }
 
-    public int getSession_id() {
-        return session_id;
+    public int getId() {
+        return id;
     }
 
     public String getTimeOfShow() {
@@ -99,7 +108,7 @@ public class Session {
     @Override
     public String toString() {
         return "Session{" +
-                "session_id=" + session_id +
+                "id=" + id +
                 ", timeOfShow='" + timeOfShow + '\'' +
                 ", typeOfShow='" + typeOfShow + '\'' +
                 ", price='" + price + '\'' +

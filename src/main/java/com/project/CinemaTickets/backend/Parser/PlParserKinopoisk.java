@@ -4,6 +4,8 @@ import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
 import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.coolection.CinemaMovieSession;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.coolection.CinemaMovieSessionObj;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -64,6 +67,24 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
     }
 
     @Override
+    public List<CinemaMovieSession> getCinemaMovieSessionListFromDocument(Document document) {
+        List<CinemaMovieSession> cinemaMovieSessionList = new LinkedList<>();
+        Cinema cinema = getCinemaFromDocument(document);
+        cinema.getMovieList().forEach( movie -> {
+            movie.getSessionList().forEach( session -> {
+                CinemaMovieSession cmsObj = new CinemaMovieSessionObj();
+                //Тут логика обработки для того, чтобы каждый элемент представить для БД в читаемом виде и с уникальными ключами.
+                //...
+                cmsObj.setCinema(cinema);
+                cmsObj.setMovie(movie);
+                cmsObj.setSession(session);
+                cinemaMovieSessionList.add(cmsObj);
+            });
+        });
+        return cinemaMovieSessionList;
+    }
+
+    @Override
     public Cinema getCinemaFromDocument(Document document) {
         logger.info("Start method getCinemaFromDocument() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
         Cinema cinema = new Cinema();
@@ -72,7 +93,6 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         String cinemaUnderground = document.select("div.cinema-header__metro").text();
         String infoAboutCinema = "Рэйтинг: " + document.select("span.cinema-header__rating.cinema-header__rating_type_positive").text();
         String urlToKinopoisk = document.location(); //TODO: придумать, как можно исключить добавление ссылок по датам и прочее. Только, чтобы добавлялась ссылка на кинотеатр с расписанием на сегодня
-        List<Movie> movies = getMovieListFromDocument(document);
 
         if (cinemaName != null) {
             cinema.setCinemaName(cinemaName);
@@ -99,6 +119,7 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         } else {
             cinema.setUrlToKinopoisk("Не найдено");
         }
+        List<Movie> movies = getMovieListFromDocument(cinema, document);
         if (movies != null) {
             cinema.setMovieList(movies);
         }
@@ -107,25 +128,24 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
     }
 
     @Override
-    public List<Movie> getMovieListFromDocument(Document document) {
+    public List<Movie> getMovieListFromDocument(Cinema cinema, Document document) {
         logger.debug("Start method getMovieListFromDocument() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
         List<Movie> movieList = new ArrayList<>();
         Movie movie;
         Elements movieElements = document.select("div.schedule-item.schedule-item_type_film");
         for (Element movieElement : movieElements) {
-            movie = getMovieFromElement(movieElement);
+            movie = getMovieFromElement(cinema, movieElement);
             movieList.add(movie);
         }
         return movieList;
     }
 
     @Override
-    public Movie getMovieFromElement(Element element) {
+    public Movie getMovieFromElement(Cinema cinema, Element element) {
         logger.debug("Start method getMovieFromElement() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
         Movie movie = new Movie();
         String movieName = element.select("a.link.schedule-film__title").text();
         String movieRating = element.select("span.schedule-film__rating-value.schedule-film__rating-value_type_neutral").text();
-        List<Session> sessionList = getSessionListFromElement(element);
 
         if (movieName != null) {
             movie.setMovieName(movieName);
@@ -137,6 +157,7 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         } else {
             movie.setMovieRating("Не найдено");
         }
+        List<Session> sessionList = getSessionListFromElement(cinema, movie, element);
         if (sessionList != null) {
             movie.setSessionList(sessionList);
         }
@@ -145,7 +166,7 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
     }
 
     @Override
-    public List<Session> getSessionListFromElement(Element element) {
+    public List<Session> getSessionListFromElement(Cinema cinema, Movie movie, Element element) {
         //TODO: если билеты продаются только в кинотеатре, то сеанс находится неверно, так как неверно выбираются позиции. Нужно что то придумать с этим.
         // Смысл искать кинотеатры не Москвы для проверки. Там для них идет выборка span.schedule-item__session-button вместо -wrapper на конце. (такая выборка без цен)
         logger.debug("Start method getSessionListFromElement() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");

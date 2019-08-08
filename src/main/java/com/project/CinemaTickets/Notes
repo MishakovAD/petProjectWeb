@@ -23,7 +23,7 @@
 /**************** SQL********************/
 create table cinema
 (
-    cinema_id            serial       not null
+    id            serial       not null
         constraint cinema_pk
             primary key,
     cinema_name          varchar(100) not null,
@@ -50,7 +50,7 @@ create table movie
     movie_name   varchar(100) not null,
     movie_rating varchar(10),
     movie_date   varchar(20),
-    cinema_id    integer,
+    id    integer,
     parent       varchar(100)
 );
 

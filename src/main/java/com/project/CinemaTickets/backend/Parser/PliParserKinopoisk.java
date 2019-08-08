@@ -3,6 +3,7 @@ package com.project.CinemaTickets.backend.Parser;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.coolection.CinemaMovieSession;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
@@ -22,13 +23,13 @@ public interface PliParserKinopoisk {
      */
     public String getUrlForBuyTicketsFromInternet(Cinema cinema, Movie movie) throws IOException;
 
-
+    List<CinemaMovieSession> getCinemaMovieSessionListFromDocument(Document document);
     public Cinema getCinemaFromDocument(Document document);
 
-    public List<Movie> getMovieListFromDocument(Document document);
-    public Movie getMovieFromElement(Element element);
+    public List<Movie> getMovieListFromDocument(Cinema cinema, Document document);
+    public Movie getMovieFromElement(Cinema cinema, Element element);
 
-    public List<Session> getSessionListFromElement(Element element);
+    public List<Session> getSessionListFromElement(Cinema cinema, Movie movie, Element element);
     public Session getSessionFromElement(Element element);
 
 

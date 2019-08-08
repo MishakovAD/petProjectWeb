@@ -363,7 +363,7 @@ public class DAOServerLogicImpl implements DAOServerLogic {
             ResultSet resultSet = stmnt.executeQuery(queryCinema);
             while (resultSet.next()) {
                 cinema = new Cinema();
-                cinema.setCinema_id(Integer.parseInt(resultSet.getString("cinema_id")));
+                cinema.setId(Integer.parseInt(resultSet.getString("cinema_id")));
                 cinema.setCinemaName(resultSet.getString("cinema_name"));
                 cinema.setCinemaAddress(resultSet.getString("cinema_address"));
                 cinema.setCinemaUnderground(resultSet.getString("cinema_underground"));

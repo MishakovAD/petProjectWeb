@@ -14,7 +14,7 @@ import java.util.List;
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int movie_id;
+    private int id;
 
     @Column(name = "movie_name")
     private String movieName;
@@ -29,6 +29,9 @@ public class Movie {
 //    @JoinColumn(name = "cinema_id")
     @Transient
     private Cinema cinema;
+
+    @Transient
+    private String movie_id;
 
     //    @OneToOne(optional=false, cascade=CascadeType.ALL)
 //    @JoinColumn (name="session_id")
@@ -49,8 +52,8 @@ public class Movie {
         this.session = session;
     }
 
-    public int getMovie_id() {
-        return movie_id;
+    public int getId() {
+        return id;
     }
 
     public String getMovieName() {

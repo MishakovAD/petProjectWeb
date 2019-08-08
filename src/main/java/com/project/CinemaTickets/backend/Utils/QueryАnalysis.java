@@ -5,9 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class QueryАnalysis {
@@ -67,6 +65,11 @@ public class QueryАnalysis {
         });
         logger.debug("End of method parseQuerye() at " + LocalDateTime.now());
         return queryesMap;
+    }
+
+    public static String createUniqueID() {
+        return UUID.randomUUID().toString()
+                .substring(0, 13).replaceAll("-", String.valueOf(new Random(System.currentTimeMillis()).nextInt(777)));
     }
 
     private static String formatCity (String city) {
@@ -155,7 +158,8 @@ public class QueryАnalysis {
 //        Map<String, String> map = parseQuerye("lat : 55.6844903, lng : 37.5954383}user_ip:185.89.8.146}user_city:Москва}movie:54321}time:54321}type:54321}place:54321}");
 //        map.forEach( (key, value) -> System.out.println(key + "-" + value) );
 //        System.out.println(PATTERN_IP_ADDRESS.matcher("192.1388.2.2").matches());
-        System.out.println(formatTime("123456"));
-        System.out.println(isRussiaText("asdsfrefdsf"));
+//        System.out.println(formatTime("123456"));
+//        System.out.println(isRussiaText("asdsfrefdsf"));
+        System.out.println(UUID.randomUUID().toString().substring(0, 13).replaceAll("-", String.valueOf(new Random(System.currentTimeMillis()).nextInt(777))));
     }
 }
