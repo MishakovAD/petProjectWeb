@@ -4,12 +4,22 @@ package com.project.CinemaTickets.backend.ServerLogic.DAO;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.coolection.CinemaMovieSession;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public interface DAOServerLogic {
+
+    /**
+     * Добавляет в БД объекты Cinema, Movie, Session
+     * с заполненными уникальными полями, а так же
+     * Cinema-Movie в таблицу связей.
+     * @param cinemaMovieSession - специальный объект для БД.
+     * @return true при успешной вставке.
+     */
+    //boolean insertCinemaMovieSessionObj (CinemaMovieSession cinemaMovieSession);
 
     /**
      * Добавляем кинотеатр в базу данных.

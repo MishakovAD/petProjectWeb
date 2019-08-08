@@ -23,7 +23,6 @@ public interface PliParserKinopoisk {
      */
     public String getUrlForBuyTicketsFromInternet(Cinema cinema, Movie movie) throws IOException;
 
-    List<CinemaMovieSession> getCinemaMovieSessionListFromDocument(Document document);
     public Cinema getCinemaFromDocument(Document document);
 
     public List<Movie> getMovieListFromDocument(Cinema cinema, Document document);

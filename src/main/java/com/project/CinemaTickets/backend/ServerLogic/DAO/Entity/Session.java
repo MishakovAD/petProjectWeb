@@ -105,6 +105,30 @@ public class Session {
         this.parent = parent;
     }
 
+    public String getSession_id() {
+        return session_id;
+    }
+
+    public void setSession_id(String session_id) {
+        this.session_id = session_id;
+    }
+
+    public String getMovie_id() {
+        return movie_id;
+    }
+
+    public void setMovie_id(String movie_id) {
+        this.movie_id = movie_id;
+    }
+
+    public String getCinema_id() {
+        return cinema_id;
+    }
+
+    public void setCinema_id(String cinema_id) {
+        this.cinema_id = cinema_id;
+    }
+
     @Override
     public String toString() {
         return "Session{" +

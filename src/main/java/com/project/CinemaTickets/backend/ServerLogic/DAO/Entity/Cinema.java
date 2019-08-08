@@ -50,10 +50,6 @@ public class Cinema {
     public Cinema() {
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public int getId() {
         return id;
     }
@@ -128,6 +124,22 @@ public class Cinema {
 
     public void removeMovie (Movie movie) {
         movieList.remove(movie);
+    }
+
+    public String getCinemaCity() {
+        return cinemaCity;
+    }
+
+    public void setCinemaCity(String cinemaCity) {
+        this.cinemaCity = cinemaCity;
+    }
+
+    public String getCinema_id() {
+        return cinema_id;
+    }
+
+    public void setCinema_id(String cinema_id) {
+        this.cinema_id = cinema_id;
     }
 
     @Override

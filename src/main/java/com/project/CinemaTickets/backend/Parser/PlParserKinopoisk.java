@@ -67,24 +67,6 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
     }
 
     @Override
-    public List<CinemaMovieSession> getCinemaMovieSessionListFromDocument(Document document) {
-        List<CinemaMovieSession> cinemaMovieSessionList = new LinkedList<>();
-        Cinema cinema = getCinemaFromDocument(document);
-        cinema.getMovieList().forEach( movie -> {
-            movie.getSessionList().forEach( session -> {
-                CinemaMovieSession cmsObj = new CinemaMovieSessionObj();
-                //Тут логика обработки для того, чтобы каждый элемент представить для БД в читаемом виде и с уникальными ключами.
-                //...
-                cmsObj.setCinema(cinema);
-                cmsObj.setMovie(movie);
-                cmsObj.setSession(session);
-                cinemaMovieSessionList.add(cmsObj);
-            });
-        });
-        return cinemaMovieSessionList;
-    }
-
-    @Override
     public Cinema getCinemaFromDocument(Document document) {
         logger.info("Start method getCinemaFromDocument() at " + LocalDateTime.now() + " in PlParserKinopoisk.class");
         Cinema cinema = new Cinema();

@@ -67,11 +67,6 @@ public class QueryАnalysis {
         return queryesMap;
     }
 
-    public static String createUniqueID() {
-        return UUID.randomUUID().toString()
-                .substring(0, 13).replaceAll("-", String.valueOf(new Random(System.currentTimeMillis()).nextInt(777)));
-    }
-
     private static String formatCity (String city) {
         return null;
     }

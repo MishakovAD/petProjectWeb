@@ -1,12 +1,15 @@
 package com.project.CinemaTickets.backend.ServerLogic;
 
-import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOServerLogicImpl;
-import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.Parser.PlParserKinopoisk;
 import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
 import com.project.CinemaTickets.backend.ProxyServer.PlProxyServer;
 import com.project.CinemaTickets.backend.ProxyServer.PliProxyServer;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOHelperUtils.ConverterTo;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOHelperUtils.ConverterToImpl;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOServerLogic;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOServerLogicImpl;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.coolection.CinemaMovieSession;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
@@ -14,12 +17,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PlServer implements PliServer {
 
@@ -66,9 +71,9 @@ public class PlServer implements PliServer {
 
                 Cinema cinema = pliParserKinopoisk.getCinemaFromDocument(document);
                 cinema.setUrlToKinopoisk(urlToKinopoisk);
-                daoServerLogic.insertCinemaToDB(cinema);
                 cinemasList.add(cinema);
 
+                //daoServerLogic.insertCinemaToDB(cinema); //поменять на вставку листа специальных объектов
                 //emulationHumanActivity();
             }
 
@@ -236,14 +241,23 @@ public class PlServer implements PliServer {
         p.setPliParserKinopoisk(new PlParserKinopoisk());
         p.setPliProxyServer(new PlProxyServer());
         p.setDaoServerLogic(new DAOServerLogicImpl());
+        p.setConverterTo(new ConverterToImpl());
 //        p.emulationHumanActivity();
 //        p.getAllCinemasFromKinopoisk("");
 //        System.out.println("End emulation");
-        for (int i = 0; i <4 ; i++) {
-            Document document = new PlProxyServer().getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/1/cinema/280891/");
-            Cinema cinema = new PlParserKinopoisk().getCinemaFromDocument(document);
-            new DAOServerLogicImpl().insertCinemaToDB(cinema);
-        }
+        long startTime = System.currentTimeMillis();
+        Document document = new PlProxyServer().getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/1/cinema/280891/day_view/2019-08-09/");
+        Cinema cinema = new PlParserKinopoisk().getCinemaFromDocument(document);
+        Document document2 = new PlProxyServer().getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/1/cinema/281063/day_view/2019-08-09/");
+        Cinema cinema2 = new PlParserKinopoisk().getCinemaFromDocument(document2);
+        List<Cinema> cinemaList = new ArrayList<>();
+        cinemaList.add(cinema);
+        cinemaList.add(cinema2);
+        List<CinemaMovieSession> cinemaMovieSessionList = new ConverterToImpl().getCinemaMovieSessionListCinemasList(cinemaList);
+        long endTime = System.currentTimeMillis();
+        System.out.println("Размер листа с элементами: " + cinemaMovieSessionList.size());
+        System.out.println("Время преобразования 1 фильма: " + (endTime-startTime)/1000 + "s.");
+
     }
 
 
@@ -252,6 +266,7 @@ public class PlServer implements PliServer {
     private PliProxyServer pliProxyServer;
     private PliParserKinopoisk pliParserKinopoisk;
     private DAOServerLogic daoServerLogic;
+    private ConverterTo converterTo;
 
     @Inject
     public void setPliProxyServer(PliProxyServer pliProxyServer) {
@@ -261,9 +276,13 @@ public class PlServer implements PliServer {
     public void setPliParserKinopoisk (PliParserKinopoisk pliParserKinopoisk1) {
         this.pliParserKinopoisk = pliParserKinopoisk1;
     }
-
     @Inject
     public void setDaoServerLogic (DAOServerLogic daoServerLogic) {
         this.daoServerLogic = daoServerLogic;
+    }
+
+    @Inject
+    public void setConverterTo(ConverterTo converterTo) {
+        this.converterTo = converterTo;
     }
 }

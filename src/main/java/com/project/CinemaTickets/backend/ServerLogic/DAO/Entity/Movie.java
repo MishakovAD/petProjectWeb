@@ -111,4 +111,12 @@ public class Movie {
     public void setParent(String parent) {
         this.parent = parent;
     }
+
+    public String getMovie_id() {
+        return movie_id;
+    }
+
+    public void setMovie_id(String movie_id) {
+        this.movie_id = movie_id;
+    }
 }
