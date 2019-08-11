@@ -21,6 +21,123 @@
 
 ******************************************
 /**************** SQL********************/
+create table petproject.cinema
+(
+	id serial not null,
+	cinema_name varchar(200) not null,
+	cinema_address varchar(500) not null,
+	cinema_underground varchar(100),
+	cinema_city varchar(200),
+	url_to_afisha varchar(300),
+	url_to_yandex_afisha varchar(300),
+	url_to_kinopoisk varchar(300),
+	info_about_cinema VARCHAR(500),
+	cinema_id varchar(100) not null
+);
+
+create unique index cinema_cinema_address_uindex
+	on petproject.cinema (cinema_address);
+
+create unique index cinema_cinema_id_uindex
+	on petproject.cinema (cinema_id);
+
+create unique index cinema_id_uindex
+	on petproject.cinema (id);
+
+alter table petproject.cinema
+	add constraint cinema_pk
+		primary key (id);
+
+----------------------------------------------
+
+create table petproject.movie
+(
+	id serial not null,
+	movie_name varchar(200) not null,
+	movie_rating varchar(20),
+	movie_date varchar(200),
+	movie_id varchar(200) not null
+);
+
+create unique index movie_id_uindex
+	on petproject.movie (id);
+
+create unique index movie_movie_id_uindex
+	on petproject.movie (movie_id);
+
+create unique index movie_movie_name_uindex
+	on petproject.movie (movie_name);
+
+alter table petproject.movie
+	add constraint movie_pk
+		primary key (id);
+
+
+----------------------------------------
+
+create table petproject.session
+(
+	id serial not null,
+	time_of_show varchar(100) not null,
+	type_of_show varchar(100),
+	price varchar(100),
+	url_for_buy_tickets varchar(500),
+	session_date varchar(100) not null,
+	movie_id varchar(100) not null
+		constraint session_movie_id_fk
+			references petproject.movie (movie_id)
+				on update cascade on delete cascade,
+	cinema_id varchar(100) not null
+		constraint session_cinema_id_fk
+			references petproject.cinema (cinema_id)
+				on update cascade on delete cascade,
+	session_id varchar(200) not null
+);
+
+
+create unique index session_id_uindex
+	on petproject.session (id);
+
+create unique index session_session_id_uindex
+	on petproject.session (session_id);
+
+create unique index session_url_for_buy_tickets_uindex
+	on petproject.session (url_for_buy_tickets);
+
+alter table petproject.session
+	add constraint session_pk
+		primary key (id);
+
+
+
+------------------------------------------------------
+
+
+create table petproject.cinema_movie
+(
+	id serial not null,
+	cinema_id varchar(100) not null
+		constraint cinema_movie_cinema_id_fk
+			references petproject.cinema (cinema_id)
+				on update cascade on delete cascade,
+	movie_id varchar(100) not null
+		constraint cinema_movie_movie_id_fk
+			references petproject.movie (movie_id)
+				on update cascade on delete cascade
+);
+
+create unique index cinema_movie_id_uindex
+	on petproject.cinema_movie (id);
+
+alter table petproject.cinema_movie
+	add constraint cinema_movie_pk
+		primary key (id);
+
+
+
+
+******************************************
+/****************OLD SQL********************/
 create table cinema
 (
     id            serial       not null

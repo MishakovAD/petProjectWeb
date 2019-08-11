@@ -25,16 +25,12 @@ public class Movie {
     @Column(name = "movie_date")
     private String movieDate;
 
-    //    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "cinema_id")
+    @Column(name = "movie_id")
+    private String movie_id;
+
     @Transient
     private Cinema cinema;
 
-    @Transient
-    private String movie_id;
-
-    //    @OneToOne(optional=false, cascade=CascadeType.ALL)
-//    @JoinColumn (name="session_id")
     @Transient
     private List<Session> sessionList;
 

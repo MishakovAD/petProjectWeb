@@ -26,6 +26,11 @@ public class ConverterToImpl implements ConverterTo {
         Map<String, Movie> movieNameMap = new HashMap<>();
 
         cinemaList.forEach( cinema -> {
+            String address = cinema.getCinemaAddress();
+            if (address != null && !address.isEmpty() && !address.equals("")){
+                String city = address.substring(3, address.indexOf(",", 1));
+                cinema.setCinemaCity(city);
+            }
             String cinemaId = createUniqueID();
             cinema.setCinema_id(cinemaId);
             cinema.getMovieList().forEach( movie -> {

@@ -26,14 +26,14 @@ public class Session {
     @Column(name = "session_date")
     private String sessionDate;
 
-    @Transient
-    private String session_id;
-
-    @Transient
+    @Column(name = "movie_id")
     private String movie_id;
 
-    @Transient
+    @Column(name = "cinema_id")
     private String cinema_id;
+
+    @Transient
+    private String session_id;
 
     //    @OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
     @Transient

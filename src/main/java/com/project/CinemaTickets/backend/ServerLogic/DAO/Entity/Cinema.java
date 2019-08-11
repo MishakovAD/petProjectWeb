@@ -25,7 +25,7 @@ public class Cinema {
     @Column(name = "cinema_underground")
     private String cinemaUnderground;
 
-    @Column(name = "cinema_city")
+    @Column(name = "cinema_city") //В будущем можно вынести в отдельную таблицу. Смысл? Будет ли работать быстрее?
     private String cinemaCity;
 
     @Column(name = "url_to_afisha")
@@ -40,10 +40,9 @@ public class Cinema {
     @Column(name = "info_about_cinema")
     private String infoAboutCinema;
 
-    @Transient
+    @Column(name = "cinema_id")
     private String cinema_id;
 
-    //    @OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
     @Transient
     private List<Movie> movieList;
 
