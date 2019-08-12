@@ -31,6 +31,7 @@ public class PlProxyServer implements PliProxyServer {
     public static List<ProxyEntity> proxyListFromInternet = new ArrayList<>();
     private List<ProxyEntity> proxyListFromDatabase = new ArrayList<>();
     private volatile int counterGetterDocumentWithProxy = 0;
+    private volatile int counterWriteCaptheWithWorker = 0;
 
     private Logger logger = LoggerFactory.getLogger(PlProxyServer.class);
 
@@ -127,9 +128,14 @@ public class PlProxyServer implements PliProxyServer {
             proxyList.add(new ProxyEntity("80.255.91.38","60488", "HTTP"));
         }
 
-        Random random = new Random(System.currentTimeMillis());
-        int index = random.nextInt(proxyList.size());
-        ProxyEntity proxyServer = proxyList.get(index);
+        ProxyEntity proxyServer;
+        if (proxyList.size() == 0) {
+            return Jsoup.parse("Документ не найден");
+        } else {
+            proxyServer = proxyList.get(0);
+            proxyList.remove(0);
+        }
+
 
         String ip = proxyServer.getIp_address();
         String port = proxyServer.getPort();
@@ -352,6 +358,7 @@ public class PlProxyServer implements PliProxyServer {
     private StringBuilder createStringDocument (URLConnection connection, StringBuilder stringDocument) {
         logger.info("Start method createStringDocument() at " + LocalDateTime.now());
         stringDocument = new StringBuilder();
+        InputStream inputStreamConnection;
         BufferedReader reader;
         try {
             /*
@@ -369,20 +376,35 @@ public class PlProxyServer implements PliProxyServer {
             --------------------------------------------------------------------------------------
              */
 
-            connection.connect();
-            if (connection.getURL().toString().contains("captcha")) {
-                String captchaUrl = connection.getURL().toString();
-                worker.start();
-                Thread.currentThread().notify();
+            if (counterWriteCaptheWithWorker == 0) {
+                connection.connect();
             }
-            Thread.sleep(5000);
+
+            //TODO: Придумать оптимальную задержку. Нужна ли она?
+            Thread.sleep(1);
             try {
-                reader  = new BufferedReader(new InputStreamReader(connection.getInputStream(), Charset.forName("UTF-8")));
+                inputStreamConnection = connection.getInputStream();
+                reader  = new BufferedReader(new InputStreamReader(inputStreamConnection, Charset.forName("UTF-8")));
             } catch (FileNotFoundException ex) {
                 logger.info("Файл не найден. Ошибка 404.");
                 stringDocument.append("Файл не найден. Ошибка 404.");
                 logger.info("End of method createStringDocument() with FileNotFound exception at " + LocalDateTime.now());
                 return stringDocument;
+            }
+
+            if (connection.getURL().toString().contains("captcha")) {
+                counterWriteCaptheWithWorker++;
+                if (counterWriteCaptheWithWorker > 10) {
+                    stringDocument.append("Документ не найден");
+                    return stringDocument;
+                }
+                String captchaUrl = connection.getURL().toString();
+                worker.start(connection);
+                inputStreamConnection.close();
+                //TODO: Как закрыть соединение???? Падает с ошибкой java.lang.IllegalStateException: Already connected
+                //Просто - создать новое соединение и его передать параметром со всем свойствами.
+                connection.setRequestProperty("Referer", "https://www.google.com/");
+                createStringDocument(connection, stringDocument);
             }
 
             String line;

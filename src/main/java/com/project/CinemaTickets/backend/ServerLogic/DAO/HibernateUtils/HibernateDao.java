@@ -1,5 +1,7 @@
 package com.project.CinemaTickets.backend.ServerLogic.DAO.HibernateUtils;
 
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.coolection.CinemaMovieSession;
 
 import java.util.List;
@@ -16,4 +18,16 @@ public interface HibernateDao {
      * @return true, если сохранение прошло успешно
      */
     boolean saveCinemaMovieSessionObj(List<CinemaMovieSession> cinemaMovieSessionList);
+
+    /**
+     * Выбор всех кинотеатров из БД
+     * @return список кинотеатров
+     */
+    List<Cinema> selectAllCinema();
+
+    /**
+     * Выбор всех Кино из БД
+     * @return список фильмов
+     */
+    List<Movie> selectAllMovie();
 }
