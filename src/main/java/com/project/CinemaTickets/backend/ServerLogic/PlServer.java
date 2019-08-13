@@ -250,16 +250,20 @@ public class PlServer implements PliServer {
         long startTime = System.currentTimeMillis();
         PlProxyServer proxyServer = new PlProxyServer();
         proxyServer.setWorker(new WorkerImpl());
-        proxyServer.proxyListFromInternet = proxyServer.getProxyFromInternet(null);
-        Document document = proxyServer.getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/5811/cinema/280891/day_view/2019-08-14/");
-        Cinema cinema = new PlParserKinopoisk().getCinemaFromDocument(document);
+        //proxyServer.proxyListFromInternet = proxyServer.getProxyFromInternet(null);
+//        Document document = proxyServer.getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/5811/cinema/280891/day_view/2019-08-14/");
+//        Cinema cinema = new PlParserKinopoisk().getCinemaFromDocument(document);
         Document document2 = proxyServer.getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/1/cinema/281063/day_view/2019-08-14/");
         Cinema cinema2 = new PlParserKinopoisk().getCinemaFromDocument(document2);
         List<Cinema> cinemaList = new ArrayList<>();
-        cinemaList.add(cinema);
+//        cinemaList.add(cinema);
         cinemaList.add(cinema2);
+        boolean isTrue = false;
         List<CinemaMovieSession> cinemaMovieSessionList = new ConverterToImpl().getCinemaMovieSessionListCinemasList(cinemaList);
-        new HibernateDaoImpl().saveCinemaMovieSessionObj(cinemaMovieSessionList);
+        while(!isTrue) {
+            isTrue = new HibernateDaoImpl().saveCinemaMovieSessionObj(cinemaMovieSessionList);
+            System.out.println("");
+        }
         long endTime = System.currentTimeMillis();
         System.out.println("Размер листа с элементами: " + cinemaMovieSessionList.size());
         System.out.println("Время преобразования 1 фильма: " + (endTime-startTime)/1000 + "s.");

@@ -1,0 +1,12 @@
+INSERT INTO petproject.cinema_movie (id, cinema_id, movie_id) VALUES (9, 'ae88fbe323644bc', 'd05bdedf758b25');
+INSERT INTO petproject.cinema_movie (id, cinema_id, movie_id) VALUES (14, 'ae88fbe323644bc', 'd05bdedf758b25');
+INSERT INTO petproject.cinema_movie (id, cinema_id, movie_id) VALUES (400, 'fb9d2da4605056f', 'd05bdedf758b25');
+INSERT INTO petproject.cinema_movie (id, cinema_id, movie_id) VALUES (401, 'fb9d2da4605056f', '5a634a453122768');
+INSERT INTO petproject.cinema_movie (id, cinema_id, movie_id) VALUES (402, 'fb9d2da4605056f', '5c60958d2602fe6');
+INSERT INTO petproject.cinema_movie (id, cinema_id, movie_id) VALUES (403, 'fb9d2da4605056f', '10b835c6527c2c0');
+INSERT INTO petproject.cinema_movie (id, cinema_id, movie_id) VALUES (404, 'fb9d2da4605056f', 'f520a86a6344493');
+INSERT INTO petproject.cinema_movie (id, cinema_id, movie_id) VALUES (405, 'fb9d2da4605056f', 'f76f41a128568a2');
+INSERT INTO petproject.cinema_movie (id, cinema_id, movie_id) VALUES (406, 'fb9d2da4605056f', 'd3e7413d151be90');
+INSERT INTO petproject.cinema_movie (id, cinema_id, movie_id) VALUES (407, 'fb9d2da4605056f', '753d46b95289ab7');
+INSERT INTO petproject.cinema_movie (id, cinema_id, movie_id) VALUES (408, 'fb9d2da4605056f', 'a31094694487420');
+INSERT INTO petproject.cinema_movie (id, cinema_id, movie_id) VALUES (409, 'fb9d2da4605056f', 'fc3a8bb71805bad');

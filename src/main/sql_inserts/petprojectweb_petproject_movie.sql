@@ -1,0 +1,10 @@
+INSERT INTO petproject.movie (id, movie_name, movie_rating, movie_date, movie_id) VALUES (1, 'Однажды в… Голливуде', '', null, 'd05bdedf758b25');
+INSERT INTO petproject.movie (id, movie_name, movie_rating, movie_date, movie_id) VALUES (48, 'Форсаж: Хоббс и Шоу', '6.6', null, '5a634a453122768');
+INSERT INTO petproject.movie (id, movie_name, movie_rating, movie_date, movie_id) VALUES (49, 'Король Лев', '', null, '5c60958d2602fe6');
+INSERT INTO petproject.movie (id, movie_name, movie_rating, movie_date, movie_id) VALUES (50, 'Дора и Затерянный город', '5.9', null, '10b835c6527c2c0');
+INSERT INTO petproject.movie (id, movie_name, movie_rating, movie_date, movie_id) VALUES (51, 'Страшные истории для рассказа в темноте', '6.3', null, 'f520a86a6344493');
+INSERT INTO petproject.movie (id, movie_name, movie_rating, movie_date, movie_id) VALUES (52, 'Тайная жизнь домашних животных 2', '', null, 'f76f41a128568a2');
+INSERT INTO petproject.movie (id, movie_name, movie_rating, movie_date, movie_id) VALUES (53, 'Аладдин', '', null, 'd3e7413d151be90');
+INSERT INTO petproject.movie (id, movie_name, movie_rating, movie_date, movie_id) VALUES (54, 'История игрушек 4', '', null, '753d46b95289ab7');
+INSERT INTO petproject.movie (id, movie_name, movie_rating, movie_date, movie_id) VALUES (55, 'Человек-паук: Вдали от дома', '', null, 'a31094694487420');
+INSERT INTO petproject.movie (id, movie_name, movie_rating, movie_date, movie_id) VALUES (56, 'Паразиты', '', null, 'fc3a8bb71805bad');

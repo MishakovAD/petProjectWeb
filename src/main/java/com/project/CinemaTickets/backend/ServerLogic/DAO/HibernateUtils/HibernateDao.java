@@ -1,6 +1,7 @@
 package com.project.CinemaTickets.backend.ServerLogic.DAO.HibernateUtils;
 
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema_Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.coolection.CinemaMovieSession;
 
@@ -30,4 +31,10 @@ public interface HibernateDao {
      * @return список фильмов
      */
     List<Movie> selectAllMovie();
+
+    /**
+     * Получаем все объекты Cinema_Movie из таблицы ManyToMany
+     * @return список Cinema_Movie
+     */
+    List<Cinema_Movie> selectAllCinema_Movie();
 }

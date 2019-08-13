@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Table(name = "cinema_movie")
@@ -45,5 +46,19 @@ public class Cinema_Movie {
 
     public void setMovieId(String movieId) {
         this.movieId = movieId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Cinema_Movie)) return false;
+        Cinema_Movie that = (Cinema_Movie) o;
+        return Objects.equals(cinemaId, that.cinemaId) &&
+                Objects.equals(movieId, that.movieId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cinemaId, movieId);
     }
 }

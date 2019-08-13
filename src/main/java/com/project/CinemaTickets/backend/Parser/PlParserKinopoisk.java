@@ -156,7 +156,7 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         Session session;
         Elements sessionElements = element.select("div.schedule-item__formats-row");
         for (Element sessionElement : sessionElements) {
-            for (Element sessionRootElement : sessionElements.select("span.schedule-item__session-button-wrapper")) {
+            for (Element sessionRootElement : sessionElement.select("span.schedule-item__session-button-wrapper")) {
                 session = getSessionFromElement(sessionRootElement);
 
                 String typeMovie = sessionElement.select("span.schedule-item__formats-format").text();

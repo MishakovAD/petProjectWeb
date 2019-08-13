@@ -1,6 +1,7 @@
 package com.project.CinemaTickets.backend.Utils;
 
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema_Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
 import org.hibernate.SessionFactory;
@@ -23,6 +24,7 @@ public class HibernateSessionFactoryUtil {
                 Configuration configuration = new Configuration().configure();
                 configuration.addAnnotatedClass(Cinema.class);
                 configuration.addAnnotatedClass(Movie.class);
+                configuration.addAnnotatedClass(Cinema_Movie.class);
                 configuration.addAnnotatedClass(Session.class);
                 StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                 sessionFactory = configuration.buildSessionFactory(builder.build());

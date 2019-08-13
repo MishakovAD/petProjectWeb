@@ -122,10 +122,9 @@ public class PlProxyServer implements PliProxyServer {
         List<ProxyEntity> proxyList = getProxyFromDatabase();
         proxyList.addAll(proxyListFromInternet);
         if (proxyList.size() < 2) {
-            proxyList.add(new ProxyEntity("61.5.134.13","9999", "SOCKS"));
-            proxyList.add(new ProxyEntity("2.234.226.32","17779", "SOCKS"));
-            proxyList.add(new ProxyEntity("188.191.29.141","48678", "HTTP"));
-            proxyList.add(new ProxyEntity("80.255.91.38","60488", "HTTP"));
+            proxyList.add(new ProxyEntity("110.34.28.30","41128", "HTTP"));
+            proxyList.add(new ProxyEntity("213.21.23.98","53281", "HTTP"));
+            proxyList.add(new ProxyEntity("178.213.0.207","35140", "HTTP"));
         }
 
         ProxyEntity proxyServer;
@@ -369,8 +368,8 @@ public class PlProxyServer implements PliProxyServer {
 //            connection.setRequestProperty("Cookie", "ys=c_chck.303" + num + "506" + num + "4; mda2_beacon=15" + num + "33571" + num + "8181; _ym_visorc_5" + num + "332" + num + "06=b; _ym_isad=2; crookie=Qknpr3OyI1JfXT50IsACbd" + num + "S1aRxedihnfrYpwN56lVKbEpIBhZATXh8qLhw47/mCiVjn8o6CLlQCXyKzrVUhWLouPg=; ya_sess_id=noauth:1563" + num + "57138; _ym_d=1563357079; yandexuid=81377" + num + "4761563" + num + "69214; mda=0; _ym_visorc_226" + num + "394" + num + "=b; mda_exp_enabled=1; cmtchd=MTU" + num + "MzM1NzE0MzQzNw==; _ym_uid=156335707" + num + "375756538; i=sJw7tHGq7UlMuiI3tcZWun" + num + "kpISGsA0eCyN8jhUQV" + num + "HsKIxFs2uPzWXymJsd8jS+BOG38n8n9/kdMi5+r3i+tPyo2uY=; _ym_visorc_10630330=w; _ym_wasSynced=%7B%22time%22%3A156" + num + "357078670%2C%22params%22%3A%7B%22eu%22%3A0%7D%2C%22bkParams%" + num + "2%3A%7B%7D%7D; spravka=dD0xNTMxODIyODY5O2k9MTg1Ljg5LjguMTQ2O3U9MTUzMTgyMjg2OTAwNDM5NDcwMDtoPTU2YzQxNzM5NmRjNTkzZWY1ZjczODEyNzAwNTNjYTAz; user-geo-region-id=213; user-geo-country-id=2; desktop_session_key=7208ac854c8c0ba" + num + "a4bb861fcced008e96bb9440a10662bf001b72bef97" + num + "98a29937346da2b97f5a27dacad3" + num + "bec2e575583f0153b498e548bdf6bc77405ee51b1354327dd68521918f1f25df4897b01b969de62b760f22705f3ad69cc323e5b; desktop_session_key.sig=t-" + num + "KoGZDclotGuo" + num + "r0Baroji" + num + "To; yandex_plus_metrika_cookie=true");
 //            // Куки выше взяты после ввода капчи. Разобраться с ними.
             connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
-            connection.setRequestProperty("Cookie", "secure=1563637166-745e6332ecc4c711be40b59db238d21b; sid=8c8k5n4aaqbqqnd269pq4chnb5; sign=03c5d85dcfa918b7fe01535d21ba5951");
-            connection.setRequestProperty("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36");
+            connection.setRequestProperty("Cookie", "secure=15" + num + "3637166-745e633" + num + "ecc4c711be40b59db238d21b; sid=8c8k5n4aaqbqqnd269pq4chnb5; sign=03c5d85dcfa918b7fe01535d21ba5951");
+            connection.setRequestProperty("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/536.36");
             connection.setRequestProperty("Referer", "https://www.google.com/");
             /*
             --------------------------------------------------------------------------------------
@@ -381,7 +380,7 @@ public class PlProxyServer implements PliProxyServer {
             }
 
             //TODO: Придумать оптимальную задержку. Нужна ли она?
-            Thread.sleep(1);
+            Thread.sleep(5000);
             try {
                 inputStreamConnection = connection.getInputStream();
                 reader  = new BufferedReader(new InputStreamReader(inputStreamConnection, Charset.forName("UTF-8")));
@@ -392,20 +391,20 @@ public class PlProxyServer implements PliProxyServer {
                 return stringDocument;
             }
 
-            if (connection.getURL().toString().contains("captcha")) {
-                counterWriteCaptheWithWorker++;
-                if (counterWriteCaptheWithWorker > 10) {
-                    stringDocument.append("Документ не найден");
-                    return stringDocument;
-                }
-                String captchaUrl = connection.getURL().toString();
-                worker.start(connection);
-                inputStreamConnection.close();
-                //TODO: Как закрыть соединение???? Падает с ошибкой java.lang.IllegalStateException: Already connected
-                //Просто - создать новое соединение и его передать параметром со всем свойствами.
-                connection.setRequestProperty("Referer", "https://www.google.com/");
-                createStringDocument(connection, stringDocument);
-            }
+//            if (connection.getURL().toString().contains("captcha")) {
+//                counterWriteCaptheWithWorker++;
+//                if (counterWriteCaptheWithWorker > 10) {
+//                    stringDocument.append("Документ не найден");
+//                    return stringDocument;
+//                }
+//                String captchaUrl = connection.getURL().toString();
+//                worker.start(connection);
+//                inputStreamConnection.close();
+//                //TODO: Как закрыть соединение???? Падает с ошибкой java.lang.IllegalStateException: Already connected
+//                //Просто - создать новое соединение и его передать параметром со всем свойствами.
+//                connection.setRequestProperty("Referer", "https://www.google.com/");
+//                createStringDocument(connection, stringDocument);
+//            }
 
             String line;
             while ((line = reader.readLine()) != null) {

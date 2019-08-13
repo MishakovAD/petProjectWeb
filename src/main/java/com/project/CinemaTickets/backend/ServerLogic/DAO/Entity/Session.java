@@ -1,11 +1,10 @@
 package com.project.CinemaTickets.backend.ServerLogic.DAO.Entity;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.*;
+import java.util.Objects;
 
+@Entity
+@Table(name = "session")
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +31,7 @@ public class Session {
     @Column(name = "cinema_id")
     private String cinema_id;
 
-    @Transient
+    @Column(name = "session_id")
     private String session_id;
 
     //    @OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -127,6 +126,20 @@ public class Session {
 
     public void setCinema_id(String cinema_id) {
         this.cinema_id = cinema_id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Session)) return false;
+        Session session = (Session) o;
+        return Objects.equals(url, session.url) &&
+                Objects.equals(session_id, session.session_id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(url, session_id);
     }
 
     @Override
