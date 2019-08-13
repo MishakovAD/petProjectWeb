@@ -47,7 +47,6 @@ public class UpdaterResultImpl implements UpdaterResult {
         } else {
             resultList = sessionList.stream().filter( session -> StringUtils.equalsAnyIgnoreCase(session.getTypeOfShow(), "")).collect(Collectors.toList());
         }
-
         logger.debug("End of updateFromType() in UpdaterResultImpl.class");
         return resultList;
     }

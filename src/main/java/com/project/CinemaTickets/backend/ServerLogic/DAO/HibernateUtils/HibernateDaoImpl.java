@@ -9,11 +9,15 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component
 public class HibernateDaoImpl implements HibernateDao {
     private Logger logger = LoggerFactory.getLogger(HibernateDaoImpl.class);
     public static Map<String, Cinema> uniqueCinemasMap = new HashMap<>();
@@ -21,7 +25,11 @@ public class HibernateDaoImpl implements HibernateDao {
     public static Set<com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session> uniqueSessionsSet = new HashSet<>();
     public static Set<Cinema_Movie> uniqueCinema_MovieSet = new HashSet<>();
 
-    private void init() {
+    private Session session;
+
+    @PostConstruct
+    public void init() {
+        session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         if (uniqueCinemasMap.size() == 0) {
             selectAllCinema().forEach(cinema -> uniqueCinemasMap.put(cinema.getCinemaName(), cinema));
         }
@@ -42,21 +50,25 @@ public class HibernateDaoImpl implements HibernateDao {
         }
     }
 
+    @PreDestroy
+    public void destroy() {
+        session.close();
+    }
+
     @Override
     public boolean saveCinemaMovieSessionObj(List<CinemaMovieSession> cinemaMovieSessionList) {
         logger.info("Start method saveCinemaMovieSessionObj() at " + LocalDateTime.now());
-        init();
-        Session session;
+        //init();
         try {
             Set<String> cinemasNameList = uniqueCinemasMap.keySet();
             Set<String> moviesNameList = uniqueMoviesMap.keySet();
-            session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
             Transaction tx1 = session.beginTransaction();
             cinemaMovieSessionList.forEach(cinemaMovieSession -> {
                 Cinema_Movie cinema_movie = new Cinema_Movie();
                 com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session sessionObj = cinemaMovieSession.getSession();
-
                 Cinema cinemaObj = cinemaMovieSession.getCinema();
+                Movie movieObj = cinemaMovieSession.getMovie();
+
                 if (!cinemasNameList.contains(cinemaObj.getCinemaName())) {
                     uniqueCinemasMap.put(cinemaObj.getCinemaName(), cinemaObj);
                     cinema_movie.setCinemaId(cinemaObj.getCinema_id());
@@ -67,7 +79,6 @@ public class HibernateDaoImpl implements HibernateDao {
                     sessionObj.setCinema_id(cinemaId);
                 }
 
-                Movie movieObj = cinemaMovieSession.getMovie();
                 if (!moviesNameList.contains(movieObj.getMovieName())) {
                     uniqueMoviesMap.put(movieObj.getMovieName(), movieObj);
                     cinema_movie.setMovieId(movieObj.getMovie_id());
@@ -88,13 +99,11 @@ public class HibernateDaoImpl implements HibernateDao {
                 }
             });
             tx1.commit();
-            session.close();
             return true;
         } catch (Exception ex) {
             logger.error("#### ERROR #### at HibernateDaoImpl.saveCinemaMovieSessionObj()", ex);
             return false;
         } finally {
-
             uniqueMoviesMap = new HashMap<>();
             uniqueCinemasMap = new HashMap<>();
             logger.info("End of method saveCinemaMovieSessionObj() at " + LocalDateTime.now());

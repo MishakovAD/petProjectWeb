@@ -4,6 +4,7 @@ import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.HibernateUtils.HibernateDao;
 import com.project.CinemaTickets.backend.ServerLogic.UpdaterResults.UpdaterResult;
 import com.project.CinemaTickets.backend.UserLogic.PliUserLogicFromDB;
 import com.project.CinemaTickets.backend.UserLogic.PliUserLogicFromInternet;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +44,13 @@ public class TimesheetController {
     Map<Session, Cinema> sessionCinemaMap = new HashMap<>();
 
     private Logger logger = LoggerFactory.getLogger(TimesheetController.class);
+
+    @PostConstruct
+    public void init() {
+        movieList = hibernateDao.selectAllMovie();
+        cinemaList = hibernateDao.selectAllCinema();
+        sessionList = hibernateDao.selectAllSession();
+    }
 
     @GetMapping({"/cinema"})
     public String getTimesheetPage() {
@@ -154,6 +163,7 @@ public class TimesheetController {
     private PliParserKinopoisk pliParserKinopoisk;
     private PliUserLogicFromDB pliUserLogicFromDB;
     private UpdaterResult updaterResult;
+    private HibernateDao hibernateDao;
 
     @Inject
     public void setPliParserKinopoisk(PliParserKinopoisk pliParserKinopoisk) {
@@ -173,5 +183,10 @@ public class TimesheetController {
     @Inject
     public void setUpdaterResult(UpdaterResult updaterResult) {
         this.updaterResult = updaterResult;
+    }
+
+    @Inject
+    public void setHibernateDao (HibernateDao hibernateDao) {
+        this.hibernateDao = hibernateDao;
     }
 }
