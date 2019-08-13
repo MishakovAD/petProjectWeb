@@ -3,6 +3,7 @@ package com.project.CinemaTickets.backend.ServerLogic.DAO.HibernateUtils;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema_Movie;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Movie;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.coolection.CinemaMovieSession;
 
 import java.util.List;
@@ -21,19 +22,25 @@ public interface HibernateDao {
     boolean saveCinemaMovieSessionObj(List<CinemaMovieSession> cinemaMovieSessionList);
 
     /**
-     * Выбор всех кинотеатров из БД
+     * Выбор всех кинотеатров из БД.
      * @return список кинотеатров
      */
     List<Cinema> selectAllCinema();
 
     /**
-     * Выбор всех Кино из БД
+     * Выбор всех Кино из БД.
      * @return список фильмов
      */
     List<Movie> selectAllMovie();
 
     /**
-     * Получаем все объекты Cinema_Movie из таблицы ManyToMany
+     * Выбор всех сеансов из БД.
+     * @return список фильмов
+     */
+    List<Session> selectAllSession();
+
+    /**
+     * Получаем все объекты Cinema_Movie из таблицы ManyToMany.
      * @return список Cinema_Movie
      */
     List<Cinema_Movie> selectAllCinema_Movie();

@@ -251,12 +251,12 @@ public class PlServer implements PliServer {
         PlProxyServer proxyServer = new PlProxyServer();
         proxyServer.setWorker(new WorkerImpl());
         //proxyServer.proxyListFromInternet = proxyServer.getProxyFromInternet(null);
-        Document document = proxyServer.getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/5811/cinema/280891/day_view/2019-08-14/");
-        Cinema cinema = new PlParserKinopoisk().getCinemaFromDocument(document);
+//        Document document = proxyServer.getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/5811/cinema/280891/day_view/2019-08-14/");
+//        Cinema cinema = new PlParserKinopoisk().getCinemaFromDocument(document);
         Document document2 = proxyServer.getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/1/cinema/281063/day_view/2019-08-14/");
         Cinema cinema2 = new PlParserKinopoisk().getCinemaFromDocument(document2);
         List<Cinema> cinemaList = new ArrayList<>();
-        cinemaList.add(cinema);
+//        cinemaList.add(cinema);
         cinemaList.add(cinema2);
         boolean isTrue = false;
         List<CinemaMovieSession> cinemaMovieSessionList = new ConverterToImpl().getCinemaMovieSessionListCinemasList(cinemaList);

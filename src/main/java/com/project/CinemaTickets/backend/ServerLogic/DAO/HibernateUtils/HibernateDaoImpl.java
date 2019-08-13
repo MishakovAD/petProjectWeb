@@ -12,11 +12,13 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class HibernateDaoImpl implements HibernateDao {
     private Logger logger = LoggerFactory.getLogger(HibernateDaoImpl.class);
     public static Map<String, Cinema> uniqueCinemasMap = new HashMap<>();
     public static Map<String, Movie> uniqueMoviesMap = new HashMap<>();
+    public static Set<com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session> uniqueSessionsSet = new HashSet<>();
     public static Set<Cinema_Movie> uniqueCinema_MovieSet = new HashSet<>();
 
     private void init() {
@@ -26,6 +28,10 @@ public class HibernateDaoImpl implements HibernateDao {
 
         if (uniqueMoviesMap.size() == 0) {
             selectAllMovie().forEach(movie -> uniqueMoviesMap.put(movie.getMovieName(), movie));
+        }
+
+        if (uniqueSessionsSet.size() == 0) {
+            selectAllSession().forEach(session -> uniqueSessionsSet.add(session));
         }
 
         if (uniqueCinema_MovieSet.size() == 0) {
@@ -77,7 +83,9 @@ public class HibernateDaoImpl implements HibernateDao {
                     uniqueCinema_MovieSet.add(cinema_movie);
                 }
 
-                session.save(sessionObj);
+                if (uniqueSessionsSet.stream().filter(sessionStream -> sessionStream.getUrl().equals(sessionObj.getUrl())).collect(Collectors.toList()).size() == 0) {
+                    session.save(sessionObj);
+                }
             });
             tx1.commit();
             session.close();
@@ -99,7 +107,6 @@ public class HibernateDaoImpl implements HibernateDao {
         List<Cinema> allCinemaList = new ArrayList<>();
         try {
             Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-            Transaction tx1 = session.beginTransaction();
             String sql = "From " + Cinema.class.getSimpleName();
             allCinemaList = session.createQuery(sql).list();
             session.close();
@@ -116,15 +123,30 @@ public class HibernateDaoImpl implements HibernateDao {
         List<Movie> allMovieList = new ArrayList<>();
         try {
             Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-            Transaction tx1 = session.beginTransaction();
             String sql = "From " + Movie.class.getSimpleName();
             allMovieList = session.createQuery(sql).list();
             session.close();
         } catch (Exception ex) {
-            logger.error("#### ERROR #### at HibernateDaoImpl.selectAllMovie", ex);
+            logger.error("#### ERROR #### at HibernateDaoImpl.selectAllMovie()", ex);
         }
         logger.info("End of method selectAllMovie() at " + LocalDateTime.now());
         return allMovieList;
+    }
+
+    @Override
+    public List<com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session> selectAllSession() {
+        logger.info("Start method selectAllSession() at " + LocalDateTime.now());
+        List<com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session> allSessionList = new ArrayList<>();
+        try {
+            Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+            String sql = "From " + com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session.class.getSimpleName();
+            allSessionList = session.createQuery(sql).list();
+            session.close();
+        } catch (Exception ex) {
+            logger.error("#### ERROR #### at HibernateDaoImpl.selectAllSession()", ex);
+        }
+        logger.info("End of method selectAllSession() at " + LocalDateTime.now());
+        return allSessionList;
     }
 
     @Override
@@ -144,9 +166,4 @@ public class HibernateDaoImpl implements HibernateDao {
         return allCinema_MovieList;
     }
 
-    public static void main(String[] args) {
-        HibernateDaoImpl h = new HibernateDaoImpl();
-        List<Movie> allMovieList = h.selectAllMovie();
-        System.out.println("");
-    }
 }
