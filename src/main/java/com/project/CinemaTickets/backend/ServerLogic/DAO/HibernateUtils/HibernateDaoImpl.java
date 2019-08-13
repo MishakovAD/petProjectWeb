@@ -41,7 +41,6 @@ public class HibernateDaoImpl implements HibernateDao {
         logger.info("Start method saveCinemaMovieSessionObj() at " + LocalDateTime.now());
         init();
         Session session;
-//        Set<com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session> sessionSet = new HashSet<>(); //Для того, чтобы исключить повторяющиеся значения. Откуда они??
         try {
             Set<String> cinemasNameList = uniqueCinemasMap.keySet();
             Set<String> moviesNameList = uniqueMoviesMap.keySet();
@@ -78,10 +77,8 @@ public class HibernateDaoImpl implements HibernateDao {
                     uniqueCinema_MovieSet.add(cinema_movie);
                 }
 
-                //sessionSet.add(sessionObj); //TODO: В чем проблема???
                 session.save(sessionObj);
             });
-            //sessionSet.forEach( session1 -> session.save(session1));
             tx1.commit();
             session.close();
             return true;
