@@ -248,7 +248,9 @@ public class PlServer implements PliServer {
         p.setPliProxyServer(new PlProxyServer());
         p.setDaoServerLogic(new DAOServerLogicImpl());
         p.setConverterTo(new ConverterToImpl());
-        p.setHibernateDao(new HibernateDaoImpl());
+        HibernateDaoImpl h = new HibernateDaoImpl();
+        h.init();
+        p.setHibernateDao(h);
         p.getAllCinemasFromKinopoisk("2019-08-16");
         PlProxyServer proxyServer = new PlProxyServer();
         proxyServer.setWorker(new WorkerImpl());
