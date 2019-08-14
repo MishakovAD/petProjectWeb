@@ -7,6 +7,10 @@ $(document).ready(function () {
     getIP();
     getGeolocation();
     getCity();
+    //timesheet_createRequest
+    getMovieNameForAjax();
+    clickSubmit();
+    //-----------------------
 });
 
 function getIP() {

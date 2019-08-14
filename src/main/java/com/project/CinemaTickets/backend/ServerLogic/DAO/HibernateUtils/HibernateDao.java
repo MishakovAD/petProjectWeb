@@ -44,4 +44,11 @@ public interface HibernateDao {
      * @return список Cinema_Movie
      */
     List<Cinema_Movie> selectAllCinema_Movie();
+
+    /**
+     * Метод возвращает список сеансов для выбранного фильма.
+     * @param movie - фильм
+     * @return список сеансов
+     */
+    List<Session> selectSessionsForMovie(Movie movie);
 }

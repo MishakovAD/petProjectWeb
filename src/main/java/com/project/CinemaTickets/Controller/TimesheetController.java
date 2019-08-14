@@ -10,6 +10,7 @@ import com.project.CinemaTickets.backend.UserLogic.PliUserLogicFromDB;
 import com.project.CinemaTickets.backend.UserLogic.PliUserLogicFromInternet;
 import com.project.CinemaTickets.backend.Utils.JSONUtils;
 import com.project.CinemaTickets.backend.Utils.QueryАnalysis;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -47,9 +48,9 @@ public class TimesheetController {
 
     @PostConstruct
     public void init() {
-        movieList = hibernateDao.selectAllMovie();
+        movieList = hibernateDao.selectAllMovie(); //TODO: Выборка movie относительно города (сравнивать по кинотеатрам)
         cinemaList = hibernateDao.selectAllCinema();
-        sessionList = hibernateDao.selectAllSession();
+        //sessionList = hibernateDao.selectAllSession(); //Лишняя информация
     }
 
     @GetMapping({"/cinema"})
@@ -58,22 +59,43 @@ public class TimesheetController {
         return "timesheet";
     }
 
-    @RequestMapping("/timesheet_all_query")
-    public void timesheetAllQuery(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        logger.info("Start method timesheetAllQuery() at " + LocalDateTime.now());
-        String allQuery = request.getParameter("allQuery").trim();
-        String content = "allQuery: " + allQuery;
+    @RequestMapping("/prepareSessionList")
+    public void prepareSessionForMovie(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("Start method prepareSessionForMovie() at " + LocalDateTime.now());
+        String movieName = request.getParameter("movieName");
+        Movie movieObj = movieList.stream().filter(movie -> StringUtils.equalsIgnoreCase(movie.getMovieName(), movieName)).findAny().get();
+        sessionList = hibernateDao.selectSessionsForMovie(movieObj);
 
-        Map<String, String> queryMapAfterAnalys = QueryАnalysis.parseQuerye(allQuery);
-        queryMapAfterAnalys.forEach((key, value) -> System.out.println(key + "-" + value));
-
-        String movieName = queryMapAfterAnalys.get("movie");
-        String city = queryMapAfterAnalys.get("user_city");
-
-        if (city != null && !city.isEmpty() && !city.equals("")) {
-            sessionList = pliUserLogicFromDB.getSessionListForMovie(movieName, city);
-            System.out.println("###################" + sessionList.size());
+        if (sessionList == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setContentType("text/html;charset=UTF-8");
+            PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
+            writer.print("Для данного фильма сеансов не найдено");
+            writer.flush();
+            writer.close();
+        } else {
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setHeader("Status Code", "200");
+            response.setContentType("text/html;charset=UTF-8");
+            PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
+            if (sessionList.size() == 0) {
+                writer.print("Для данного фильма сеансов не найдено");
+            } else {
+                writer.print("Для данного фильма найдено сеансов: " + sessionList.size());
+            }
+            writer.flush();
+            writer.close();
         }
+
+        logger.info("End of method prepareSessionForMovie() at " + LocalDateTime.now() + " - with sessionList.size()= " + sessionList.size());
+    }
+
+    @RequestMapping("/prepareResult")
+    public void prepareResult(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("Start method timesheetAllQuery() at " + LocalDateTime.now());
+        String query = request.getParameter("query").trim();
+
+        Map<String, String> queryMapAfterAnalys = QueryАnalysis.parseQuerye(query);
 
         String time = queryMapAfterAnalys.get("time");
         if (time != null && !time.isEmpty() && !time.equals("")) {
@@ -84,33 +106,37 @@ public class TimesheetController {
         if (type != null && !type.isEmpty() && !type.equals("")) {
             sessionList = updaterResult.updateFromType(sessionList, type);
         }
-        System.out.println("###################" + sessionList.size());
+
+        String price = queryMapAfterAnalys.get("price");
+        if (price != null && !price.isEmpty() && !price.equals("")) {
+            sessionList = updaterResult.updateFromPrice(sessionList, price);
+        }
 
         String place = queryMapAfterAnalys.get("place");
         if (place != null && !place.isEmpty() && !place.equals("")) {
             sessionCinemaMap = updaterResult.updateFromPlace(sessionList, place);
         }
+        System.out.println("###################" + sessionList.size());
 
-        double latitude = Double.parseDouble(queryMapAfterAnalys.get("latitude"));
-        double longitude = Double.parseDouble(queryMapAfterAnalys.get("longitude"));
+        if (queryMapAfterAnalys.get("latitude") != null) {
+            double latitude = Double.parseDouble(queryMapAfterAnalys.get("latitude"));
+        }
+        if (queryMapAfterAnalys.get("longitude") != null) {
+            double longitude = Double.parseDouble(queryMapAfterAnalys.get("longitude"));
+        }
 
         JSONObject responseObject;
         JSONArray responseArray = new JSONArray();
 
-        for (Map.Entry entrySet : sessionCinemaMap.entrySet()) {
+        for (Session session : sessionList) {
             responseObject = new JSONObject();
-            Session session = (Session) entrySet.getKey();
-            Cinema cinema = (Cinema) entrySet.getValue();
-            responseObject.put("cinemaName", cinema.getCinemaName());
-            responseObject.put("cinemaAddress", cinema.getCinemaAddress());
-            responseObject.put("cinemaUnderground", cinema.getCinemaUnderground());
-            responseObject.put("cinemaUrl", cinema.getUrlToKinopoisk());
+            responseObject.put("movie", session.getMovie_id());
+            responseObject.put("cinema", session.getCinema_id());
             responseObject.put("sessionType", session.getTypeOfShow());
             responseObject.put("sessionTime", session.getTimeOfShow());
             responseObject.put("sessionPrice", session.getPrice());
             responseObject.put("sessionDate", session.getSessionDate());
             responseObject.put("sesssionUrl", session.getUrl());
-            responseObject.put("sesssionParent", session.getParent());
             responseArray.put(responseObject);
         }
 

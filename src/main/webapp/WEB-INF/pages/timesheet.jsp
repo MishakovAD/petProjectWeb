@@ -18,6 +18,8 @@
     <!-- ####################### Скрипты ####################### -->
     <!-- css -->
     <link rel="stylesheet" href="css/suggest.css">
+    <link rel="stylesheet" href="css/loading.css">
+    <link rel="stylesheet" href="css/loading2.css">
     <!-- css end -->
 
     <!-- Подключение библиотек -->
@@ -39,108 +41,168 @@
     <script src="js/timesheet/timesheet_controller.js" type="text/javascript"></script>
     <script src="js/timesheet/timesheet_autocomplete.js" type="text/javascript"></script>
     <script src="js/timesheet/timesheet_user_interface.js" type="text/javascript"></script>
+    <script src="js/timesheet/timesheet_createRequest.js" type="text/javascript"></script>
     <!-- Пользовательские скрипты -->
     <!-- ####################### Скрипты ####################### -->
 
     <title>Билеты в кино</title>
 </head>
 <body>
-<!--
-Тут билеты
-<br/>
-<div class="query">
-    <h4 class="field_name" id="field_name">Название фильма: </h4>
-    <input type="text" name="timesheetquery" id="timesheetquery"/><br/>
-    <input type="button" name="timesheetquery_button" id="timesheetquery_button" value="Далее"><br/>
-</div>
--->
-<form>
-    <div class="form-row">
-        <div class="col-2">
-        </div>
-        <div class="col-3">
-            <!-- timesheet_user_interface.js createDynamicInterface() -->
-            <label for="movieName">Название фильма:</label>
-            <input type="text" class="form-control" id="movieName" aria-describedby="movieName" placeholder="Введите название фильма..">
-            <br>
-        </div>
-        <div class="col-3">
-            <label for="movieTime">Желаемое время сеанса:</label>
-            <input type="datetime-local" class="form-control" id="movieTime" aria-describedby="movieTime" placeholder="Введите желаемое время..">
-            <small id="movieTimeHelp" class="form-text text-muted">Введите желаемое время. Будет выбран ближайший сеанс.</small>
-            <br>
-        </div>
-        <div class="col-3">
-            <label for="movieType">Тип сеанса:</label>
-            <!-- timesheet_user_interface.js cjooseType() -->
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="movieType" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Выберете тип
-                </button>
-                <div class="dropdown-menu" aria-labelledby="movieType">
-                    <a class="dropdown-item active" href="#">2D</a>
-                    <a class="dropdown-item" href="#">3D</a>
-                    <a class="dropdown-item" href="#">IMax 3D</a>
-                    <a class="dropdown-item" href="#">Dolby Atmos</a>
-                    <a class="dropdown-item" href="#">D-Box</a>
-                </div>
+
+<!-- FORM -->
+<div id="formDiv">
+    <form>
+        <div class="form-row">
+            <div class="col-2">
             </div>
-            <br>
+            <div class="col-3" id="suggestDiv">
+                <!-- timesheet_user_interface.js createDynamicInterface() -->
+                <label for="movieName">Название фильма:</label>
+                <input type="text" class="form-control" id="movieName" aria-describedby="movieName" placeholder="Введите название фильма..">
+                <small id="movieNameHelp" class="form-text text-muted"></small>
+                <br>
+            </div>
+            <div class="col-3">
+                <label for="movieTime">Желаемое время сеанса:</label>
+                <input type="datetime-local" class="form-control" id="movieTime" aria-describedby="movieTime" placeholder="Введите желаемое время..">
+                <small id="movieTimeHelp" class="form-text text-muted">Введите желаемое время. Будет выбран ближайший сеанс.</small>
+                <br>
+            </div>
+            <div class="col-3">
+                <label for="movieType">Тип сеанса:</label>
+                <!-- timesheet_user_interface.js cjooseType() -->
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="movieType" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Выберете тип
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="movieType">
+                        <a class="dropdown-item active" href="#">2D</a>
+                        <a class="dropdown-item" href="#">3D</a>
+                        <a class="dropdown-item" href="#">IMax 3D</a>
+                        <a class="dropdown-item" href="#">Dolby Atmos</a>
+                        <a class="dropdown-item" href="#">D-Box</a>
+                    </div>
+                </div>
+                <br>
+            </div>
+            <div class="col-1">
+            </div>
         </div>
-        <div class="col-1">
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="col-2">
-        </div>
-        <div class="col-3">
-            <label for="moviePrice">Максимальная стоимость билета:</label>
-            <input type="text" class="form-control" id="moviePrice" aria-describedby="moviePrice" placeholder="Введите стоимость..">
-            <input type="range" class="custom-range" min="0" max="2000" step="50" value="0" id="moviePriceRange">
-            <small id="moviePriceHelp" class="form-text text-muted">Введите/выберете максимальную стоимость билета.</small>
-            <br>
-        </div>
-        <div class="col-3">
-            <label for="moviePlace">Ближайшее метро:</label>
-            <input type="text" class="form-control" id="moviePlace" aria-describedby="moviePrice" placeholder="Введите ближайшее метро..">
-            <small id="moviePlaceHelp" class="form-text text-muted">Введите ближайшее метро или место.</small>
-            <br>
-        </div>
-        <div class="col-3">
+        <div class="form-row">
+            <div class="col-2">
+            </div>
+            <div class="col-3">
+                <label for="moviePrice">Максимальная стоимость билета:</label>
+                <input type="text" class="form-control" id="moviePrice" aria-describedby="moviePrice" placeholder="Введите стоимость..">
+                <input type="range" class="custom-range" min="0" max="2000" step="50" value="0" id="moviePriceRange">
+                <small id="moviePriceHelp" class="form-text text-muted">Введите/выберете максимальную стоимость билета.</small>
+                <br>
+            </div>
+            <div class="col-3">
+                <label for="moviePlace">Ближайшее метро:</label>
+                <input type="text" class="form-control" id="moviePlace" aria-describedby="moviePrice" placeholder="Введите ближайшее метро..">
+                <small id="moviePlaceHelp" class="form-text text-muted">Введите ближайшее метро или место.</small>
+                <br>
+            </div>
+            <div class="col-3">
 
+            </div>
+            <div class="col-1">
+            </div>
         </div>
-        <div class="col-1">
+        <div class="form-row">
+            <div class="col-2">
+            </div>
+            <div class="col-3">
+                <button type="button" class="btn btn-primary" id="Submit">Submit</button>
+            </div>
+            <div class="col-3">
+            </div>
+            <div class="col-3">
+            </div>
+            <div class="col-1">
+            </div>
         </div>
-    </div>
-    <div class="form-row">
-        <div class="col-2">
-        </div>
-        <div class="col-3">
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
-        <div class="col-3">
-        </div>
-        <div class="col-3">
-        </div>
-        <div class="col-1">
-        </div>
-    </div>
-</form>
-
-
-<!-- <div class="response" id="response">
-    <strong>Ответ сервлета </strong>:
-    <span id="ajaxTimesheetQuery"></span>
-    <br/>
-    <br/>
-    <ul id="list">
-
-    </ul>
-</div> -->
+    </form>
+</div>
+<!-- END FORM -->
 
 <div id="user-city"></div>
 <div id="user-region"></div>
 <div id="user-country"></div>
+
+<!-- ANIMATIONS https://icons8.com/cssload/ru/-->
+<div id="animation" style="visibility: hidden;">
+    <div class="cssload-thecube">
+        <div class="cssload-cube cssload-c1"></div>
+        <div class="cssload-cube cssload-c2"></div>
+        <div class="cssload-cube cssload-c4"></div>
+        <div class="cssload-cube cssload-c3"></div>
+    </div>
+
+    <!-- ********************************** -->
+    <div id="cssload-pgloading">
+        <div class="cssload-loadingwrap">
+            <ul class="cssload-bokeh">
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- END ANIMATIONS -->
+
+
+<!-- RESULT -->
+<div id="result" style="visibility: hidden;">
+    <div class="hero-unit">
+        <div class="page-header">
+            <h1 id="movieTitle"><h4 id="cinemaTitle"></h4></h1>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Дата</th>
+                <th scope="col">Время</th>
+                <th scope="col">Цена</th>
+                <th scope="col">Тип сеанса</th>
+                <th scope="col">Ссылка для покупки</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td id="date"></td>
+                <td id="time"></td>
+                <td id="price"></td>
+                <td id="type"></td>
+                <td id="url_for_buy_tickets">
+                    <div id="url"></div>
+                </td>
+            </tr>
+
+            <!--<tr>
+                <th scope="row">2</th>
+                <td>Jacob</td>
+                <td>Thornton</td>
+                <td>@fat</td>
+            </tr>
+            <tr>
+                <th scope="row">3</th>
+                <td>Larry</td>
+                <td>the Bird</td>
+                <td>@twitter</td>
+            </tr>-->
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- END RESULT -->
 
 </body>
 

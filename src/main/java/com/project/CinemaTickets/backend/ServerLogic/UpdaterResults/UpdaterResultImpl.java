@@ -28,9 +28,12 @@ public class UpdaterResultImpl implements UpdaterResult {
     @Override
     public List<Session> updateFromPrice(List<Session> sessionList, String price) {
         logger.debug("Start updateFromPrice() in UpdaterResultImpl.class");
-        int priceInt = Integer.parseInt(price.replaceAll("\\D", ""));
-        List<Session> resultList = sessionList.stream().filter( session -> Integer.parseInt(session.getPrice().replaceAll("\\D", "")) <= priceInt).collect(Collectors.toList());
-        logger.debug("End of updateFromPrice() in UpdaterResultImpl.class");
+        List<Session> resultList = sessionList;
+        if (price != null) {
+            int priceInt = Integer.parseInt(price.replaceAll("\\D", ""));
+            resultList = sessionList.stream().filter( session -> Integer.parseInt(session.getPrice().replaceAll("\\D", "")) <= priceInt).collect(Collectors.toList());
+            logger.debug("End of updateFromPrice() in UpdaterResultImpl.class");
+        }
         return resultList;
     }
 
@@ -45,7 +48,7 @@ public class UpdaterResultImpl implements UpdaterResult {
         } else if (StringUtils.contains(type, "3")) {
             resultList = sessionList.stream().filter( session -> StringUtils.equalsAnyIgnoreCase(session.getTypeOfShow(), "3D")).collect(Collectors.toList());
         } else {
-            resultList = sessionList.stream().filter( session -> StringUtils.equalsAnyIgnoreCase(session.getTypeOfShow(), "")).collect(Collectors.toList());
+            resultList = sessionList;
         }
         logger.debug("End of updateFromType() in UpdaterResultImpl.class");
         return resultList;

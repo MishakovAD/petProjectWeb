@@ -14,5 +14,6 @@ function autocompleteSuggestMovie() {
             moreIndicatorClass: 'suggest-more',
             moreIndicatorText : '&hellip;'
         });
+        $('#suggestDiv.col-3 div').css('padding-bottom', '0em');
     });
 }
