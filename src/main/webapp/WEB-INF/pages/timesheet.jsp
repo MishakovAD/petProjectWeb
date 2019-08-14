@@ -163,43 +163,9 @@
             <h1 id="movieTitle"><h4 id="cinemaTitle"></h4></h1>
         </div>
 
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Дата</th>
-                <th scope="col">Время</th>
-                <th scope="col">Цена</th>
-                <th scope="col">Тип сеанса</th>
-                <th scope="col">Ссылка для покупки</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td id="date"></td>
-                <td id="time"></td>
-                <td id="price"></td>
-                <td id="type"></td>
-                <td id="url_for_buy_tickets">
-                    <div id="url"></div>
-                </td>
-            </tr>
+        <div id="resultTableDiv">
 
-            <!--<tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-            </tr>-->
-            </tbody>
-        </table>
+        </div>
     </div>
 </div>
 <!-- END RESULT -->

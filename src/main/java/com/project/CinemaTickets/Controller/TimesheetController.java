@@ -28,9 +28,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Сделать дополнительную проверку на запрос. возвращет ли он инужные данные или нет. Искать похожие запросы среди списка премьер
@@ -125,20 +124,52 @@ public class TimesheetController {
             double longitude = Double.parseDouble(queryMapAfterAnalys.get("longitude"));
         }
 
-        JSONObject responseObject;
+        JSONObject responseObj;
         JSONArray responseArray = new JSONArray();
+        Set<String> uniqueCinemaId = new HashSet<>();
 
-        for (Session session : sessionList) {
-            responseObject = new JSONObject();
-            responseObject.put("movie", session.getMovie_id());
-            responseObject.put("cinema", session.getCinema_id());
-            responseObject.put("sessionType", session.getTypeOfShow());
-            responseObject.put("sessionTime", session.getTimeOfShow());
-            responseObject.put("sessionPrice", session.getPrice());
-            responseObject.put("sessionDate", session.getSessionDate());
-            responseObject.put("sesssionUrl", session.getUrl());
-            responseArray.put(responseObject);
-        }
+        sessionList.forEach(session -> {
+            if (!uniqueCinemaId.contains(session.getCinema_id())) {
+                uniqueCinemaId.add(session.getCinema_id());
+            }
+        });
+
+        uniqueCinemaId.forEach(cinemaId -> {
+            JSONArray responseArrayByGroupCinema = new JSONArray();
+            List<Session> sessionListFromCinema = sessionList.stream().filter(s -> s.getCinema_id().equals(cinemaId)).collect(Collectors.toList());
+            sessionListFromCinema.forEach(groupSession -> {
+                JSONObject responseObject = new JSONObject();
+                responseObject.put("movie", groupSession.getMovie_id());
+                responseObject.put("cinema", groupSession.getCinema_id());
+                responseObject.put("sessionType", groupSession.getTypeOfShow());
+                responseObject.put("sessionTime", groupSession.getTimeOfShow());
+                responseObject.put("sessionPrice", groupSession.getPrice());
+                responseObject.put("sessionDate", groupSession.getSessionDate());
+                responseObject.put("sesssionUrl", groupSession.getUrl());
+                responseArrayByGroupCinema.put(responseObject);
+                responseArrayByGroupCinema.put(responseObject);
+                responseArrayByGroupCinema.put(responseObject);
+            });
+            responseArray.put(responseArrayByGroupCinema);
+            responseArray.put(responseArrayByGroupCinema);
+            responseArray.put(responseArrayByGroupCinema);
+        });
+
+//        for (Session session : sessionList) {
+//            responseObj = new JSONObject();
+//            String cinemaId = session.getCinema_id();
+//            if (!uniqueCinemaId.contains(cinemaId)) {
+//                uniqueCinemaId.add(cinemaId);
+//                responseObj.put("movie", session.getMovie_id());
+//                responseObj.put("cinema", session.getCinema_id());
+//                responseObj.put("sessionType", session.getTypeOfShow());
+//                responseObj.put("sessionTime", session.getTimeOfShow());
+//                responseObj.put("sessionPrice", session.getPrice());
+//                responseObj.put("sessionDate", session.getSessionDate());
+//                responseObj.put("sesssionUrl", session.getUrl());
+//                responseArray.put(responseObj);
+//            }
+//        }
 
         response.setContentType("application/json");
         PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
