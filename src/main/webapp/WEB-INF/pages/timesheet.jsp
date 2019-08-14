@@ -140,6 +140,21 @@
         <div class="cssload-cube cssload-c3"></div>
     </div>
 
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-7">
+            <h3 id="titleText1">Результат уже готов!</h3>
+            <h3 id="titleText2">Просто заставка прикольная.</h3>
+            <h6 id="titleText3">Результаты появятся через:
+                <small id="timer">7</small>
+                <br>
+                <small id="additionalTimerText">Но вообще, раньше :)</small>
+            </h6>
+        </div>
+        <div class="col-2"></div>
+    </div>
+
+
     <!-- ********************************** -->
     <div id="cssload-pgloading">
         <div class="cssload-loadingwrap">
@@ -160,10 +175,12 @@
 <div id="result" style="visibility: hidden;">
     <div class="hero-unit">
         <div class="page-header">
-            <h1 id="movieTitle"><h4 id="cinemaTitle"></h4></h1>
+            <h1 id="movieTitle"></h1>
         </div>
 
         <div id="resultTableDiv">
+            <h4 id="cinemaTitle"></h4>
+
 
         </div>
     </div>

@@ -115,7 +115,6 @@ public class TimesheetController {
         if (place != null && !place.isEmpty() && !place.equals("")) {
             sessionCinemaMap = updaterResult.updateFromPlace(sessionList, place);
         }
-        System.out.println("###################" + sessionList.size());
 
         if (queryMapAfterAnalys.get("latitude") != null) {
             double latitude = Double.parseDouble(queryMapAfterAnalys.get("latitude"));
@@ -124,7 +123,6 @@ public class TimesheetController {
             double longitude = Double.parseDouble(queryMapAfterAnalys.get("longitude"));
         }
 
-        JSONObject responseObj;
         JSONArray responseArray = new JSONArray();
         Set<String> uniqueCinemaId = new HashSet<>();
 
@@ -139,40 +137,31 @@ public class TimesheetController {
             List<Session> sessionListFromCinema = sessionList.stream().filter(s -> s.getCinema_id().equals(cinemaId)).collect(Collectors.toList());
             sessionListFromCinema.forEach(groupSession -> {
                 JSONObject responseObject = new JSONObject();
-                responseObject.put("movie", groupSession.getMovie_id());
-                responseObject.put("cinema", groupSession.getCinema_id());
+                responseObject.put("movie", movieList.stream()
+                        .filter(m -> m.getMovie_id().equals(groupSession.getMovie_id()))
+                        .findFirst()
+                        .get()
+                        .getMovieName());
+                responseObject.put("cinema", cinemaList.stream()
+                        .filter(c -> c.getCinema_id().equals(groupSession.getCinema_id()))
+                        .findFirst()
+                        .get()
+                        .getCinemaName());
                 responseObject.put("sessionType", groupSession.getTypeOfShow());
                 responseObject.put("sessionTime", groupSession.getTimeOfShow());
                 responseObject.put("sessionPrice", groupSession.getPrice());
                 responseObject.put("sessionDate", groupSession.getSessionDate());
                 responseObject.put("sesssionUrl", groupSession.getUrl());
                 responseArrayByGroupCinema.put(responseObject);
-                responseArrayByGroupCinema.put(responseObject);
-                responseArrayByGroupCinema.put(responseObject);
             });
-            responseArray.put(responseArrayByGroupCinema);
-            responseArray.put(responseArrayByGroupCinema);
             responseArray.put(responseArrayByGroupCinema);
         });
 
-//        for (Session session : sessionList) {
-//            responseObj = new JSONObject();
-//            String cinemaId = session.getCinema_id();
-//            if (!uniqueCinemaId.contains(cinemaId)) {
-//                uniqueCinemaId.add(cinemaId);
-//                responseObj.put("movie", session.getMovie_id());
-//                responseObj.put("cinema", session.getCinema_id());
-//                responseObj.put("sessionType", session.getTypeOfShow());
-//                responseObj.put("sessionTime", session.getTimeOfShow());
-//                responseObj.put("sessionPrice", session.getPrice());
-//                responseObj.put("sessionDate", session.getSessionDate());
-//                responseObj.put("sesssionUrl", session.getUrl());
-//                responseArray.put(responseObj);
-//            }
-//        }
-
         response.setContentType("application/json");
         PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
+        if (sessionList.size() == 0) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
         writer.print(responseArray);
         writer.flush();
         writer.close();

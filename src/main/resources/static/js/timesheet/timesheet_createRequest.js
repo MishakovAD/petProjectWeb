@@ -52,8 +52,6 @@ function sendAjaxForPrepareSessions(sendUrl, requestData) {
     });
 }
 
-var respData; //delete
-var responsFrom; //delete
 function sendAjaxForFilterSessions(sendUrl, requestData) {
     $.ajax({
         url: sendUrl,
@@ -61,37 +59,40 @@ function sendAjaxForFilterSessions(sendUrl, requestData) {
         datatype: "application/json",
         cache: false,
         success: function (response) {
-            responsFrom = response;
-            $('#formDiv').remove();
-            $('#animation').remove();
-            $('#movieTitle').text(response[0][0]["movie"]);
-            for (var i = 0; i < response.length; i++) {
-                respData = response[i];
-                $('#cinemaTitle').text(respData[0]["cinema"]);
-                createTable(i, respData);
-                // for (var j = 0; j<respData.length; j++) {
-                //     $('#movieTitle').text(respData[0]["movie"]);
-                //     $('#cinemaTitle').text(respData[0]["cinema"]);
-                //     var responseData = respData[j];
-                //     addRow("resultTable", j, responseData["sessionDate"], responseData["sessionTime"], responseData["sessionPrice"], responseData["sessionType"], responseData["sesssionUrl"]);
-                //     // $('#date').text(responseData["sessionDate"]);
-                //     // $('#time').text(responseData["sessionTime"]);
-                //     // $('#price').text("от " + responseData["sessionPrice"]);
-                //     // $('#type').text(responseData["sessionType"]);
-                //     // $('#url').html('<a class="btn btn-primary btn-large" href="' + responseData["sesssionUrl"] + '">Купить билет</a>');
-                // }
-            }
-            var resultDiv = $('#result');
-            resultDiv.css('visibility', 'visible');
+            timer([0,0,6], function (hours, minutes, seconds) {
+                $('#timer').text(seconds);
+            });
+            setTimeout(function (respose) {
+                var responsFrom = response;
+                $('#formDiv').remove();
+                $('#animation').remove();
+                $('#movieTitle').text(response[0][0]["movie"]);
+                for (var i = 0; i < response.length; i++) {
+                    var respData = response[i];
+                    createTable(i, respData);
+                    // for (var j = 0; j<respData.length; j++) {
+                    //     // $('#url').html('<a class="btn btn-primary btn-large" href="' + responseData["sesssionUrl"] + '">Купить билет</a>');
+                    // }
+                }
+                var resultDiv = $('#result');
+                resultDiv.css('visibility', 'visible');
+            }, 5000);
         },
         error: function (response) {
-            alert("ERROR!!!");
+            $('#titleText1').text("УПС!");
+            $('#titleText2').text("Кажется, что то пошло не так!");
+            $('#titleText3').text("Но вы не волнуйтесь! "
+                + "Просто обновите страницу \n"
+                + "и введите правильное название кино. Вам подскажут.");
         }
     });
 }
 
 function createTable(tableId, respData) {
     var body = document.getElementById("resultTableDiv");
+    var h4 = document.createElement('h4');
+    h4.innerHTML = respData[0]["cinema"];
+    body.appendChild(h4);
     var table = document.createElement("table");
     table.classList.add("table");
     table.classList.add("table-striped");
@@ -130,18 +131,11 @@ function createTable(tableId, respData) {
         addRow(tableBody, tableId, j+1, responseData["sessionDate"], responseData["sessionTime"], responseData["sessionPrice"], responseData["sessionType"], responseData["sesssionUrl"]);
     }
 
-    // var trBody = document.createElement('tr'); //row
-    // var tdBody = document.createElement('td'); //cell
-    // tdBody.appendChild(document.createElement('button'));
-    // trBody.appendChild(tdBody);
-    // tableBody.appendChild(trBody);
-
     table.appendChild(tableBody);
     body.appendChild(table);
 }
 
 function addRow(tableBody, tableId, id, date, time, price, type, url){
-    //var tbody = document.getElementById(tableId).getElementsByTagName("TBODY")[0];
     var row = document.createElement("TR");
     var td1 = document.createElement("TD");
     td1.appendChild(document.createTextNode(id));
@@ -150,11 +144,24 @@ function addRow(tableBody, tableId, id, date, time, price, type, url){
     var td3 = document.createElement("TD");
     td3.appendChild (document.createTextNode(time));
     var td4 = document.createElement("TD");
-    td4.appendChild (document.createTextNode(price));
+    td4.appendChild (document.createTextNode("от " + price));
     var td5 = document.createElement("TD");
     td5.appendChild (document.createTextNode(type));
     var td6 = document.createElement("TD");
-    td6.appendChild (document.createTextNode(url));
+
+
+    var button = document.createElement("button");
+    button.setAttribute('type', 'button');
+    button.classList.add('btn');
+    button.classList.add('btn-primary');
+    button.classList.add('btn-large');
+    button.innerHTML = "Купить билет";
+    var a_url = document.createElement('a');
+    a_url.setAttribute('href', url);
+    a_url.appendChild(button);
+
+
+    td6.appendChild (a_url);
     row.appendChild(td1);
     row.appendChild(td2);
     row.appendChild(td3);
@@ -163,3 +170,31 @@ function addRow(tableBody, tableId, id, date, time, price, type, url){
     row.appendChild(td6);
     tableBody.appendChild(row);
 }
+
+function timer(_time, _call){
+    timer.lastCall = _call;
+    timer.lastTime = _time;
+    timer.timerInterval = setInterval(function(){
+        _call(_time[0],_time[1],_time[2]);
+        _time[2]--;
+        if(_time[0]==0 && _time[1]==0 && _time[2]==0){
+            timer.pause();
+            _call(0,0,0);
+        }
+        if(_time[2]==0){
+            _time[2] = 59;
+            _time[1]--;
+            if(_time[1]==0){
+                _time[1] = 59;
+                _time[0]--
+            }
+        }
+        timer.lastTime = _time
+    }, 1000)
+}
+timer.pause = function(){
+    clearInterval(timer.timerInterval)
+};
+timer.start = function(){
+    timer(timer.lastTime, timer.lastCall)
+};

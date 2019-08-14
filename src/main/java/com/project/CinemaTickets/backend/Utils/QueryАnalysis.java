@@ -49,8 +49,16 @@ public class QueryАnalysis {
             } else if (queryPart.contains("time")) {
                 String key = queryPart.split(":")[0];
                 String value = queryPart.replaceAll(key + ":", "");
-                String time = formatTime(value);
-                queryesMap.put(key, time);
+                if (StringUtils.contains(value, "T")) {
+                    String time = formatTimeNew(value);
+                    String date = formatDateNew(value);
+                    queryesMap.put("time", time);
+                    queryesMap.put("date", date);
+                } else {
+                    String time = formatTime(value);
+                    queryesMap.put(key, time);
+                }
+
             } else if (queryPart.contains("type")) {
                 String key = queryPart.split(":")[0];
                 String value = queryPart.replaceAll(key + ":", "");
@@ -100,8 +108,22 @@ public class QueryАnalysis {
         return false;
     }
 
-    private static String formatDate (String date) {
-        return null;
+    private static String formatDateNew (String dateTime) {
+        String date = "1970-01-01";
+        if(dateTime != null) {
+            date = dateTime.substring(0, dateTime.indexOf("T"));
+        }
+        return date;
+    }
+
+    private static String formatTimeNew (String dateTime){
+        String time = "0:00";
+        if(dateTime != null) {
+            time = dateTime.substring(dateTime.indexOf("T") + 1);
+            //TODO: Костыль, придумать, как сделать лучше.
+            time = time.substring(0, time.indexOf(","));
+        }
+        return time;
     }
 
     private static String formatTime (String time) {
@@ -152,9 +174,11 @@ public class QueryАnalysis {
     public static void main(String[] args) {
 //        Map<String, String> map = parseQuerye("lat : 55.6844903, lng : 37.5954383}user_ip:185.89.8.146}user_city:Москва}movie:54321}time:54321}type:54321}place:54321}");
 //        map.forEach( (key, value) -> System.out.println(key + "-" + value) );
+        Map<String, String> map = parseQuerye("time:2019-08-14T0:32, type:, price:1900, place");
+        map.forEach( (key, value) -> System.out.println(key + "-" + value) );
 //        System.out.println(PATTERN_IP_ADDRESS.matcher("192.1388.2.2").matches());
 //        System.out.println(formatTime("123456"));
 //        System.out.println(isRussiaText("asdsfrefdsf"));
-        System.out.println(UUID.randomUUID().toString().substring(0, 13).replaceAll("-", String.valueOf(new Random(System.currentTimeMillis()).nextInt(777))));
+//        System.out.println(UUID.randomUUID().toString().substring(0, 13).replaceAll("-", String.valueOf(new Random(System.currentTimeMillis()).nextInt(777))));
     }
 }

@@ -166,6 +166,7 @@ public class UpdaterResultImpl implements UpdaterResult {
     }
 
     public static void main(String[] args) {
-        System.out.println("jn 270h".replaceAll("\\D", ""));
+        UpdaterResultImpl u = new UpdaterResultImpl();
+        System.out.println(u.isRrquiredPeriod("20:18", "21:20"));
     }
 }
