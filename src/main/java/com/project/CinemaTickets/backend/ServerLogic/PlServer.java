@@ -10,6 +10,7 @@ import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOServerLogic;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOServerLogicImpl;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.coolection.CinemaMovieSession;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.HibernateUtils.HibernateDao;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.HibernateUtils.HibernateDaoImpl;
 import com.project.CinemaTickets.backend.ServerLogic.Worker.WorkerImpl;
 import org.apache.commons.lang3.StringUtils;
@@ -75,8 +76,11 @@ public class PlServer implements PliServer {
                 cinema.setUrlToKinopoisk(urlToKinopoisk);
                 cinemasList.add(cinema);
 
+                List<CinemaMovieSession> cinemaMovieSessionList = converterTo.getCinemaMovieSessionListCinemasList(cinemasList);
+                hibernateDao.saveCinemaMovieSessionObj(cinemaMovieSessionList);
+
                 //daoServerLogic.insertCinemaToDB(cinema); //поменять на вставку листа специальных объектов
-                //emulationHumanActivity();
+                emulationHumanActivity();
             }
 
         }
@@ -244,29 +248,10 @@ public class PlServer implements PliServer {
         p.setPliProxyServer(new PlProxyServer());
         p.setDaoServerLogic(new DAOServerLogicImpl());
         p.setConverterTo(new ConverterToImpl());
-//        p.emulationHumanActivity();
-//        p.getAllCinemasFromKinopoisk("");
-//        System.out.println("End emulation");
-        long startTime = System.currentTimeMillis();
+        p.setHibernateDao(new HibernateDaoImpl());
+        p.getAllCinemasFromKinopoisk("2019-08-16");
         PlProxyServer proxyServer = new PlProxyServer();
         proxyServer.setWorker(new WorkerImpl());
-        //proxyServer.proxyListFromInternet = proxyServer.getProxyFromInternet(null);
-//        Document document = proxyServer.getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/5811/cinema/280891/day_view/2019-08-14/");
-//        Cinema cinema = new PlParserKinopoisk().getCinemaFromDocument(document);
-        Document document2 = proxyServer.getHttpDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/1/cinema/281063/day_view/2019-08-14/");
-        Cinema cinema2 = new PlParserKinopoisk().getCinemaFromDocument(document2);
-        List<Cinema> cinemaList = new ArrayList<>();
-//        cinemaList.add(cinema);
-        cinemaList.add(cinema2);
-        boolean isTrue = false;
-        List<CinemaMovieSession> cinemaMovieSessionList = new ConverterToImpl().getCinemaMovieSessionListCinemasList(cinemaList);
-        while(!isTrue) {
-            isTrue = new HibernateDaoImpl().saveCinemaMovieSessionObj(cinemaMovieSessionList);
-            System.out.println("");
-        }
-        long endTime = System.currentTimeMillis();
-        System.out.println("Размер листа с элементами: " + cinemaMovieSessionList.size());
-        System.out.println("Время преобразования 1 фильма: " + (endTime-startTime)/1000 + "s.");
 
     }
 
@@ -277,6 +262,7 @@ public class PlServer implements PliServer {
     private PliParserKinopoisk pliParserKinopoisk;
     private DAOServerLogic daoServerLogic;
     private ConverterTo converterTo;
+    private HibernateDao hibernateDao;
 
     @Inject
     public void setPliProxyServer(PliProxyServer pliProxyServer) {
@@ -294,5 +280,10 @@ public class PlServer implements PliServer {
     @Inject
     public void setConverterTo(ConverterTo converterTo) {
         this.converterTo = converterTo;
+    }
+
+    @Inject
+    public void setHibernateDao (HibernateDao hibernateDao) {
+        this.hibernateDao = hibernateDao;
     }
 }
