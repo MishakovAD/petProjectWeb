@@ -1,5 +1,7 @@
 package com.project.CinemaTickets.backend.ServerLogic.Worker;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
 
 import java.net.URLConnection;
@@ -8,10 +10,9 @@ import java.net.URLConnection;
 public class WorkerImpl extends Thread implements Worker {
     private boolean running = true;
 
-    public void run(URLConnection connection) {
+    public void run() {
         while (isRunning()) {
             System.out.println("Worker run");
-            System.out.println("URL in Worker at method run(): " + connection.getURL().toString());
             try {
                 Thread.sleep(10000);
             } catch (InterruptedException e) {
@@ -21,9 +22,16 @@ public class WorkerImpl extends Thread implements Worker {
 
     }
 
-    public void start(URLConnection connection) {
-        System.out.println("URL in Worker: " + connection.getURL().toString());
-        this.run(connection);
+    public String start(StringBuilder capthaDocument) {
+        StringBuilder url = new StringBuilder("https://www.kinopoisk.ru/checkcaptcha?key=");
+        Document captchaDoc = Jsoup.parse(capthaDocument.toString());
+        String key = captchaDoc.getElementsByAttributeValue("name", "key").attr("value");
+        String retpath = captchaDoc.getElementsByAttributeValue("name", "retpath").attr("value");
+        String srcImg = captchaDoc.getElementsByAttributeValue("class", "image form__captcha").attr("src");
+
+
+
+        return url.toString();
     }
 
     public boolean isRunning() {
@@ -32,5 +40,11 @@ public class WorkerImpl extends Thread implements Worker {
 
     public void setRunning(boolean running) {
         this.running = running;
+    }
+
+    public static void main(String[] args) {
+        WorkerImpl w = new WorkerImpl();
+        StringBuilder sb = new StringBuilder();
+        w.start(sb);
     }
 }
