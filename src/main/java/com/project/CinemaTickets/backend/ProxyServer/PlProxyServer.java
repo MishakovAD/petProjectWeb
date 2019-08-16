@@ -133,6 +133,7 @@ public class PlProxyServer implements PliProxyServer {
         } else {
             proxyServer = proxyList.get(0);
             proxyList.remove(0);
+            proxyList.add(proxyServer);
         }
 
 
@@ -380,7 +381,8 @@ public class PlProxyServer implements PliProxyServer {
             }
 
             //TODO: Придумать оптимальную задержку. Нужна ли она?
-            Thread.sleep(5000);
+            int time = random.nextInt(10000);
+            Thread.sleep(time);
             try {
                 inputStreamConnection = connection.getInputStream();
                 reader  = new BufferedReader(new InputStreamReader(inputStreamConnection, Charset.forName("UTF-8")));

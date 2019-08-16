@@ -132,9 +132,16 @@ public class TimesheetController {
             }
         });
 
+        Set<Session> resultSessionSet = new HashSet<>();
+        sessionList.forEach(s -> {
+            if (resultSessionSet.stream().filter(rs -> StringUtils.equals(rs.getSession_id(), s.getSession_id())).collect(Collectors.toList()).size() == 0) {
+                resultSessionSet.add(s);
+            }
+        });
+
         uniqueCinemaId.forEach(cinemaId -> {
             JSONArray responseArrayByGroupCinema = new JSONArray();
-            List<Session> sessionListFromCinema = sessionList.stream().filter(s -> s.getCinema_id().equals(cinemaId)).collect(Collectors.toList());
+            List<Session> sessionListFromCinema = resultSessionSet.stream().filter(s -> s.getCinema_id().equals(cinemaId)).collect(Collectors.toList());
             sessionListFromCinema.forEach(groupSession -> {
                 JSONObject responseObject = new JSONObject();
                 responseObject.put("movie", movieList.stream()
