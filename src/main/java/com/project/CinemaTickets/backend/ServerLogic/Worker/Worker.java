@@ -7,5 +7,5 @@ import java.net.URLConnection;
  * по определенным условиям, а так же по расписанию.
  */
 public interface Worker {
-    public void start(URLConnection connection);
+    public String start(StringBuilder capthaDocument);
 }
