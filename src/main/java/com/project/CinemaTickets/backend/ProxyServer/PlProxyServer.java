@@ -133,6 +133,7 @@ public class PlProxyServer implements PliProxyServer {
         } else {
             proxyServer = proxyList.get(0);
             proxyList.remove(0);
+            proxyList.add(proxyServer);
         }
 
 
@@ -362,25 +363,13 @@ public class PlProxyServer implements PliProxyServer {
         Random random = new Random(System.currentTimeMillis());
         int num = random.nextInt(10);
         try {
-            /*
-            -------------------------------------------------------------------------------------
-             */
-//            connection.setRequestProperty("Cookie", "ys=c_chck.303" + num + "506" + num + "4; mda2_beacon=15" + num + "33571" + num + "8181; _ym_visorc_5" + num + "332" + num + "06=b; _ym_isad=2; crookie=Qknpr3OyI1JfXT50IsACbd" + num + "S1aRxedihnfrYpwN56lVKbEpIBhZATXh8qLhw47/mCiVjn8o6CLlQCXyKzrVUhWLouPg=; ya_sess_id=noauth:1563" + num + "57138; _ym_d=1563357079; yandexuid=81377" + num + "4761563" + num + "69214; mda=0; _ym_visorc_226" + num + "394" + num + "=b; mda_exp_enabled=1; cmtchd=MTU" + num + "MzM1NzE0MzQzNw==; _ym_uid=156335707" + num + "375756538; i=sJw7tHGq7UlMuiI3tcZWun" + num + "kpISGsA0eCyN8jhUQV" + num + "HsKIxFs2uPzWXymJsd8jS+BOG38n8n9/kdMi5+r3i+tPyo2uY=; _ym_visorc_10630330=w; _ym_wasSynced=%7B%22time%22%3A156" + num + "357078670%2C%22params%22%3A%7B%22eu%22%3A0%7D%2C%22bkParams%" + num + "2%3A%7B%7D%7D; spravka=dD0xNTMxODIyODY5O2k9MTg1Ljg5LjguMTQ2O3U9MTUzMTgyMjg2OTAwNDM5NDcwMDtoPTU2YzQxNzM5NmRjNTkzZWY1ZjczODEyNzAwNTNjYTAz; user-geo-region-id=213; user-geo-country-id=2; desktop_session_key=7208ac854c8c0ba" + num + "a4bb861fcced008e96bb9440a10662bf001b72bef97" + num + "98a29937346da2b97f5a27dacad3" + num + "bec2e575583f0153b498e548bdf6bc77405ee51b1354327dd68521918f1f25df4897b01b969de62b760f22705f3ad69cc323e5b; desktop_session_key.sig=t-" + num + "KoGZDclotGuo" + num + "r0Baroji" + num + "To; yandex_plus_metrika_cookie=true");
-//            // Куки выше взяты после ввода капчи. Разобраться с ними.
-            connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
-            connection.setRequestProperty("Cookie", "secure=15" + num + "3637166-745e633" + num + "ecc4c711be40b59db238d21b; sid=8c8k5n4aaqbqqnd269pq4chnb5; sign=03c5d85dcfa918b7fe01535d21ba5951");
-            connection.setRequestProperty("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/536.36");
-            connection.setRequestProperty("Referer", "https://www.google.com/");
-            /*
-            --------------------------------------------------------------------------------------
-             */
-
             if (counterWriteCaptheWithWorker == 0) {
                 connection.connect();
             }
 
             //TODO: Придумать оптимальную задержку. Нужна ли она?
-            Thread.sleep(5000);
+            int time = random.nextInt(10000);
+            Thread.sleep(time);
             try {
                 inputStreamConnection = connection.getInputStream();
                 reader  = new BufferedReader(new InputStreamReader(inputStreamConnection, Charset.forName("UTF-8")));
@@ -407,18 +396,51 @@ public class PlProxyServer implements PliProxyServer {
                 stringDocument.append("Документ не найден");
                 return stringDocument;
             }
-            String captchaUrl = connection.getURL().toString();
-            String newUrl = worker.start(stringDocument);
-            connection = openConnection(newUrl, null);
+            String writeCaptchaUrl = writeCaptcha(connection, stringDocument, num);
+
+            //*************************************TEST**********************************************************
+            String url = connection.getURL().toString();
+            connection = openConnection(url.substring(url.indexOf("retpath=") + 8, url.indexOf("%3F")).replaceAll("%3A", ":") + "?", null);
             connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
+            connection.setRequestProperty("accept-encoding", "gzip, deflate, br");
+            connection.setRequestProperty("accept-language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
             connection.setRequestProperty("Cookie", "secure=15" + num + "3637166-745e633" + num + "ecc4c711be40b59db238d21b; sid=8c8k5n4aaqbqqnd269pq4chnb5; sign=03c5d85dcfa918b7fe01535d21ba5951");
+            connection.setRequestProperty("referer", writeCaptchaUrl);
+            connection.setRequestProperty("upgrade-insecure-requests", "1");
             connection.setRequestProperty("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/536.36");
-            connection.setRequestProperty("Referer", "https://www.google.com/");
+            try {
+                connection.connect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //***************************************************************************************************
+
             createStringDocument(connection, new StringBuilder());
         }
 
         logger.info("End of method createStringDocument() at " + LocalDateTime.now());
         return stringDocument;
+    }
+
+    private String writeCaptcha(URLConnection connection, StringBuilder stringDocument, int num) {
+        String captchaUrl = connection.getURL().toString();
+        String newUrl = worker.start(stringDocument);
+        connection = openConnection(newUrl, null);
+        connection.setRequestProperty("path", newUrl.replaceAll("https://www.kinopoisk.ru/", ""));
+        connection.setRequestProperty("scheme","https");
+        connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
+        connection.setRequestProperty("accept-encoding", "gzip, deflate, br");
+        connection.setRequestProperty("accept-language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
+        connection.setRequestProperty("Cookie", "secure=15" + num + "3637166-745e633" + num + "ecc4c711be40b59db238d21b; sid=8c8k5n4aaqbqqnd269pq4chnb5; sign=03c5d85dcfa918b7fe01535d21ba5951");
+        connection.setRequestProperty("referer", captchaUrl);
+        connection.setRequestProperty("upgrade-insecure-requests", "1");
+        connection.setRequestProperty("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/536.36");
+        try {
+            connection.connect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return newUrl;
     }
 
     private String selectIp(String ip_port) {

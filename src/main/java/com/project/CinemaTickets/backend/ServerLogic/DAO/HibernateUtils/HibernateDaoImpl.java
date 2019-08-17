@@ -59,7 +59,7 @@ public class HibernateDaoImpl implements HibernateDao {
     @Override
     public boolean saveCinemaMovieSessionObj(List<CinemaMovieSession> cinemaMovieSessionList) {
         logger.info("Start method saveCinemaMovieSessionObj() at " + LocalDateTime.now());
-        //init();
+        init(); //Для работающего приложения - не нужно
         try {
             Set<String> cinemasNameList = uniqueCinemasMap.keySet();
             Set<String> moviesNameList = uniqueMoviesMap.keySet();
@@ -107,6 +107,7 @@ public class HibernateDaoImpl implements HibernateDao {
         } finally {
             uniqueMoviesMap = new HashMap<>();
             uniqueCinemasMap = new HashMap<>();
+            uniqueSessionsSet = new HashSet<>();
             logger.info("End of method saveCinemaMovieSessionObj() at " + LocalDateTime.now());
         }
     }

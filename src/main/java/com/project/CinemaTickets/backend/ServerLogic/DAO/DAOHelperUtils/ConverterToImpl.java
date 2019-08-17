@@ -12,10 +12,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static com.project.CinemaTickets.backend.Utils.HelperUtils.createUniqueID;
 
 public class ConverterToImpl implements ConverterTo {
+    public static Pattern PATTERN_URL_BUY_TICKETS = Pattern.compile("https://tickets.widget.kinopoisk.ru/w/sessions/");
     private Logger logger = LoggerFactory.getLogger(ConverterToImpl.class);
 
     @Override
@@ -47,6 +49,11 @@ public class ConverterToImpl implements ConverterTo {
                     session.setCinema_id(cinemaId);
                     String uniqueMovieId = movieNameMap.get(movieName).getMovie_id();
                     session.setMovie_id(uniqueMovieId);
+                    if (PATTERN_URL_BUY_TICKETS.matcher(session.getUrl()).matches()) {
+                        StringBuilder url = new StringBuilder(session.getUrl());
+                        url.append("NO-ONLINE-TICKETS-" + createUniqueID());
+                        session.setUrl(url.toString());
+                    }
 
                     CinemaMovieSession cmsObj = new CinemaMovieSessionObj();
                     cmsObj.setCinema(cinema);
@@ -59,5 +66,9 @@ public class ConverterToImpl implements ConverterTo {
         long endTime = System.currentTimeMillis();
         logger.info("End of method getCinemaMovieSessionListCinemasList() at " + LocalDateTime.now() + " - with work time = " + (endTime - startTime)/1000 + "s.");
         return cinemaMovieSessionList;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(PATTERN_URL_BUY_TICKETS.matcher("https://tickets.widget.kinopoisk.ru/w/sessions/").matches());
     }
 }

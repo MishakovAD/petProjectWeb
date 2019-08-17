@@ -245,15 +245,16 @@ public class PlServer implements PliServer {
     public static void main(String[] args) throws IOException {
         PlServer p = new PlServer();
         p.setPliParserKinopoisk(new PlParserKinopoisk());
-        p.setPliProxyServer(new PlProxyServer());
         p.setDaoServerLogic(new DAOServerLogicImpl());
         p.setConverterTo(new ConverterToImpl());
         HibernateDaoImpl h = new HibernateDaoImpl();
         h.init();
         p.setHibernateDao(h);
-        p.getAllCinemasFromKinopoisk("2019-08-17");
         PlProxyServer proxyServer = new PlProxyServer();
         proxyServer.setWorker(new WorkerImpl());
+        p.setPliProxyServer(proxyServer);
+        p.getAllCinemasFromKinopoisk("2019-08-18");
+
 
     }
 
