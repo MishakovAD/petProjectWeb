@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -35,10 +36,9 @@ public class PlHttpClient implements PliHttpClient {
 
     @Override
     public Document getDocumentFromInternet(String url) throws IOException {
-        String answerCaptcha;
+        String answerCaptchaUrl;
         StringBuilder htmlDocumentAtString = new StringBuilder();
         HttpClient httpClient = HttpClientBuilder.create().build();
-        ResponseHandler responseHandler = new BasicResponseHandler();
         HttpContext context = new HttpClientContext();
 
         HttpGet request = new HttpGet(url);
@@ -46,24 +46,30 @@ public class PlHttpClient implements PliHttpClient {
         request.setHeader("User-Agent", USER_AGENT);
 
         CloseableHttpResponse response = (CloseableHttpResponse) httpClient.execute(request, context);
-
         List<URI> redirectionList = ((HttpClientContext) context).getRedirectLocations();
 
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode == HttpServletResponse.SC_OK) {
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(response.getEntity().getContent()));
-
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                htmlDocumentAtString.append(line);
-            }
+            htmlDocumentAtString = readDocumentFromResponse(response);
         }
 
         if (StringUtils.containsIgnoreCase(htmlDocumentAtString, CHECK_ANTI_SPAM) && redirectionList.size() > 0) {
-            answerCaptcha = getAnswerUrlForCaptcha(htmlDocumentAtString);
-            HttpGet requestCaptcha = new HttpGet(answerCaptcha);
+            answerCaptchaUrl = getAnswerUrlForCaptcha(htmlDocumentAtString);
+
+            HttpGet requestCaptcha = new HttpGet(answerCaptchaUrl);
+            requestCaptcha.setHeader("path", answerCaptchaUrl.replaceAll("https://www.kinopoisk.ru/", ""));
+            requestCaptcha.setHeader("scheme","https");
+            requestCaptcha.setHeader("Accept", ACCEPT);
+            requestCaptcha.setHeader("accept-encoding", "gzip, deflate, br");
+            requestCaptcha.setHeader("accept-language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
             requestCaptcha.setHeader("referer", redirectionList.get(0).toString());
+            requestCaptcha.setHeader("upgrade-insecure-requests", "1");
+            requestCaptcha.setHeader("user-agent", USER_AGENT);
+            CloseableHttpResponse responseCaptcha = (CloseableHttpResponse) httpClient.execute(requestCaptcha, context);
+
+            htmlDocumentAtString = readDocumentFromResponse(responseCaptcha);
+
+            responseCaptcha.close();
         }
 
         response.close();
@@ -72,8 +78,33 @@ public class PlHttpClient implements PliHttpClient {
     }
 
     @Override
-    public String getAnswerUrlForCaptcha(StringBuilder capthaDocument) {
-        return null;
+    public String getAnswerUrlForCaptcha(StringBuilder captchaDocument) {
+        StringBuilder url = new StringBuilder("https://www.kinopoisk.ru/checkcaptcha?key=");
+        Document captchaDoc = Jsoup.parse(captchaDocument.toString());
+        String key = captchaDoc.getElementsByAttributeValue("name", "key")
+                .attr("value")
+                .replaceAll("/", "%2F")
+                .replaceAll(":", "%3A");
+        String retpath = captchaDoc.getElementsByAttributeValue("name", "retpath")
+                .attr("value")
+                .replaceAll("/", "%2F")
+                .replaceAll(":", "%3A")
+                .replaceAll("\\?", "%3F");
+        String srcImg = captchaDoc.getElementsByAttributeValue("class", "image form__captcha")
+                .attr("src");
+        System.out.println(srcImg);
+        url.append(key).append("&retpath=").append(retpath).append("&rep=");
+        String answer = "";
+        //TODO: Это место преобразовать в ожидание ввода результатов с сайта.
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            answer = URLEncoder.encode(reader.readLine());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //------------------------------------------------------------------
+        url.append(answer);
+        return url.toString();
     }
 
     @Override
@@ -85,6 +116,18 @@ public class PlHttpClient implements PliHttpClient {
             }
         });
         return null;
+    }
+
+    private StringBuilder readDocumentFromResponse(HttpResponse response) throws IOException {
+        StringBuilder htmlDocAtString = new StringBuilder();
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(response.getEntity().getContent()));
+
+        String line = "";
+        while ((line = reader.readLine()) != null) {
+            htmlDocAtString.append(line);
+        }
+        return htmlDocAtString;
     }
 
 
