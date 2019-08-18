@@ -81,21 +81,24 @@ public class PlHttpClient implements PliHttpClient {
     public String getAnswerUrlForCaptcha(StringBuilder captchaDocument) {
         StringBuilder url = new StringBuilder("https://www.kinopoisk.ru/checkcaptcha?key=");
         Document captchaDoc = Jsoup.parse(captchaDocument.toString());
-        String key = captchaDoc.getElementsByAttributeValue("name", "key")
+        String key = captchaDoc
+                .getElementsByAttributeValue("name", "key")
                 .attr("value")
                 .replaceAll("/", "%2F")
                 .replaceAll(":", "%3A");
-        String retpath = captchaDoc.getElementsByAttributeValue("name", "retpath")
+        String retpath = captchaDoc
+                .getElementsByAttributeValue("name", "retpath")
                 .attr("value")
                 .replaceAll("/", "%2F")
                 .replaceAll(":", "%3A")
                 .replaceAll("\\?", "%3F");
-        String srcImg = captchaDoc.getElementsByAttributeValue("class", "image form__captcha")
-                .attr("src");
-        System.out.println(srcImg);
         url.append(key).append("&retpath=").append(retpath).append("&rep=");
         String answer = "";
         //TODO: Это место преобразовать в ожидание ввода результатов с сайта.
+        String srcImg = captchaDoc
+                .getElementsByAttributeValue("class", "image form__captcha")
+                .attr("src");
+        System.out.println(srcImg);
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         try {
             answer = URLEncoder.encode(reader.readLine());
