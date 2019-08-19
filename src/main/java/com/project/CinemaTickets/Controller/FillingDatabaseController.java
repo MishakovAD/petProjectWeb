@@ -15,8 +15,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 @Controller
-public class CaptchaController {
-    private Logger logger = LoggerFactory.getLogger(CaptchaController.class);
+public class FillingDatabaseController {
+    private Logger logger = LoggerFactory.getLogger(FillingDatabaseController.class);
 
     @GetMapping({"/enter_captha"})
     public String getEnterCaptchaPage() {
@@ -27,7 +27,7 @@ public class CaptchaController {
     @RequestMapping("/get_captcha_question")
     public void getCaptchaQuestion(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.info("Start method getCaptchaQuestion() at " + LocalDateTime.now());
-        String city = request.getParameter("user_city");
+
 
         response.setContentType("application/json");
         PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));

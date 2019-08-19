@@ -5,6 +5,7 @@ import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import java.io.IOException;
 import java.util.List;
 
+@Deprecated
 public interface PliServer {
 
     /**

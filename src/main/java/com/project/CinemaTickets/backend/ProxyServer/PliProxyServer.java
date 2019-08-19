@@ -6,6 +6,7 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 import java.util.List;
 
+@Deprecated
 public interface PliProxyServer {
     /**
      * Метод, получающий список прокси-серверов (ip - port)

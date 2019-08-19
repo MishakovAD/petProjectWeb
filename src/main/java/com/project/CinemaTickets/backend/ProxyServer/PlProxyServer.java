@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Random;
 
 @Component
+@Deprecated
 public class PlProxyServer implements PliProxyServer {
     public static String ONE_OF_PROXY_SERVERS_SITE = "http://spys.one/";
     public static List<ProxyEntity> proxyListFromInternet = new ArrayList<>();

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@Deprecated
 public class PlServer implements PliServer {
 
     private Logger logger = LoggerFactory.getLogger(PlServer.class);
