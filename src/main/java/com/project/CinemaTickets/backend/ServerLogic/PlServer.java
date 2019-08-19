@@ -79,6 +79,8 @@ public class PlServer implements PliServer {
                 List<CinemaMovieSession> cinemaMovieSessionList = converterTo.getCinemaMovieSessionListCinemasList(cinemasList);
                 hibernateDao.saveCinemaMovieSessionObj(cinemaMovieSessionList);
 
+                cinemasList.remove(cinema);
+
                 //daoServerLogic.insertCinemaToDB(cinema); //поменять на вставку листа специальных объектов
                 //emulationHumanActivity();
             }
