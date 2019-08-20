@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 public class PlHttpClient implements PliHttpClient {
@@ -57,27 +58,29 @@ public class PlHttpClient implements PliHttpClient {
 
         if (StringUtils.containsIgnoreCase(htmlDocumentAtString, CHECK_ANTI_SPAM) && redirectionList.size() > 0) {
             //Создаем новый поток, который будет останавливать поток, что вызвал метод и ждать ввода каптчи, а затем продолжать работу.
+            AtomicBoolean pause = new AtomicBoolean(true);
             Thread captchaThread = new Thread(() -> {
                 System.out.println("captchaThread is starting, Thread = " + Thread.currentThread());
-
-                Thread.getAllStackTraces().forEach((threadKey, threadValue) -> {
-                    System.out.println("ThreadKey=" + threadKey + ", ThreadValue=" + threadValue);
-                    if (threadKey.getName().equals("controllerThread")) {
-                        System.out.println("*****************Thread is waiting at captchaThread! " + threadKey.getName());
-                    }
-                });
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                pause.set(false);
                 //По задумке конструкция вначале заставляет ждать поток, который вызвал метод
                 // (а то есть у воркера) до тех пор, пока не закончит свое выполнение этот метод, а данная конструкция пробуждает все потоки.
             }, "captchaThread");
             captchaThread.start();
             Thread.getAllStackTraces().forEach((threadKey, threadValue) -> {
                 System.out.println("ThreadKey=" + threadKey + ", ThreadValue=" + threadValue);
-                if (threadKey.getName().equals("controllerThread")) {
-                    try {
-                        threadKey.join();
-                        System.out.println("Thread is wait! " + threadKey.getName());
-                    } catch (InterruptedException ex) {
-                        logger.error("Error at method getDocumentFromInternet() ", ex);
+                if (threadKey.getName().equals("workerThread")) {
+                    while (pause.get()) {
+                        System.out.println("****pause****");
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             });
