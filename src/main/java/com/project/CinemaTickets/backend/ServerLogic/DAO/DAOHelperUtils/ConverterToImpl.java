@@ -6,6 +6,7 @@ import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.coolection.Cinem
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.coolection.CinemaMovieSessionObj;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.regex.Pattern;
 
 import static com.project.CinemaTickets.backend.Utils.HelperUtils.createUniqueID;
 
+@Component
 public class ConverterToImpl implements ConverterTo {
     public static Pattern PATTERN_URL_BUY_TICKETS = Pattern.compile("https://tickets.widget.kinopoisk.ru/w/sessions/");
     private Logger logger = LoggerFactory.getLogger(ConverterToImpl.class);

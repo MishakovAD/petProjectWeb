@@ -14,6 +14,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -21,11 +22,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class PlHttpClient implements PliHttpClient {
     private Logger logger = LoggerFactory.getLogger(PlHttpClient.class);
 
@@ -36,6 +39,7 @@ public class PlHttpClient implements PliHttpClient {
 
     @Override
     public Document getDocumentFromInternet(String url) throws IOException {
+        logger.info("Start method getDocumentFromInternet() at " + LocalDateTime.now());
         String answerCaptchaUrl;
         StringBuilder htmlDocumentAtString = new StringBuilder();
         HttpClient httpClient = HttpClientBuilder.create().build();
@@ -54,6 +58,21 @@ public class PlHttpClient implements PliHttpClient {
         }
 
         if (StringUtils.containsIgnoreCase(htmlDocumentAtString, CHECK_ANTI_SPAM) && redirectionList.size() > 0) {
+            //Создаем новый поток, который будет останавливать поток, что вызвал метод и ждать ввода каптчи, а затем продолжать работу.
+            try {
+                Thread.currentThread().wait();
+            } catch (InterruptedException ex) {
+                logger.error("Error at method getDocumentFromInternet() ", ex);
+            }
+            Thread captchaThread = new Thread(() -> {
+
+                Thread.currentThread().notifyAll();
+                //По задумке конструкция вначале заставляет ждать поток, который вызвал метод
+                // (а то есть у воркера) до тех пор, пока не закончит свое выполнение этот метод, а данная конструкция пробуждает все потоки.
+            }, "captchaThread");
+            captchaThread.start();
+            //-----------------------------------------------------------------------------------------------------------------------
+            //Вынести в отдельный метод, чтобы вызывать в потоке.
             answerCaptchaUrl = getAnswerUrlForCaptcha(htmlDocumentAtString);
 
             HttpGet requestCaptcha = new HttpGet(answerCaptchaUrl);
@@ -68,17 +87,19 @@ public class PlHttpClient implements PliHttpClient {
             CloseableHttpResponse responseCaptcha = (CloseableHttpResponse) httpClient.execute(requestCaptcha, context);
 
             htmlDocumentAtString = readDocumentFromResponse(responseCaptcha);
-
             responseCaptcha.close();
+            //-----------------------------------------------------------------------------------------------------------------------------
         }
 
         response.close();
         Document htmlDocument = Jsoup.parse(htmlDocumentAtString.toString());
+        logger.info("End of method getDocumentFromInternet() at " + LocalDateTime.now());
         return htmlDocument;
     }
 
     @Override
     public String getAnswerUrlForCaptcha(StringBuilder captchaDocument) {
+        logger.info("Start method getAnswerUrlForCaptcha() at " + LocalDateTime.now());
         StringBuilder url = new StringBuilder("https://www.kinopoisk.ru/checkcaptcha?key=");
         Document captchaDoc = Jsoup.parse(captchaDocument.toString());
         String key = captchaDoc
@@ -107,21 +128,25 @@ public class PlHttpClient implements PliHttpClient {
         }
         //------------------------------------------------------------------
         url.append(answer);
+        logger.info("End of method getAnswerUrlForCaptcha() at " + LocalDateTime.now());
         return url.toString();
     }
 
     @Override
     public Map<String, String> getCookies(HttpResponse response) {
+        logger.info("Start method getCookies() at " + LocalDateTime.now());
         Map<String, String> cookiesMap = new HashMap<>();
         Arrays.stream(response.getAllHeaders()).forEach(header -> {
             if (StringUtils.containsIgnoreCase(header.getName(), "cookie")) {
 
             }
         });
+        logger.info("End of method getCookies() at " + LocalDateTime.now());
         return null;
     }
 
     private StringBuilder readDocumentFromResponse(HttpResponse response) throws IOException {
+        logger.info("Start method readDocumentFromResponse() at " + LocalDateTime.now());
         StringBuilder htmlDocAtString = new StringBuilder();
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(response.getEntity().getContent()));
@@ -130,6 +155,7 @@ public class PlHttpClient implements PliHttpClient {
         while ((line = reader.readLine()) != null) {
             htmlDocAtString.append(line);
         }
+        logger.info("End of method readDocumentFromResponse() at " + LocalDateTime.now());
         return htmlDocAtString;
     }
 
