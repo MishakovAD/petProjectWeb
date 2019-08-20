@@ -1,11 +1,13 @@
 package com.project.CinemaTickets.Controller;
 
+import com.project.CinemaTickets.backend.ServerLogic.Worker.Worker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -21,6 +23,10 @@ public class FillingDatabaseController {
     @GetMapping({"/enter_captha"})
     public String getEnterCaptchaPage() {
         logger.info("Start method getEnterCaptchaPage() at " + LocalDateTime.now());
+        Thread thread = new Thread((Runnable) worker, "controllerThread");
+        System.out.println("Thread starting");
+        thread.start();
+        System.out.println(thread.getName());
         return "timesheet";
     }
 
@@ -48,5 +54,13 @@ public class FillingDatabaseController {
         writer.flush();
         writer.close();
         logger.info("End of method enterAnswerCaptcha() at " + LocalDateTime.now());
+    }
+
+    //--------------------------Injections part ---------------------------
+    private Worker worker;
+
+    @Inject
+    public void setWorker(Worker worker) {
+        this.worker = worker;
     }
 }

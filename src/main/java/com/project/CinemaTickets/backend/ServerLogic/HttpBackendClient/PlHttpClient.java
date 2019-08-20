@@ -3,11 +3,9 @@ package com.project.CinemaTickets.backend.ServerLogic.HttpBackendClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HttpContext;
 import org.jsoup.Jsoup;
@@ -31,7 +29,7 @@ import java.util.Map;
 @Component
 public class PlHttpClient implements PliHttpClient {
     private Logger logger = LoggerFactory.getLogger(PlHttpClient.class);
-
+    //TODO: Заполнить все хедеры
     public static String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/536.36";
     public static String ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
     public static String CHECK_ANTI_SPAM = "Если вы&nbsp;видите эту страницу, значит с&nbsp;вашего IP-адреса поступило необычно много запросов.";
@@ -59,18 +57,30 @@ public class PlHttpClient implements PliHttpClient {
 
         if (StringUtils.containsIgnoreCase(htmlDocumentAtString, CHECK_ANTI_SPAM) && redirectionList.size() > 0) {
             //Создаем новый поток, который будет останавливать поток, что вызвал метод и ждать ввода каптчи, а затем продолжать работу.
-            try {
-                Thread.currentThread().wait();
-            } catch (InterruptedException ex) {
-                logger.error("Error at method getDocumentFromInternet() ", ex);
-            }
             Thread captchaThread = new Thread(() -> {
+                System.out.println("captchaThread is starting, Thread = " + Thread.currentThread());
 
-                Thread.currentThread().notifyAll();
+                Thread.getAllStackTraces().forEach((threadKey, threadValue) -> {
+                    System.out.println("ThreadKey=" + threadKey + ", ThreadValue=" + threadValue);
+                    if (threadKey.getName().equals("controllerThread")) {
+                        System.out.println("*****************Thread is waiting at captchaThread! " + threadKey.getName());
+                    }
+                });
                 //По задумке конструкция вначале заставляет ждать поток, который вызвал метод
                 // (а то есть у воркера) до тех пор, пока не закончит свое выполнение этот метод, а данная конструкция пробуждает все потоки.
             }, "captchaThread");
             captchaThread.start();
+            Thread.getAllStackTraces().forEach((threadKey, threadValue) -> {
+                System.out.println("ThreadKey=" + threadKey + ", ThreadValue=" + threadValue);
+                if (threadKey.getName().equals("controllerThread")) {
+                    try {
+                        threadKey.join();
+                        System.out.println("Thread is wait! " + threadKey.getName());
+                    } catch (InterruptedException ex) {
+                        logger.error("Error at method getDocumentFromInternet() ", ex);
+                    }
+                }
+            });
             //-----------------------------------------------------------------------------------------------------------------------
             //Вынести в отдельный метод, чтобы вызывать в потоке.
             answerCaptchaUrl = getAnswerUrlForCaptcha(htmlDocumentAtString);

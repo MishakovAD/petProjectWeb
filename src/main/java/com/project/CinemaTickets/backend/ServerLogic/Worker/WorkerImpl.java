@@ -26,10 +26,11 @@ import java.util.*;
 import static com.project.CinemaTickets.backend.Utils.HelperUtils.createIdCinemas;
 
 @Component
-public class WorkerImpl extends Thread implements Worker {
+public class WorkerImpl implements Worker, Runnable {
     private Logger logger = LoggerFactory.getLogger(WorkerImpl.class);
     private boolean workerRunning = true;
 
+    @Override
     public void run() {
         logger.info("Start method run() at " + LocalDateTime.now());
         List<Cinema> cinemasList = new ArrayList<>();
