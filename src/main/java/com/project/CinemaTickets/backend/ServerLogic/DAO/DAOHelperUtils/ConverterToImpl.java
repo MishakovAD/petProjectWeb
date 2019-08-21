@@ -37,6 +37,13 @@ public class ConverterToImpl implements ConverterTo {
             }
             String cinemaId = createUniqueID();
             cinema.setCinema_id(cinemaId);
+
+            if (cinema.getMovieList().size() == 0) {
+                CinemaMovieSession cmsObj = new CinemaMovieSessionObj();
+                cmsObj.setCinema(cinema);
+                cinemaMovieSessionList.add(cmsObj);
+            }
+
             cinema.getMovieList().forEach( movie -> {
                 String movieName = movie.getMovieName();
                 if (!movieNameMap.keySet().contains(movieName)) {
@@ -44,7 +51,6 @@ public class ConverterToImpl implements ConverterTo {
                     movie.setMovie_id(movieId);
                     movieNameMap.put(movieName, movie);
                 }
-
                 movie.getSessionList().forEach( session -> {
                     String sessionId = createUniqueID();
                     session.setSession_id(sessionId);
