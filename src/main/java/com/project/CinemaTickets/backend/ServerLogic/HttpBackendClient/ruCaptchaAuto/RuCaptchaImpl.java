@@ -58,7 +58,13 @@ public class RuCaptchaImpl implements RuCaptcha {
     }
 
     private String encodeToString(String url, String type) throws IOException {
-        InputStream in = new BufferedInputStream(new URL(url).openStream());
+        URL connection = new URL(url);
+        HttpURLConnection urlconn;
+        urlconn = (HttpURLConnection) connection.openConnection();
+        urlconn.setRequestMethod("GET");
+        urlconn.connect();
+        InputStream in = null;
+        in = urlconn.getInputStream();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         byte[] buf = new byte[1024];
         int n = 0;
