@@ -31,6 +31,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.project.CinemaTickets.backend.ServerLogic.HttpBackendClient.ruCaptchaAuto.RuCaptchaImpl.ruCaptchaEnable;
+
 @Component
 public class PlHttpClient implements PliHttpClient {
     private Logger logger = LoggerFactory.getLogger(PlHttpClient.class);
@@ -120,15 +122,22 @@ public class PlHttpClient implements PliHttpClient {
                 .getElementsByAttributeValue("class", "image form__captcha")
                 .attr("src");
         captchaImageUrl = srcImg;
-        String ruCaptchaResponseKey = ruCaptcha.sendRequest(srcImg);
+
+        String ruCaptchaResponseKey = "";
+        if (ruCaptchaEnable) {
+            ruCaptchaResponseKey = ruCaptcha.sendRequest(srcImg);
+        }
         while(StringUtils.isEmpty(answerCaptchaFromController) || StringUtils.isEmpty(answerCaptchaFromRuCaptcha)) {
-            answerCaptchaFromRuCaptcha = ruCaptcha.getResponse(ruCaptchaResponseKey);
+            if (ruCaptchaEnable) {
+                answerCaptchaFromRuCaptcha = ruCaptcha.getResponse(ruCaptchaResponseKey);
+            }
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException ex) {
                 logger.error("ERROR on sleep at getAnswerUrlForCaptcha!", ex);
             }
         }
+
         answer = StringUtils.isEmpty(answerCaptchaFromController) ? answerCaptchaFromRuCaptcha : answerCaptchaFromController;
         answerCaptchaFromController = "";
         answerCaptchaFromRuCaptcha = "";
