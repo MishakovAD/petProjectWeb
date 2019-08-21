@@ -129,12 +129,12 @@ public class PlHttpClient implements PliHttpClient {
         answer = answerCaptchaFromController;
         answerCaptchaFromController = "";
         //-----------------------------------------------------------------------
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-//        try {
-//            answer = URLEncoder.encode(reader.readLine());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            answer = URLEncoder.encode(reader.readLine());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         //------------------------------------------------------------------
         captchaImageUrl = "";
         url.append(URLEncoder.encode(answer));
@@ -179,6 +179,9 @@ public class PlHttpClient implements PliHttpClient {
         cinemaList.add(cinema);
         ConverterToImpl converterTo = new ConverterToImpl();
         HibernateDaoImpl hib = new HibernateDaoImpl();
-        hib.saveCinemaMovieSessionObj(converterTo.getCinemaMovieSessionListCinemasList(cinemaList));
+        while (true) {
+            hib.saveCinemaMovieSessionObj(converterTo.getCinemaMovieSessionListCinemasList(cinemaList));
+        }
+
     }
 }

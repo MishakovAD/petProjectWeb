@@ -51,4 +51,9 @@ public interface HibernateDao {
      * @return список сеансов
      */
     List<Session> selectSessionsForMovie(Movie movie);
+
+    /**
+     * Коммит внесенных изменений.
+     */
+    void commitChanges();
 }

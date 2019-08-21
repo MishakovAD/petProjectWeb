@@ -56,11 +56,15 @@ public class WorkerImpl implements Worker, Runnable {
                     notValidIdSet.add(kinopoiskId);
                 } else {
                     Cinema cinema = pliParserKinopoisk.getCinemaFromDocument(document);
+                    //TODO: установка корректной даты. Вынести в отдельный метод или пробросить дату в парсер.
+                    cinema.getMovieList().forEach(movie -> movie.getSessionList().forEach(session -> session.setSessionDate(date)));
+                    //---------------------------------------------------------------------------------------
                     cinema.setUrlToKinopoisk(urlToKinopoisk.substring(0, urlToKinopoisk.indexOf("/day_view") + 1));
                     cinemasList.add(cinema);
 
                     List<CinemaMovieSession> cinemaMovieSessionList = converterTo.getCinemaMovieSessionListCinemasList(cinemasList);
                     hibernateDao.saveCinemaMovieSessionObj(cinemaMovieSessionList);
+                    hibernateDao.commitChanges();
 
                     cinemasList.remove(cinema);
                 }

@@ -76,6 +76,7 @@ public class HibernateDaoImpl implements HibernateDao {
 
                 if (!cinemasNameList.contains(cinemaObj.getCinemaName())) {
                     uniqueCinemasMap.put(cinemaObj.getCinemaName(), cinemaObj);
+                    cinemasNameList.add(cinemaObj.getCinemaName());
                     cinema_movie.setCinemaId(cinemaObj.getCinema_id());
                     session.save(cinemaObj);
                 } else {
@@ -100,19 +101,16 @@ public class HibernateDaoImpl implements HibernateDao {
                 }
 
                 if (!uniqueSessionsSet.contains(sessionObj)) {
+                    uniqueSessionsSet.add(sessionObj);
                     session.save(sessionObj);
                 }
             });
-            tx1.commit();
             //}
             return true;
         } catch (Exception ex) {
             logger.error("#### ERROR #### at HibernateDaoImpl.saveCinemaMovieSessionObj()", ex);
             return false;
         } finally {
-            uniqueMoviesMap = new HashMap<>();
-            uniqueCinemasMap = new HashMap<>();
-            uniqueSessionsSet = new HashSet<>();
             logger.info("End of method saveCinemaMovieSessionObj() at " + LocalDateTime.now());
         }
     }
@@ -196,5 +194,10 @@ public class HibernateDaoImpl implements HibernateDao {
         }
         logger.info("End of method selectSessionsForMovie() at " + LocalDateTime.now());
         return sessionList;
+    }
+
+    @Override
+    public void commitChanges() {
+        tx1.commit();
     }
 }
