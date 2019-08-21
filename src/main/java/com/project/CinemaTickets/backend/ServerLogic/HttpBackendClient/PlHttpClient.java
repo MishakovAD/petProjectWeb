@@ -5,6 +5,7 @@ import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOHelperUtils.ConverterToImpl;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 import com.project.CinemaTickets.backend.ServerLogic.DAO.HibernateUtils.HibernateDaoImpl;
+import com.project.CinemaTickets.backend.ServerLogic.HttpBackendClient.ruCaptchaAuto.RuCaptcha;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,6 +37,7 @@ public class PlHttpClient implements PliHttpClient {
 
     public static String captchaImageUrl = "";
     public static String answerCaptchaFromController = "";
+    public static String answerCaptchaFromRuCaptcha = "";
     //TODO: Заполнить все хедеры
     public static String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/536.36";
     public static String ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
@@ -111,23 +114,24 @@ public class PlHttpClient implements PliHttpClient {
                 .replaceAll(":", "%3A")
                 .replaceAll("\\?", "%3F");
         url.append(key).append("&retpath=").append(retpath).append("&rep=");
+
         String answer = "";
-        //TODO: Это место преобразовать в ожидание ввода результатов с сайта.
         String srcImg = captchaDoc
                 .getElementsByAttributeValue("class", "image form__captcha")
                 .attr("src");
         captchaImageUrl = srcImg;
-        System.out.println(srcImg);
-        while(StringUtils.isEmpty(answerCaptchaFromController)) {
+        String ruCaptchaResponseKey = ruCaptcha.sendRequest(srcImg);
+        while(StringUtils.isEmpty(answerCaptchaFromController) || StringUtils.isEmpty(answerCaptchaFromRuCaptcha)) {
+            answerCaptchaFromRuCaptcha = ruCaptcha.getResponse(ruCaptchaResponseKey);
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException ex) {
                 logger.error("ERROR on sleep at getAnswerUrlForCaptcha!", ex);
             }
         }
-        System.out.println("ДАННАЯ СТРОКА НЕ ДОЛЖНА ВЫВОДИТЬСЯ, ПОКА НЕ БУДЕТ ОТВЕТА");
-        answer = answerCaptchaFromController;
+        answer = StringUtils.isEmpty(answerCaptchaFromController) ? answerCaptchaFromRuCaptcha : answerCaptchaFromController;
         answerCaptchaFromController = "";
+        answerCaptchaFromRuCaptcha = "";
         //-----------------------------------------------------------------------
 //        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 //        try {
@@ -167,6 +171,14 @@ public class PlHttpClient implements PliHttpClient {
         }
         logger.info("End of method readDocumentFromResponse() at " + LocalDateTime.now());
         return htmlDocAtString;
+    }
+
+    //-----------------------------------------------------------------------------------
+    private RuCaptcha ruCaptcha;
+
+    @Inject
+    public void setRuCaptcha(RuCaptcha ruCaptcha) {
+        this.ruCaptcha = ruCaptcha;
     }
 
 
