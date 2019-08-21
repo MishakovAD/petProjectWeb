@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
 @Component
@@ -26,6 +27,7 @@ public class HibernateDaoImpl implements HibernateDao {
     public static Set<com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session> uniqueSessionsSet = new HashSet<>();
     public static Set<Cinema_Movie> uniqueCinema_MovieSet = new HashSet<>();
 
+    private Object lock = new Object();
     private Session session;
 
     @PostConstruct
@@ -63,43 +65,45 @@ public class HibernateDaoImpl implements HibernateDao {
         try {
             Set<String> cinemasNameList = uniqueCinemasMap.keySet();
             Set<String> moviesNameList = uniqueMoviesMap.keySet();
-            Transaction tx1 = session.beginTransaction();
-            cinemaMovieSessionList.forEach(cinemaMovieSession -> {
-                Cinema_Movie cinema_movie = new Cinema_Movie();
-                com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session sessionObj = cinemaMovieSession.getSession();
-                Cinema cinemaObj = cinemaMovieSession.getCinema();
-                Movie movieObj = cinemaMovieSession.getMovie();
+            synchronized (lock) {
+                Transaction tx1 = session.beginTransaction();
+                cinemaMovieSessionList.forEach(cinemaMovieSession -> {
+                    Cinema_Movie cinema_movie = new Cinema_Movie();
+                    com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session sessionObj = cinemaMovieSession.getSession();
+                    Cinema cinemaObj = cinemaMovieSession.getCinema();
+                    Movie movieObj = cinemaMovieSession.getMovie();
 
-                if (!cinemasNameList.contains(cinemaObj.getCinemaName())) {
-                    uniqueCinemasMap.put(cinemaObj.getCinemaName(), cinemaObj);
-                    cinema_movie.setCinemaId(cinemaObj.getCinema_id());
-                    session.save(cinemaObj);
-                } else {
-                    String cinemaId = uniqueCinemasMap.get(cinemaObj.getCinemaName()).getCinema_id();
-                    cinema_movie.setCinemaId(cinemaId);
-                    sessionObj.setCinema_id(cinemaId);
-                }
+                    if (!cinemasNameList.contains(cinemaObj.getCinemaName())) {
+                        uniqueCinemasMap.put(cinemaObj.getCinemaName(), cinemaObj);
+                        cinema_movie.setCinemaId(cinemaObj.getCinema_id());
+                        session.save(cinemaObj);
+                    } else {
+                        String cinemaId = uniqueCinemasMap.get(cinemaObj.getCinemaName()).getCinema_id();
+                        cinema_movie.setCinemaId(cinemaId);
+                        sessionObj.setCinema_id(cinemaId);
+                    }
 
-                if (!moviesNameList.contains(movieObj.getMovieName())) {
-                    uniqueMoviesMap.put(movieObj.getMovieName(), movieObj);
-                    cinema_movie.setMovieId(movieObj.getMovie_id());
-                    session.save(movieObj);
-                } else {
-                    String movieId = uniqueMoviesMap.get(movieObj.getMovieName()).getMovie_id();
-                    cinema_movie.setMovieId(movieId);
-                    sessionObj.setMovie_id(movieId);
-                }
+                    if (!moviesNameList.contains(movieObj.getMovieName())) {
+                        uniqueMoviesMap.put(movieObj.getMovieName(), movieObj);
+                        cinema_movie.setMovieId(movieObj.getMovie_id());
+                        session.save(movieObj);
+                    } else {
+                        String movieId = uniqueMoviesMap.get(movieObj.getMovieName()).getMovie_id();
+                        cinema_movie.setMovieId(movieId);
+                        sessionObj.setMovie_id(movieId);
+                    }
 
-                if (!uniqueCinema_MovieSet.contains(cinema_movie)) {
-                    session.save(cinema_movie);
-                    uniqueCinema_MovieSet.add(cinema_movie);
-                }
+                    if (!uniqueCinema_MovieSet.contains(cinema_movie)) {
+                        session.save(cinema_movie);
+                        uniqueCinema_MovieSet.add(cinema_movie);
+                    }
 
-                if (uniqueSessionsSet.stream().filter(sessionStream -> sessionStream.getUrl().equals(sessionObj.getUrl())).collect(Collectors.toList()).size() == 0) {
-                    session.save(sessionObj);
-                }
-            });
-            tx1.commit();
+                    if (!uniqueSessionsSet.contains(sessionObj)) {
+                        session.save(sessionObj);
+                    }
+                });
+                tx1.commit();
+            }
             return true;
         } catch (Exception ex) {
             logger.error("#### ERROR #### at HibernateDaoImpl.saveCinemaMovieSessionObj()", ex);

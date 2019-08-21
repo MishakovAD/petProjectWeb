@@ -133,13 +133,17 @@ public class Session {
         if (this == o) return true;
         if (!(o instanceof Session)) return false;
         Session session = (Session) o;
-        return Objects.equals(url, session.url) &&
-                Objects.equals(session_id, session.session_id);
+        return Objects.equals(timeOfShow, session.timeOfShow) &&
+                Objects.equals(typeOfShow, session.typeOfShow) &&
+                Objects.equals(price, session.price) &&
+                Objects.equals(sessionDate, session.sessionDate) &&
+                Objects.equals(movie_id, session.movie_id) &&
+                Objects.equals(cinema_id, session.cinema_id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(url, session_id);
+        return Objects.hash(timeOfShow, typeOfShow, price, sessionDate, movie_id, cinema_id);
     }
 
     @Override

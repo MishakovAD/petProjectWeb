@@ -2,6 +2,7 @@ package com.project.CinemaTickets.backend.Utils;
 
 import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -26,5 +27,13 @@ public class HelperUtils {
             idList.add(generateId);
         }
         return idList;
+    }
+
+    public static LocalDate[] initWeekArray() {
+        LocalDate[] dateArray = new LocalDate[7];
+        for (int i = 0; i < 7; i++) {
+            dateArray[i] = LocalDate.now().plusDays(i);
+        }
+        return dateArray;
     }
 }

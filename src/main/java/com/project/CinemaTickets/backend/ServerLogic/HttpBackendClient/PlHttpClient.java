@@ -1,5 +1,10 @@
 package com.project.CinemaTickets.backend.ServerLogic.HttpBackendClient;
 
+import com.project.CinemaTickets.backend.Parser.PlParserKinopoisk;
+import com.project.CinemaTickets.backend.Parser.PliParserKinopoisk;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.DAOHelperUtils.ConverterToImpl;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Cinema;
+import com.project.CinemaTickets.backend.ServerLogic.DAO.HibernateUtils.HibernateDaoImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -21,15 +26,15 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 public class PlHttpClient implements PliHttpClient {
     private Logger logger = LoggerFactory.getLogger(PlHttpClient.class);
+
+    public static String captchaImageUrl = "";
+    public static String answerCaptchaFromController = "";
     //TODO: Заполнить все хедеры
     public static String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/536.36";
     public static String ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
@@ -39,7 +44,7 @@ public class PlHttpClient implements PliHttpClient {
     @Override
     public Document getDocumentFromInternet(String url) throws IOException {
         logger.info("Start method getDocumentFromInternet() at " + LocalDateTime.now());
-        String answerCaptchaUrl;
+        String answerCaptchaUrl = "";
         StringBuilder htmlDocumentAtString = new StringBuilder();
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpContext context = new HttpClientContext();
@@ -57,51 +62,29 @@ public class PlHttpClient implements PliHttpClient {
         }
 
         if (StringUtils.containsIgnoreCase(htmlDocumentAtString, CHECK_ANTI_SPAM) && redirectionList.size() > 0) {
-            //Создаем новый поток, который будет останавливать поток, что вызвал метод и ждать ввода каптчи, а затем продолжать работу.
-            AtomicBoolean pause = new AtomicBoolean(true);
-            Thread captchaThread = new Thread(() -> {
-                System.out.println("captchaThread is starting, Thread = " + Thread.currentThread());
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                pause.set(false);
-                //По задумке конструкция вначале заставляет ждать поток, который вызвал метод
-                // (а то есть у воркера) до тех пор, пока не закончит свое выполнение этот метод, а данная конструкция пробуждает все потоки.
-            }, "captchaThread");
-            captchaThread.start();
-            Thread.getAllStackTraces().forEach((threadKey, threadValue) -> {
-                System.out.println("ThreadKey=" + threadKey + ", ThreadValue=" + threadValue);
-                if (threadKey.getName().equals("workerThread")) {
-                    while (pause.get()) {
-                        System.out.println("****pause****");
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            //TODO: Реализовать в многопоточном режиме обработку всей недели дат в разных потоках
-            //-----------------------------------------------------------------------------------------------------------------------
             //Вынести в отдельный метод, чтобы вызывать в потоке.
-            answerCaptchaUrl = getAnswerUrlForCaptcha(htmlDocumentAtString);
+            synchronized (answerCaptchaUrl) {
+                answerCaptchaUrl = getAnswerUrlForCaptcha(htmlDocumentAtString);
 
-            HttpGet requestCaptcha = new HttpGet(answerCaptchaUrl);
-            requestCaptcha.setHeader("path", answerCaptchaUrl.replaceAll("https://www.kinopoisk.ru/", ""));
-            requestCaptcha.setHeader("scheme","https");
-            requestCaptcha.setHeader("Accept", ACCEPT);
-            requestCaptcha.setHeader("accept-encoding", "gzip, deflate, br");
-            requestCaptcha.setHeader("accept-language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
-            requestCaptcha.setHeader("referer", redirectionList.get(0).toString());
-            requestCaptcha.setHeader("upgrade-insecure-requests", "1");
-            requestCaptcha.setHeader("user-agent", USER_AGENT);
-            CloseableHttpResponse responseCaptcha = (CloseableHttpResponse) httpClient.execute(requestCaptcha, context);
+                HttpGet requestCaptcha = new HttpGet(answerCaptchaUrl);
+                requestCaptcha.setHeader("path", answerCaptchaUrl.replaceAll("https://www.kinopoisk.ru/", ""));
+                requestCaptcha.setHeader("scheme","https");
+                requestCaptcha.setHeader("Accept", ACCEPT);
+                requestCaptcha.setHeader("accept-encoding", "gzip, deflate, br");
+                requestCaptcha.setHeader("accept-language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
+                requestCaptcha.setHeader("referer", redirectionList.get(0).toString());
+                requestCaptcha.setHeader("upgrade-insecure-requests", "1");
+                requestCaptcha.setHeader("user-agent", USER_AGENT);
+                redirectionList = new ArrayList<>();
+                CloseableHttpResponse responseCaptcha = (CloseableHttpResponse) httpClient.execute(requestCaptcha, context);
+                redirectionList = ((HttpClientContext) context).getRedirectLocations();
 
-            htmlDocumentAtString = readDocumentFromResponse(responseCaptcha);
-            responseCaptcha.close();
+                htmlDocumentAtString = readDocumentFromResponse(responseCaptcha);
+                responseCaptcha.close();
+                if (StringUtils.containsIgnoreCase(htmlDocumentAtString, CHECK_ANTI_SPAM) && redirectionList.size() > 0) {
+                    getDocumentFromInternet(url);
+                }
+            }
             //-----------------------------------------------------------------------------------------------------------------------------
         }
 
@@ -133,14 +116,26 @@ public class PlHttpClient implements PliHttpClient {
         String srcImg = captchaDoc
                 .getElementsByAttributeValue("class", "image form__captcha")
                 .attr("src");
+        captchaImageUrl = srcImg;
         System.out.println(srcImg);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        try {
-            answer = URLEncoder.encode(reader.readLine());
-        } catch (IOException e) {
-            e.printStackTrace();
+        while(StringUtils.isEmpty(answerCaptchaFromController)) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                logger.error("ERROR on sleep at getAnswerUrlForCaptcha!", ex);
+            }
         }
+        answer = answerCaptchaFromController;
+        answerCaptchaFromController = "";
+        //-----------------------------------------------------------------------
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+//        try {
+//            answer = URLEncoder.encode(reader.readLine());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         //------------------------------------------------------------------
+        captchaImageUrl = "";
         url.append(answer);
         logger.info("End of method getAnswerUrlForCaptcha() at " + LocalDateTime.now());
         return url.toString();
@@ -176,8 +171,13 @@ public class PlHttpClient implements PliHttpClient {
 
     public static void main(String[] args) throws IOException {
         PlHttpClient pl = new PlHttpClient();
-        while (true) {
-            pl.getDocumentFromInternet("https://www.kinopoisk.ru/afisha/city/1/cinema/280891/");
-        }
+        String str = "https://www.kinopoisk.ru/afisha/city/1/cinema/280268/";
+        PliParserKinopoisk parser = new PlParserKinopoisk();
+        Cinema cinema = parser.getCinemaFromDocument(pl.getDocumentFromInternet(str));
+        List<Cinema> cinemaList = new ArrayList<>();
+        cinemaList.add(cinema);
+        ConverterToImpl converterTo = new ConverterToImpl();
+        HibernateDaoImpl hib = new HibernateDaoImpl();
+        hib.saveCinemaMovieSessionObj(converterTo.getCinemaMovieSessionListCinemasList(cinemaList));
     }
 }

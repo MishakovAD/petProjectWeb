@@ -178,6 +178,10 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         String pageUrl = element.baseUri();
         Session session = new Session();
         String timeMovie = element.select("span.schedule-item__session-button.schedule-item__session-button_active.js-yaticket-button").text();
+        if (StringUtils.isEmpty(timeMovie)) {
+            timeMovie = element.select("span.schedule-item__session-button").text();
+        }
+
 
         String price = element.select("span.schedule-item__price").text();
         String urlForBuyTickets = HELPER_FOR_BUY_TICKETS + element
@@ -190,15 +194,15 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
             movieDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         }
 
-        if(timeMovie != null) {
+        if(!StringUtils.isEmpty(timeMovie)) {
             session.setTimeOfShow(timeMovie);
         } else {
             session.setTimeOfShow("Не найдено");
         }
-        if (price != null) {
+        if (!StringUtils.isEmpty(price)) {
             session.setPrice(price);
         } else {
-            session.setPrice("Не найдено");
+            session.setPrice("Билеты продаются в кассах кинотеатра.");
         }
         if (urlForBuyTickets != null) {
             session.setUrl(urlForBuyTickets);
