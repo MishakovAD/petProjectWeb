@@ -37,12 +37,9 @@ public class FillingDatabaseController {
     @GetMapping({"/enter_captсha"})
     public String getEnterCaptchaPage() {
         logger.info("Start method getEnterCaptchaPage() at " + LocalDateTime.now());
-        Arrays.stream(dateArray).forEach(date -> {
-            Thread thread = new Thread((Runnable) worker, "workerThread"+date);
-            System.out.println("Thread starting");
-            thread.start();
-            System.out.println("*************" + thread.getName());
-        });
+        Thread thread = new Thread((Runnable) worker, "workerThread");
+        System.out.println("Thread starting");
+        thread.start();
         logger.info("End of method getEnterCaptchaPage() at " + LocalDateTime.now());
         return "captcha";
     }

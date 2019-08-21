@@ -40,34 +40,34 @@ public class WorkerImpl implements Worker, Runnable {
         LocalDate[] dateArray = initWeekArray();
         while (isWorkerRunning()) {
             idCinemasList.forEach(kinopoiskId -> {
-                String date = Thread.currentThread().getName().replaceAll("workerThread", "");
-                System.out.println("Поток " + Thread.currentThread().getName() + " с датой: " + date);
-                Document document = new Document("");
-                String urlToKinopoisk;
-                urlToKinopoisk = "https://www.kinopoisk.ru/afisha/city/1/cinema/" + kinopoiskId
-                        + "/day_view/" + LocalDate.parse(date).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/";
-                try {
-                    document = pliHttpClient.getDocumentFromInternet(urlToKinopoisk);
-                } catch (IOException ex) {
-                    logger.info("ERROR in the method run() at " + LocalDateTime.now(), ex);
-                }
+                Arrays.stream(dateArray).forEach(date -> {
+                    Document document = new Document("");
+                    String urlToKinopoisk;
+                    urlToKinopoisk = "https://www.kinopoisk.ru/afisha/city/1/cinema/" + kinopoiskId
+                            + "/day_view/" + date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/";
+                    try {
+                        document = pliHttpClient.getDocumentFromInternet(urlToKinopoisk);
+                    } catch (IOException ex) {
+                        logger.info("ERROR in the method run() at " + LocalDateTime.now(), ex);
+                    }
 
-                if (StringUtils.containsIgnoreCase(document.text(), "Файл не найден. Ошибка 404.")) {
-                    notValidIdSet.add(kinopoiskId);
-                } else {
-                    Cinema cinema = pliParserKinopoisk.getCinemaFromDocument(document);
-                    //TODO: установка корректной даты. Вынести в отдельный метод или пробросить дату в парсер.
-                    cinema.getMovieList().forEach(movie -> movie.getSessionList().forEach(session -> session.setSessionDate(date)));
-                    //---------------------------------------------------------------------------------------
-                    cinema.setUrlToKinopoisk(urlToKinopoisk.substring(0, urlToKinopoisk.indexOf("/day_view") + 1));
-                    cinemasList.add(cinema);
+                    if (StringUtils.containsIgnoreCase(document.text(), "Файл не найден. Ошибка 404.")) {
+                        notValidIdSet.add(kinopoiskId);
+                    } else {
+                        Cinema cinema = pliParserKinopoisk.getCinemaFromDocument(document);
+                        //TODO: установка корректной даты. Вынести в отдельный метод или пробросить дату в парсер.
+                        cinema.getMovieList().forEach(movie -> movie.getSessionList().forEach(session -> session.setSessionDate(String.valueOf(date))));
+                        //---------------------------------------------------------------------------------------
+                        cinema.setUrlToKinopoisk(urlToKinopoisk.substring(0, urlToKinopoisk.indexOf("/day_view") + 1));
+                        cinemasList.add(cinema);
 
-                    List<CinemaMovieSession> cinemaMovieSessionList = converterTo.getCinemaMovieSessionListCinemasList(cinemasList);
-                    hibernateDao.saveCinemaMovieSessionObj(cinemaMovieSessionList);
-                    hibernateDao.commitChanges();
+                        List<CinemaMovieSession> cinemaMovieSessionList = converterTo.getCinemaMovieSessionListCinemasList(cinemasList);
+                        hibernateDao.saveCinemaMovieSessionObj(cinemaMovieSessionList);
+                        hibernateDao.commitChanges();
 
-                    cinemasList.remove(cinema);
-                }
+                        cinemasList.remove(cinema);
+                    }
+                });
             });
             //hibernateDao.saveNotValidSet(notValidIdSet) if not exist //Сделать метод. И потом уллучшить метод создания айдишников кинотеатров.
         }

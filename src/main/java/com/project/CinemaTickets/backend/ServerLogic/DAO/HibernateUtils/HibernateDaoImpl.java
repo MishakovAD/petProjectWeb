@@ -64,10 +64,8 @@ public class HibernateDaoImpl implements HibernateDao {
         logger.info("Start method saveCinemaMovieSessionObj() at " + LocalDateTime.now());
         //init(); //Для работающего приложения - не нужно
         try {
-            Set<String> cinemasNameList = uniqueCinemasMap.keySet();
-            Set<String> moviesNameList = uniqueMoviesMap.keySet();
-            //TODO: Нужно решить проблему с исользованием одной и тойже сессии.
-            //synchronized (this) {
+            Set<String> cinemasNameList = new HashSet<>(uniqueCinemasMap.keySet());
+            Set<String> moviesNameList = new HashSet<>(uniqueMoviesMap.keySet());
             cinemaMovieSessionList.forEach(cinemaMovieSession -> {
                 Cinema_Movie cinema_movie = new Cinema_Movie();
                 com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session sessionObj = cinemaMovieSession.getSession();
@@ -87,6 +85,7 @@ public class HibernateDaoImpl implements HibernateDao {
 
                 if (!moviesNameList.contains(movieObj.getMovieName())) {
                     uniqueMoviesMap.put(movieObj.getMovieName(), movieObj);
+                    moviesNameList.add(movieObj.getMovieName());
                     cinema_movie.setMovieId(movieObj.getMovie_id());
                     session.save(movieObj);
                 } else {
@@ -105,7 +104,6 @@ public class HibernateDaoImpl implements HibernateDao {
                     session.save(sessionObj);
                 }
             });
-            //}
             return true;
         } catch (Exception ex) {
             logger.error("#### ERROR #### at HibernateDaoImpl.saveCinemaMovieSessionObj()", ex);
