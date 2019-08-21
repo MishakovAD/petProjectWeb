@@ -40,30 +40,30 @@ public class WorkerImpl implements Worker, Runnable {
         LocalDate[] dateArray = initWeekArray();
         while (isWorkerRunning()) {
             idCinemasList.forEach(kinopoiskId -> {
-                Arrays.stream(dateArray).forEach(date -> {
-                    Document document = new Document("");
-                    String urlToKinopoisk;
-                    urlToKinopoisk = "https://www.kinopoisk.ru/afisha/city/1/cinema/" + kinopoiskId
-                            + "/day_view/" + date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/";
-                    try {
-                        document = pliHttpClient.getDocumentFromInternet(urlToKinopoisk);
-                    } catch (IOException ex) {
-                        logger.info("ERROR in the method run() at " + LocalDateTime.now(), ex);
-                    }
+                String date = Thread.currentThread().getName().replaceAll("workerThread", "");
+                System.out.println("Поток " + Thread.currentThread().getName() + " с датой: " + date);
+                Document document = new Document("");
+                String urlToKinopoisk;
+                urlToKinopoisk = "https://www.kinopoisk.ru/afisha/city/1/cinema/" + kinopoiskId
+                        + "/day_view/" + LocalDate.parse(date).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "/";
+                try {
+                    document = pliHttpClient.getDocumentFromInternet(urlToKinopoisk);
+                } catch (IOException ex) {
+                    logger.info("ERROR in the method run() at " + LocalDateTime.now(), ex);
+                }
 
-                    if (StringUtils.containsIgnoreCase(document.text(), "Файл не найден. Ошибка 404.")) {
-                        notValidIdSet.add(kinopoiskId);
-                    } else {
-                        Cinema cinema = pliParserKinopoisk.getCinemaFromDocument(document);
-                        cinema.setUrlToKinopoisk(urlToKinopoisk.substring(0, urlToKinopoisk.indexOf("/day_view")+1));
-                        cinemasList.add(cinema);
+                if (StringUtils.containsIgnoreCase(document.text(), "Файл не найден. Ошибка 404.")) {
+                    notValidIdSet.add(kinopoiskId);
+                } else {
+                    Cinema cinema = pliParserKinopoisk.getCinemaFromDocument(document);
+                    cinema.setUrlToKinopoisk(urlToKinopoisk.substring(0, urlToKinopoisk.indexOf("/day_view") + 1));
+                    cinemasList.add(cinema);
 
-                        List<CinemaMovieSession> cinemaMovieSessionList = converterTo.getCinemaMovieSessionListCinemasList(cinemasList);
-                        hibernateDao.saveCinemaMovieSessionObj(cinemaMovieSessionList);
+                    List<CinemaMovieSession> cinemaMovieSessionList = converterTo.getCinemaMovieSessionListCinemasList(cinemasList);
+                    hibernateDao.saveCinemaMovieSessionObj(cinemaMovieSessionList);
 
-                        cinemasList.remove(cinema);
-                    }
-                });
+                    cinemasList.remove(cinema);
+                }
             });
             //hibernateDao.saveNotValidSet(notValidIdSet) if not exist //Сделать метод. И потом уллучшить метод создания айдишников кинотеатров.
         }
@@ -114,7 +114,7 @@ public class WorkerImpl implements Worker, Runnable {
     private HibernateDao hibernateDao;
 
     @Inject
-    public void setPliParserKinopoisk (PliParserKinopoisk pliParserKinopoisk1) {
+    public void setPliParserKinopoisk(PliParserKinopoisk pliParserKinopoisk1) {
         this.pliParserKinopoisk = pliParserKinopoisk1;
     }
 
@@ -124,7 +124,7 @@ public class WorkerImpl implements Worker, Runnable {
     }
 
     @Inject
-    public void setHibernateDao (HibernateDao hibernateDao) {
+    public void setHibernateDao(HibernateDao hibernateDao) {
         this.hibernateDao = hibernateDao;
     }
 

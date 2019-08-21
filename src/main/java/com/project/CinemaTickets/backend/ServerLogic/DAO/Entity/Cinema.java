@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table (name = "cinema")
@@ -139,6 +140,23 @@ public class Cinema {
 
     public void setCinema_id(String cinema_id) {
         this.cinema_id = cinema_id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Cinema)) return false;
+        Cinema cinema = (Cinema) o;
+        return Objects.equals(cinemaName, cinema.cinemaName) &&
+                Objects.equals(cinemaAddress, cinema.cinemaAddress) &&
+                Objects.equals(cinemaUnderground, cinema.cinemaUnderground) &&
+                Objects.equals(cinemaCity, cinema.cinemaCity) &&
+                Objects.equals(urlToKinopoisk, cinema.urlToKinopoisk);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cinemaName, cinemaAddress, cinemaUnderground, cinemaCity, urlToKinopoisk);
     }
 
     @Override

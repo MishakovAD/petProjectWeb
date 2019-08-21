@@ -125,6 +125,7 @@ public class PlHttpClient implements PliHttpClient {
                 logger.error("ERROR on sleep at getAnswerUrlForCaptcha!", ex);
             }
         }
+        System.out.println("ДАННАЯ СТРОКА НЕ ДОЛЖНА ВЫВОДИТЬСЯ, ПОКА НЕ БУДЕТ ОТВЕТА");
         answer = answerCaptchaFromController;
         answerCaptchaFromController = "";
         //-----------------------------------------------------------------------
@@ -136,7 +137,7 @@ public class PlHttpClient implements PliHttpClient {
 //        }
         //------------------------------------------------------------------
         captchaImageUrl = "";
-        url.append(answer);
+        url.append(URLEncoder.encode(answer));
         logger.info("End of method getAnswerUrlForCaptcha() at " + LocalDateTime.now());
         return url.toString();
     }

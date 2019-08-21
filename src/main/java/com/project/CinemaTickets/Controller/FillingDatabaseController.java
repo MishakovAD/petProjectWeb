@@ -34,7 +34,7 @@ public class FillingDatabaseController {
         dateArray = initWeekArray();
     }
 
-    @GetMapping({"/enter_captha"})
+    @GetMapping({"/enter_captсha"})
     public String getEnterCaptchaPage() {
         logger.info("Start method getEnterCaptchaPage() at " + LocalDateTime.now());
         Arrays.stream(dateArray).forEach(date -> {
@@ -43,7 +43,8 @@ public class FillingDatabaseController {
             thread.start();
             System.out.println("*************" + thread.getName());
         });
-        return "timesheet";
+        logger.info("End of method getEnterCaptchaPage() at " + LocalDateTime.now());
+        return "captcha";
     }
 
     @RequestMapping("/get_captcha_question")
@@ -53,7 +54,7 @@ public class FillingDatabaseController {
         if (StringUtils.isNotEmpty(captchaImageUrl)) {
             question = captchaImageUrl;
         }
-        response.setContentType("application/json");
+        response.setContentType("text/html");
         PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
         writer.print(question);
         writer.flush();
