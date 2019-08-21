@@ -28,8 +28,8 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.project.CinemaTickets.backend.ServerLogic.HttpBackendClient.ruCaptchaAuto.RuCaptchaImpl.ruCaptchaEnable;
 
@@ -40,57 +40,49 @@ public class PlHttpClient implements PliHttpClient {
     public static String captchaImageUrl = "";
     public static String answerCaptchaFromController = "";
     public static String answerCaptchaFromRuCaptcha = "";
-    //TODO: Заполнить все хедеры
-    public static String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/536.36";
-    public static String ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
+    //---------------------HEADERS---------------------
+    public static String authority = "www.kinopoisk.ru";
+    public static String method = "GET";
+    public static String scheme = "https";
+    public static String accept_encoding = "gzip, deflate, br";
+    public static String accept_language = "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7";
+    public static String sec_fetch_mode = "navigate";
+    public static String sec_fetch_cite = "none";
+    public static String sec_fetch_user = "?1";
+    public static String upgrade_insecure_requests = "1";
+    public static String accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
+    public static String user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/536.36";
+    //---------------------HEADERS---------------------
     public static String CHECK_ANTI_SPAM = "Если вы&nbsp;видите эту страницу, значит с&nbsp;вашего IP-адреса поступило необычно много запросов.";
-
 
     @Override
     public Document getDocumentFromInternet(String url) throws IOException {
         logger.info("Start method getDocumentFromInternet() at " + LocalDateTime.now());
-        String answerCaptchaUrl = "";
         StringBuilder htmlDocumentAtString = new StringBuilder();
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpContext context = new HttpClientContext();
-
-        HttpGet request = new HttpGet(url);
-        request.setHeader("Accept", ACCEPT);
-        request.setHeader("User-Agent", USER_AGENT);
+        HttpGet request = getRequestWithHeaders(url);
 
         CloseableHttpResponse response = (CloseableHttpResponse) httpClient.execute(request, context);
         List<URI> redirectionList = ((HttpClientContext) context).getRedirectLocations();
-
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode == HttpServletResponse.SC_OK) {
             htmlDocumentAtString = readDocumentFromResponse(response);
         }
 
         if (StringUtils.containsIgnoreCase(htmlDocumentAtString, CHECK_ANTI_SPAM) && redirectionList.size() > 0) {
-            //Вынести в отдельный метод, чтобы вызывать в потоке.
-            synchronized (answerCaptchaUrl) {
-                answerCaptchaUrl = getAnswerUrlForCaptcha(htmlDocumentAtString);
+            String answerCaptchaUrl = getAnswerUrlForCaptcha(htmlDocumentAtString);
+            HttpGet requestCaptcha = getRequestWithHeaders(answerCaptchaUrl);
+            request.setHeader("referer", redirectionList.get(0).toString());
+            redirectionList = new ArrayList<>();
 
-                HttpGet requestCaptcha = new HttpGet(answerCaptchaUrl);
-                requestCaptcha.setHeader("path", answerCaptchaUrl.replaceAll("https://www.kinopoisk.ru/", ""));
-                requestCaptcha.setHeader("scheme","https");
-                requestCaptcha.setHeader("Accept", ACCEPT);
-                requestCaptcha.setHeader("accept-encoding", "gzip, deflate, br");
-                requestCaptcha.setHeader("accept-language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
-                requestCaptcha.setHeader("referer", redirectionList.get(0).toString());
-                requestCaptcha.setHeader("upgrade-insecure-requests", "1");
-                requestCaptcha.setHeader("user-agent", USER_AGENT);
-                redirectionList = new ArrayList<>();
-                CloseableHttpResponse responseCaptcha = (CloseableHttpResponse) httpClient.execute(requestCaptcha, context);
-                redirectionList = ((HttpClientContext) context).getRedirectLocations();
-
-                htmlDocumentAtString = readDocumentFromResponse(responseCaptcha);
-                responseCaptcha.close();
-                if (StringUtils.containsIgnoreCase(htmlDocumentAtString, CHECK_ANTI_SPAM) && redirectionList.size() > 0) {
-                    getDocumentFromInternet(url);
-                }
+            CloseableHttpResponse responseCaptcha = (CloseableHttpResponse) httpClient.execute(requestCaptcha, context);
+            redirectionList = ((HttpClientContext) context).getRedirectLocations();
+            htmlDocumentAtString = readDocumentFromResponse(responseCaptcha);
+            responseCaptcha.close();
+            if (StringUtils.containsIgnoreCase(htmlDocumentAtString, CHECK_ANTI_SPAM) && redirectionList.size() > 0) {
+                getDocumentFromInternet(url);
             }
-            //-----------------------------------------------------------------------------------------------------------------------------
         }
 
         response.close();
@@ -104,43 +96,17 @@ public class PlHttpClient implements PliHttpClient {
         logger.info("Start method getAnswerUrlForCaptcha() at " + LocalDateTime.now());
         StringBuilder url = new StringBuilder("https://www.kinopoisk.ru/checkcaptcha?key=");
         Document captchaDoc = Jsoup.parse(captchaDocument.toString());
-        String key = captchaDoc
-                .getElementsByAttributeValue("name", "key")
-                .attr("value")
-                .replaceAll("/", "%2F")
-                .replaceAll(":", "%3A");
-        String retpath = captchaDoc
-                .getElementsByAttributeValue("name", "retpath")
-                .attr("value")
-                .replaceAll("/", "%2F")
-                .replaceAll(":", "%3A")
-                .replaceAll("\\?", "%3F");
+        String key = getKeyFromCaptchaDoc(captchaDoc);
+        String retpath = getRetpathFromCaptchaDoc(captchaDoc);
         url.append(key).append("&retpath=").append(retpath).append("&rep=");
-
-        String answer = "";
-        String srcImg = captchaDoc
-                .getElementsByAttributeValue("class", "image form__captcha")
-                .attr("src");
+        String srcImg = getScrImgFromCaptchaDoc(captchaDoc);
         captchaImageUrl = srcImg;
 
-        String ruCaptchaResponseKey = "";
-        if (ruCaptchaEnable) {
-            ruCaptchaResponseKey = ruCaptcha.sendRequest(srcImg);
-        }
-        while(StringUtils.isEmpty(answerCaptchaFromController) || StringUtils.isEmpty(answerCaptchaFromRuCaptcha)) {
-            if (ruCaptchaEnable) {
-                answerCaptchaFromRuCaptcha = ruCaptcha.getResponse(ruCaptchaResponseKey);
-            }
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException ex) {
-                logger.error("ERROR on sleep at getAnswerUrlForCaptcha!", ex);
-            }
-        }
-
-        answer = StringUtils.isEmpty(answerCaptchaFromController) ? answerCaptchaFromRuCaptcha : answerCaptchaFromController;
+        waitAnswerToCapcha(srcImg);
+        String answer = StringUtils.isEmpty(answerCaptchaFromController) ? answerCaptchaFromRuCaptcha : answerCaptchaFromController;
         answerCaptchaFromController = "";
         answerCaptchaFromRuCaptcha = "";
+        captchaImageUrl = "";
         //-----------------------------------------------------------------------
 //        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 //        try {
@@ -149,23 +115,77 @@ public class PlHttpClient implements PliHttpClient {
 //            e.printStackTrace();
 //        }
         //------------------------------------------------------------------
-        captchaImageUrl = "";
         url.append(URLEncoder.encode(answer));
         logger.info("End of method getAnswerUrlForCaptcha() at " + LocalDateTime.now());
         return url.toString();
     }
 
-    @Override
-    public Map<String, String> getCookies(HttpResponse response) {
-        logger.info("Start method getCookies() at " + LocalDateTime.now());
-        Map<String, String> cookiesMap = new HashMap<>();
-        Arrays.stream(response.getAllHeaders()).forEach(header -> {
-            if (StringUtils.containsIgnoreCase(header.getName(), "cookie")) {
+    private String getScrImgFromCaptchaDoc(Document captchaDoc) {
+        return captchaDoc
+                .getElementsByAttributeValue("class", "image form__captcha")
+                .attr("src");
+    }
 
+    private void waitAnswerToCapcha(String srcImg) {
+        if (ruCaptchaEnable) {
+            String ruCaptchaResponseKey = null;
+            try {
+                ruCaptchaResponseKey = ruCaptcha.sendRequest(srcImg);
+            } catch (IOException ex) {
+                logger.error("ERROR at getAnswerUrlForCaptcha!", ex);
             }
-        });
-        logger.info("End of method getCookies() at " + LocalDateTime.now());
-        return null;
+            while (StringUtils.isEmpty(answerCaptchaFromRuCaptcha)) {
+                try {
+                    Thread.sleep(3500);
+                } catch (InterruptedException ex) {
+                    logger.error("ERROR on sleep at getAnswerUrlForCaptcha!", ex);
+                }
+                answerCaptchaFromRuCaptcha = ruCaptcha.getResponse(ruCaptchaResponseKey);
+            }
+        } else {
+            while(StringUtils.isEmpty(answerCaptchaFromController)) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ex) {
+                    logger.error("ERROR on sleep at getAnswerUrlForCaptcha!", ex);
+                }
+            }
+        }
+    }
+
+
+    private HttpGet getRequestWithHeaders(String url) {
+        HttpGet request = new HttpGet(url);
+        request.setHeader("path", url.replaceAll("https://www.kinopoisk.ru/", ""));
+        request.setHeader("accept", accept);
+        request.setHeader("user-agent", user_agent);
+        request.setHeader("authority", authority);
+        request.setHeader("method", method);
+        request.setHeader("scheme", scheme);
+        request.setHeader("accept-encoding", accept_encoding);
+        request.setHeader("accept-language", accept_language);
+        request.setHeader("sec-fetch-mode", sec_fetch_mode);
+        request.setHeader("sec-fetch-cite", sec_fetch_cite);
+        request.setHeader("sec-fetch-user", sec_fetch_user);
+        request.setHeader("upgrade-insecure-requests", upgrade_insecure_requests);
+        return request;
+    }
+
+    private String getRetpathFromCaptchaDoc(Document captchaDoc) {
+        return captchaDoc
+                .getElementsByAttributeValue("name", "retpath")
+                .attr("value")
+                .replaceAll("/", "%2F")
+                .replaceAll(":", "%3A")
+                .replaceAll("\\?", "%3F");
+    }
+
+    private String getKeyFromCaptchaDoc(Document captchaDoc) {
+        return captchaDoc
+                .getElementsByAttributeValue("name", "key")
+                .attr("value")
+                .replaceAll("/", "%2F")
+                .replaceAll(":", "%3A");
     }
 
     private StringBuilder readDocumentFromResponse(HttpResponse response) throws IOException {

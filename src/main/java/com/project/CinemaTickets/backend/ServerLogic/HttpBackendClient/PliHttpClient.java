@@ -20,11 +20,4 @@ public interface PliHttpClient {
      * @return ссылка с ответом
      */
     String getAnswerUrlForCaptcha (StringBuilder capthaDocument);
-
-    /**
-     * Возвращает набор куков ключ-значение
-     * @param response ответ от сервера
-     * @return карта cookies
-     */
-    Map<String, String> getCookies(HttpResponse response);
 }
