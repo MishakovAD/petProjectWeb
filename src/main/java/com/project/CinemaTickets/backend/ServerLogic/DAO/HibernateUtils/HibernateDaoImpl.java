@@ -106,7 +106,8 @@ public class HibernateDaoImpl implements HibernateDao {
                 }
 
                 if (sessionObj != null) {
-                    if(!uniqueSessionsSet.contains(sessionObj)) {
+                    List sList = uniqueSessionsSet.stream().filter(s -> s.getUrl().equals(sessionObj.getUrl())).collect(Collectors.toList());
+                    if(!uniqueSessionsSet.contains(sessionObj) && sList.size() == 0) {
                         uniqueSessionsSet.add(sessionObj);
                         session.save(sessionObj);
                     }

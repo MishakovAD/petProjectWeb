@@ -80,6 +80,9 @@ public class PlHttpClient implements PliHttpClient {
             redirectionList = ((HttpClientContext) context).getRedirectLocations();
             htmlDocumentAtString = readDocumentFromResponse(responseCaptcha);
             responseCaptcha.close();
+            if (responseCaptcha.getStatusLine().getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
+                htmlDocumentAtString = new StringBuilder("Файл не найден. Ошибка 404.");
+            }
             if (StringUtils.containsIgnoreCase(htmlDocumentAtString, CHECK_ANTI_SPAM) && redirectionList.size() > 0) {
                 getDocumentFromInternet(url);
             }
@@ -127,6 +130,7 @@ public class PlHttpClient implements PliHttpClient {
     }
 
     private void waitAnswerToCapcha(String srcImg) {
+        System.out.println(srcImg);
         if (ruCaptchaEnable) {
             String ruCaptchaResponseKey = null;
             try {
@@ -134,13 +138,17 @@ public class PlHttpClient implements PliHttpClient {
             } catch (IOException ex) {
                 logger.error("ERROR at getAnswerUrlForCaptcha!", ex);
             }
-            while (StringUtils.isEmpty(answerCaptchaFromRuCaptcha)) {
+            while (StringUtils.isEmpty(answerCaptchaFromRuCaptcha) || StringUtils.equals(answerCaptchaFromRuCaptcha, "CAPCHA_NOT_READY")) {
                 try {
                     Thread.sleep(3500);
-                } catch (InterruptedException ex) {
+                    answerCaptchaFromRuCaptcha = ruCaptcha.getResponse(ruCaptchaResponseKey);
+                } catch (InterruptedException | IOException ex) {
                     logger.error("ERROR on sleep at getAnswerUrlForCaptcha!", ex);
                 }
-                answerCaptchaFromRuCaptcha = ruCaptcha.getResponse(ruCaptchaResponseKey);
+                if (StringUtils.equals(answerCaptchaFromRuCaptcha, "ERROR_CAPTCHA_UNSOLVABLE")) {
+                    answerCaptchaFromRuCaptcha = "Ответ не найден, нужна новая каптча";
+                }
+
             }
         } else {
             while(StringUtils.isEmpty(answerCaptchaFromController)) {

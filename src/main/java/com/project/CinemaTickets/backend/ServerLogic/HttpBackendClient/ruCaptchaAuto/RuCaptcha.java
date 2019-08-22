@@ -20,5 +20,5 @@ public interface RuCaptcha {
      * @param key ключ, по которому можно получить ответ
      * @return ответ на каптчу
      */
-    String getResponse(String key);
+    String getResponse(String key) throws IOException;
 }
