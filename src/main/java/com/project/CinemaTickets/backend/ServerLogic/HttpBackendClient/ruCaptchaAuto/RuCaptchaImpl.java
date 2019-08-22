@@ -41,13 +41,14 @@ public class RuCaptchaImpl implements RuCaptcha {
     @Override
     public String getResponse(String key) throws IOException {
         String answer = null;
+        String response = null;
         StringBuilder responseUrl = new StringBuilder("https://rucaptcha.com/res.php");
         responseUrl.append("?key=").append(userKey).append("&action=get&id=").append(key);
-        answer = readResponse(responseUrl.toString(), "", false);
+        response = readResponse(responseUrl.toString(), "", false);
         if (StringUtils.containsIgnoreCase(answer, "OK")) {
-            answer = answer.substring(answer.indexOf("OK|")+3);
+            answer = response.substring(response.indexOf("OK|")+3);
         } else {
-            answer = answer;
+            answer = response;
         }
         return answer;
     }
@@ -97,9 +98,4 @@ public class RuCaptchaImpl implements RuCaptcha {
         return imageString;
     }
 
-    public static void main(String[] args) throws IOException {
-        RuCaptchaImpl ru = new RuCaptchaImpl();
-        String key = ru.sendRequest("https://www.kinopoisk.ru/captchaimg?aHR0cHM6Ly9leHQuY2FwdGNoYS55YW5kZXgubmV0L2ltYWdlP2tleT0wMDFRM0gxWWwxRE5kSGhteGVnTHdieUtFZ1V4WEJ0bCZzZXJ2aWNlPWtpbm9wb2lzaw,,_0/1566460472/d41d8cd98f00b204e9800998ecf8427e_886e38ae164793d59149d1448fcada3c");
-        String answer = ru.getResponse(key);
-    }
 }
