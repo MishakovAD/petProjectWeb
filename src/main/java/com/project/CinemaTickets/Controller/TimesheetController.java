@@ -47,6 +47,7 @@ public class TimesheetController {
 
     @PostConstruct
     public void init() {
+        logger.info("init() in TimesheetController.class");
         movieList = hibernateDao.selectAllMovie(); //TODO: Выборка movie относительно города (сравнивать по кинотеатрам)
         cinemaList = hibernateDao.selectAllCinema();
         //sessionList = hibernateDao.selectAllSession(); //Лишняя информация

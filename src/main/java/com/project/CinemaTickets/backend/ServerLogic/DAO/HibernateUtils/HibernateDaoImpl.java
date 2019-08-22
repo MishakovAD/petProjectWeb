@@ -32,6 +32,7 @@ public class HibernateDaoImpl implements HibernateDao {
 
     @PostConstruct
     public void init() {
+        logger.info("init() in HibernateDaoImpl.class");
         session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         if (uniqueCinemasMap.size() == 0) {
             selectAllCinema().forEach(cinema -> uniqueCinemasMap.put(cinema.getCinemaName(), cinema));

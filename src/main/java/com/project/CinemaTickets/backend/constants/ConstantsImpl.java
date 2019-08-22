@@ -27,7 +27,7 @@ public class ConstantsImpl implements Constants {
     @Override
     @PostConstruct
     public void initPropertiesConst() {
-        logger.debug("Start initPropertiesConst()");
+        logger.info("initPropertiesConst() at ConstantsImpl.class");
         ruCaptchaEnableProp = configBackend.isRuCaptchaEnable();
         userKeyRuCaptcha = configBackend.getRuCaptchaUserKey();
         loginDB = configBackend.getDbUser();

@@ -47,7 +47,7 @@ public class RuCaptchaImpl implements RuCaptcha {
         StringBuilder responseUrl = new StringBuilder("https://rucaptcha.com/res.php");
         responseUrl.append("?key=").append(userKey).append("&action=get&id=").append(key);
         response = readResponse(responseUrl.toString(), "", false);
-        if (StringUtils.containsIgnoreCase(answer, "OK")) {
+        if (StringUtils.containsIgnoreCase(response, "OK")) {
             answer = response.substring(response.indexOf("OK|")+3);
         } else {
             answer = response;

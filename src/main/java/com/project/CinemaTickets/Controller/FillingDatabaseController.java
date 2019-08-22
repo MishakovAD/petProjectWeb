@@ -31,6 +31,7 @@ public class FillingDatabaseController {
 
     @PostConstruct
     public void init() {
+        logger.info("init() in FillingDatabaseController.class");
         dateArray = initWeekArray();
     }
 
