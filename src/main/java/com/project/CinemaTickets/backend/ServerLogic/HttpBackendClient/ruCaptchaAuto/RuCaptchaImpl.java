@@ -9,10 +9,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import static com.project.CinemaTickets.backend.constants.ConstantsImpl.userKey;
+
 @Component
 public class RuCaptchaImpl implements RuCaptcha {
-    public static boolean ruCaptchaEnable = true; //TODO: Добавить в файл конфигурации и тянуть оттуда.
-    private String userKey = "";
 
     @Override
     public String sendRequest(String captchaUrlImage) throws IOException {

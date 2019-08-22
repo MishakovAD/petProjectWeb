@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.project.CinemaTickets.backend.constants.ConstantsImpl.loginDatabase;
+import static com.project.CinemaTickets.backend.constants.ConstantsImpl.passwordDatabase;
+import static com.project.CinemaTickets.backend.constants.ConstantsImpl.urlDatabase;
+
 //TODO: Добавить првоерку на существующий уже кинотеатр и повторяющиеся не добавлять.
 //А лучше брать список кинотеатров из БД. А так же подумать, как можно изменить методы добавления
 //Чтобы добавлялись, например, отдельно кинотеатр, отдельно кино, отдельно сессия. Как лучше это сделать?
@@ -30,14 +34,9 @@ public class DAOServerLogicImpl implements DAOServerLogic {
     private Logger logger = LoggerFactory.getLogger(DAOServerLogicImpl.class);
     public static List<Cinema> staticCinemaList = new ArrayList<>();
 
-    private final String url = "jdbc:postgresql://localhost/petprojectweb?currentSchema=petproject";
-    private final String user = "home";
-    private final String password = "home";
-
-//    private final String url = "jdbc:postgresql://localhost/petprojectweb"; //WORK
-//    private final String user = "postgres";
-//    private final String password = "postgres";
-
+    private final String url = urlDatabase;
+    private final String user = loginDatabase;
+    private final String password = passwordDatabase;
 
 
     @Override
