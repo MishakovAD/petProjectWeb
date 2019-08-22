@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import java.io.IOException;
 
 @Component
 public class ConstantsImpl implements Constants {
@@ -28,15 +27,13 @@ public class ConstantsImpl implements Constants {
     @Override
     @PostConstruct
     public void initPropertiesConst() {
-        try {
-            ruCaptchaEnableProp = configBackend.isRuCaptchaEnable();
-            userKeyRuCaptcha = configBackend.getRuCaptchaUserKey();
-            loginDB = configBackend.getDbUser();
-            passwordDB = configBackend.getDbPassword();
-            urlDB = configBackend.getDbUrl();
-        } catch (IOException e) {
-            logger.error("ERROR in initPropertiesConst", e);
-        }
+        logger.debug("Start initPropertiesConst()");
+        ruCaptchaEnableProp = configBackend.isRuCaptchaEnable();
+        userKeyRuCaptcha = configBackend.getRuCaptchaUserKey();
+        loginDB = configBackend.getDbUser();
+        passwordDB = configBackend.getDbPassword();
+        urlDB = configBackend.getDbUrl();
+
         ruCaptchaEnable = ruCaptchaEnableProp;
         userKey = userKeyRuCaptcha;
         loginDatabase = loginDB;

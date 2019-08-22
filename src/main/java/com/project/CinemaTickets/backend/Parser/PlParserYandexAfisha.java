@@ -14,11 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.project.CinemaTickets.backend.constants.Constants.CITY_MOSCOW;
+import static com.project.CinemaTickets.backend.constants.Constants.HELPER_FOR_QUERY_YANDEX_AFISHA;
+import static com.project.CinemaTickets.backend.constants.Constants.PATTERN_CINEMA_YANDEX_AFISHA;
+
 //TODO: Сейчас сделаем просто получение ссылки для фильма, который выбрали, в последующем нужно будет сделать отдельный парсер для ya.afisha
 public class PlParserYandexAfisha extends PlParserAfisha implements PliParser {
-    public static String HELPER_FOR_QUERY_YANDEX_AFISHA = "купить билеты afisha.yandex.ru ";
-    public String CITY_MOSCOW = "Москва";
-    public static Pattern PATTERN_CINEMA_YANDEX_AFISHA = Pattern.compile("(https://afisha.yandex.ru/moscow/cinema/places/[a-z0-9A-Zа-яА-Я -]+)"); //возможно в конце нужен символ /
 
     public Document getHTMLDocumentOfYandexAfisha (String queryCinemaAndMovie) throws IOException {
         String url = createUrlFromQuery(queryCinemaAndMovie);

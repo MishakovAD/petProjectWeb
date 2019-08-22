@@ -1,5 +1,7 @@
 package com.project.CinemaTickets.backend.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -9,6 +11,7 @@ import java.util.Properties;
 
 @Component
 public class ConfigBackendImpl implements ConfigBackend {
+    private Logger logger = LoggerFactory.getLogger(ConfigBackendImpl.class);
 
     private Properties property;
     @Override

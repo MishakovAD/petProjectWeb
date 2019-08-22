@@ -22,13 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.project.CinemaTickets.backend.constants.Constants.HELPER_FOR_QUERY_AFISHA;
+import static com.project.CinemaTickets.backend.constants.Constants.PATTERN_CINEMA_AFISHA_FIRST;
+import static com.project.CinemaTickets.backend.constants.Constants.PATTERN_CINEMA_AFISHA_SECOND;
+
 @Component
 public class PlParserAfisha implements PliParser {
-    public static String HELPER_FOR_QUERY_AFISHA = "afisha.ru ";
-    public String CITY_MOSCOW = "Москва";
-    public static Pattern PATTERN_CINEMA_AFISHA_FIRST = Pattern.compile("(https://www.afisha.ru/movie/[0-9]+/?)");
-    public static Pattern PATTERN_CINEMA_AFISHA_SECOND = Pattern.compile("(https://www.afisha.ru/\\w+/schedule_cinema_product/[0-9]+/?)");
-
     private Logger logger = LoggerFactory.getLogger(PlParserAfisha.class);
     private int counterOfCreatingUrl = 0;
 

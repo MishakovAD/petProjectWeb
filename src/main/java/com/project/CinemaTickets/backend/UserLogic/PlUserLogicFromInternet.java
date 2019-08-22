@@ -22,12 +22,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.project.CinemaTickets.backend.constants.Constants.PATTERN_TIME;
+
 @Component
 public class PlUserLogicFromInternet implements PliUserLogicFromInternet {
-    public static String[] TYPES_OF_SHOW_FILM = {"2D", "3D", "IMax", "Dolby Atmos"};
-    public static Pattern PATTERN_CINEMA_KINOPOISK = Pattern.compile("(https://www.kinopoisk.ru/afisha/city/\\d+/cinema/[a-z0-9A-Zа-яА-Я -]+/?)");
-    public static Pattern PATTERN_TIME = Pattern.compile("(\\d+):(\\d+)");
-
     private Logger logger = LoggerFactory.getLogger(PlUserLogicFromInternet.class);
 
     private int counterTryGetFilmId = 0;

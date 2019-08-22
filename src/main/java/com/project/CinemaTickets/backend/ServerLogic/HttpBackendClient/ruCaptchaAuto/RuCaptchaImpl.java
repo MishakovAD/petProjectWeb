@@ -2,6 +2,8 @@ package com.project.CinemaTickets.backend.ServerLogic.HttpBackendClient.ruCaptch
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -13,9 +15,11 @@ import static com.project.CinemaTickets.backend.constants.ConstantsImpl.userKey;
 
 @Component
 public class RuCaptchaImpl implements RuCaptcha {
+    private Logger logger = LoggerFactory.getLogger(RuCaptchaImpl.class);
 
     @Override
     public String sendRequest(String captchaUrlImage) throws IOException {
+        logger.debug("Start sendRequest() from RuCaptchaImpl.class");
         String requestKey = "";
         String method = "base64";
         StringBuilder url = new StringBuilder("https://rucaptcha.com/in.php?method=");
@@ -37,6 +41,7 @@ public class RuCaptchaImpl implements RuCaptcha {
 
     @Override
     public String getResponse(String key) throws IOException {
+        logger.debug("Start getResponse() from RuCaptchaImpl.class");
         String answer = null;
         String response = null;
         StringBuilder responseUrl = new StringBuilder("https://rucaptcha.com/res.php");
@@ -51,6 +56,7 @@ public class RuCaptchaImpl implements RuCaptcha {
     }
 
     private String readResponse(String url, String img, boolean methodPost) throws IOException {
+        logger.debug("Start readResponse() from RuCaptchaImpl.class");
         StringBuffer response = new StringBuffer();
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         if (methodPost) {
@@ -76,6 +82,7 @@ public class RuCaptchaImpl implements RuCaptcha {
     }
 
     private String encodeToString(String url) throws IOException {
+        logger.debug("Start encodeToString() from RuCaptchaImpl.class");
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod("GET");
         connection.connect();
@@ -94,5 +101,4 @@ public class RuCaptchaImpl implements RuCaptcha {
         String imageString = encoder.encodeToString(response);
         return imageString;
     }
-
 }

@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 @Component
 public class HibernateDaoImpl implements HibernateDao {
     private Logger logger = LoggerFactory.getLogger(HibernateDaoImpl.class);
-    public static Map<String, Cinema> uniqueCinemasMap = new HashMap<>();
-    public static Map<String, Movie> uniqueMoviesMap = new HashMap<>();
-    public static Set<com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session> uniqueSessionsSet = new HashSet<>();
-    public static Set<Cinema_Movie> uniqueCinema_MovieSet = new HashSet<>();
+    private Map<String, Cinema> uniqueCinemasMap = new HashMap<>();
+    private Map<String, Movie> uniqueMoviesMap = new HashMap<>();
+    private Set<com.project.CinemaTickets.backend.ServerLogic.DAO.Entity.Session> uniqueSessionsSet = new HashSet<>();
+    private Set<Cinema_Movie> uniqueCinema_MovieSet = new HashSet<>();
 
     private Session session;
     private Transaction tx1;

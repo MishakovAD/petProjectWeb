@@ -36,7 +36,6 @@ import static com.project.CinemaTickets.backend.constants.Constants.CHECK_ANTI_S
 import static com.project.CinemaTickets.backend.constants.Constants.accept;
 import static com.project.CinemaTickets.backend.constants.Constants.accept_encoding;
 import static com.project.CinemaTickets.backend.constants.Constants.accept_language;
-import static com.project.CinemaTickets.backend.constants.Constants.ruCaptchaEnable;
 import static com.project.CinemaTickets.backend.constants.Constants.sec_fetch_cite;
 import static com.project.CinemaTickets.backend.constants.Constants.sec_fetch_mode;
 import static com.project.CinemaTickets.backend.constants.Constants.sec_fetch_user;
@@ -45,6 +44,7 @@ import static com.project.CinemaTickets.backend.constants.Constants.user_agent;
 import static com.project.CinemaTickets.backend.constants.Constants.authority;
 import static com.project.CinemaTickets.backend.constants.Constants.scheme;
 import static com.project.CinemaTickets.backend.constants.Constants.method;
+import static com.project.CinemaTickets.backend.constants.ConstantsImpl.ruCaptchaEnable;
 
 @Component
 public class PlHttpClient implements PliHttpClient {

@@ -25,14 +25,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.project.CinemaTickets.backend.constants.Constants.HELPER_FOR_BUY_TICKETS;
+import static com.project.CinemaTickets.backend.constants.Constants.HELPER_FOR_QUERY_KINOPOISK;
+import static com.project.CinemaTickets.backend.constants.Constants.PATTERN_CINEMA_KINOPOISK;
+
 @Component
 public class PlParserKinopoisk implements PliParserKinopoisk {
     int counterUrlForBuyTickets = 0;
-    public static String HELPER_FOR_QUERY_KINOPOISK = "купить билеты kinopoisk.ru afisha";
-    public static String HELPER_FOR_BUY_TICKETS = "https://tickets.widget.kinopoisk.ru/w/sessions/";
-    public String CITY_MOSCOW = "Москва";
-    public static Pattern PATTERN_CINEMA_KINOPOISK = Pattern.compile("(https://www.kinopoisk.ru/afisha/city/\\d+/cinema/[a-z0-9A-Zа-яА-Я -]+/?)");
-
     private Logger logger = LoggerFactory.getLogger(PlParserKinopoisk.class);
 
     @Override

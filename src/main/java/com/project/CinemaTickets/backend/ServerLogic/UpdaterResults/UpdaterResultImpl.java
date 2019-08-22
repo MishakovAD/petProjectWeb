@@ -20,9 +20,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.project.CinemaTickets.backend.constants.Constants.PATTERN_TIME;
+
 @Component
 public class UpdaterResultImpl implements UpdaterResult {
-    public static Pattern PATTERN_TIME = Pattern.compile("(\\d+):(\\d+)");
     private Logger logger = LoggerFactory.getLogger(UpdaterResultImpl.class);
 
     @Override

@@ -16,10 +16,10 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.project.CinemaTickets.backend.Utils.HelperUtils.createUniqueID;
+import static com.project.CinemaTickets.backend.constants.Constants.PATTERN_URL_BUY_TICKETS;
 
 @Component
 public class ConverterToImpl implements ConverterTo {
-    public static Pattern PATTERN_URL_BUY_TICKETS = Pattern.compile("https://tickets.widget.kinopoisk.ru/w/sessions/");
     private Logger logger = LoggerFactory.getLogger(ConverterToImpl.class);
 
     @Override
