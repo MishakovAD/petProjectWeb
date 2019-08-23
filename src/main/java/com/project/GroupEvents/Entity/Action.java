@@ -1,4 +1,4 @@
-package com.project.Entity;
+package com.project.GroupEvents.Entity;
 
 public class Action {
     private int action_id;

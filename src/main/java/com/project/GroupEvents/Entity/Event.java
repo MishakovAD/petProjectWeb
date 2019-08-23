@@ -1,4 +1,4 @@
-package com.project.Entity;
+package com.project.GroupEvents.Entity;
 
 public class Event {
     private int event_id;

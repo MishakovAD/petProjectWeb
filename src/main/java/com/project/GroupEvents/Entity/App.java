@@ -1,4 +1,4 @@
-package com.project.Entity;
+package com.project.GroupEvents.Entity;
 
 public class App {
     private User user;

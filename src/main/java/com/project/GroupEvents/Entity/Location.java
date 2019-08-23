@@ -1,4 +1,4 @@
-package com.project.Entity;
+package com.project.GroupEvents.Entity;
 
 public class Location {
     private int location_id;
