@@ -67,6 +67,8 @@ public class PlHttpClient implements PliHttpClient {
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode == HttpServletResponse.SC_OK) {
             htmlDocumentAtString = readDocumentFromResponse(response);
+        } else {
+            htmlDocumentAtString = new StringBuilder("Файл не найден. Ошибка 404.");
         }
 
         if (StringUtils.containsIgnoreCase(htmlDocumentAtString, CHECK_ANTI_SPAM) && redirectionList.size() > 0) {
