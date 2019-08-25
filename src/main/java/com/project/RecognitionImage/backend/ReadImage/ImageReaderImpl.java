@@ -1,6 +1,10 @@
 package com.project.RecognitionImage.backend.ReadImage;
 
 import com.project.RecognitionImage.backend.Entity.PictureDot;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -15,9 +19,23 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ImageReaderImpl implements ImageReader {
+    static{
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    }
+
     public static void main(String[] args) {
+        System.out.println("Welcome to OpenCV " + Core.VERSION);
+        Mat m = new Mat(5, 10, CvType.CV_8UC1, new Scalar(0));
+        System.out.println("OpenCV Mat: " + m);
+        Mat mr1 = m.row(1);
+        mr1.setTo(new Scalar(1));
+        Mat mc5 = m.col(5);
+        mc5.setTo(new Scalar(5));
+        System.out.println("OpenCV Mat data:\n" + m.dump());
+
+        String filename = "C:/b.png";
         ImageReaderImpl i = new ImageReaderImpl();
-        i.readeImage("C:/b.png");
+        //i.readeImage("C:/b.png");
     }
 
     @Override
@@ -30,33 +48,19 @@ public class ImageReaderImpl implements ImageReader {
                 for (int j = 0; j < image.getWidth(); j++) {
                     int color = image.getRGB(j, i);
                     pictureDots.add(new PictureDot(j, i, image.getHeight(), image.getWidth(), color));
-                    printSimplePicture(color);
+                    //printSimplePicture(color); //выводит понятный текст исключительно для простых изображений
                     if (set.get(image.getRGB(j, i)) != null) {
                         int value = set.get(image.getRGB(j, i)) + 1;
                         set.put(image.getRGB(j, i), value);
                     } else {
-                        set.put(image.getRGB(j, i), 0);
+                        set.put(image.getRGB(j, i), 1);
                     }
                 }
                 System.out.println();
             }
-            Map<Integer, Integer> newMap = new HashMap<>();
-            ArrayList<Integer> arr = new ArrayList<>();
-            arr.addAll(sortByValue(set).values());
-            sortByValue(set).forEach((k, v) -> {
-                int maxKey = getKeyToMaxValue(set);
-                newMap.put(maxKey, set.get(maxKey));
-                set.remove(maxKey);
-            });
             int removeKey = getKeyToMaxValue(set);
             set.remove(removeKey);
             int pictureKey = getKeyToMaxValue(set);
-//            set.remove(pictureKey);
-//            pictureKey = getKeyToMaxValue(set);
-//            set.remove(pictureKey);
-//            pictureKey = getKeyToMaxValue(set);
-//            set.remove(pictureKey);
-//            pictureKey = getKeyToMaxValue(set);
             for (int i = 0; i < image.getHeight(); i++) {
                 for (int j = 0; j < image.getWidth(); j++) {
                     if (image.getRGB(j, i) == pictureKey) {
