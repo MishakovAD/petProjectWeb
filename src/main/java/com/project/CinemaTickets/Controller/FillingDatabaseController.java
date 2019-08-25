@@ -35,7 +35,7 @@ public class FillingDatabaseController {
         dateArray = initWeekArray();
     }
 
-    @GetMapping({"/enter_captсha"})
+    @GetMapping({"/filldb"})
     public String getEnterCaptchaPage() {
         logger.info("Start method getEnterCaptchaPage() at " + LocalDateTime.now());
         Thread thread = new Thread((Runnable) worker, "workerThread");
