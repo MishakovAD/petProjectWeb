@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ImageReaderImpl implements ImageReader {
     public static void main(String[] args) {
         ImageReaderImpl i = new ImageReaderImpl();
-        i.readeImage("C:/c.png");
+        i.readeImage("C:/b.png");
     }
 
     @Override
@@ -30,18 +30,7 @@ public class ImageReaderImpl implements ImageReader {
                 for (int j = 0; j < image.getWidth(); j++) {
                     int color = image.getRGB(j, i);
                     pictureDots.add(new PictureDot(j, i, image.getHeight(), image.getWidth(), color));
-                    int blue = color & 0xff;
-                    int green = (color & 0xff00) >> 8;
-                    int red = (color & 0xff0000) >> 16;
-                    if (blue > green && blue > red) {
-                        System.out.print("1");
-                    } else if (green > blue && green > red) {
-                        System.out.print("2");
-                    } else if (red > blue && red > green) {
-                        System.out.print("3");
-                    } else {
-                        System.out.print("0");
-                    }
+                    printSimplePicture(color);
                     if (set.get(image.getRGB(j, i)) != null) {
                         int value = set.get(image.getRGB(j, i)) + 1;
                         set.put(image.getRGB(j, i), value);
@@ -88,7 +77,7 @@ public class ImageReaderImpl implements ImageReader {
     }
 
     private int getKeyToMaxValue (Map<Integer, Integer> map) {
-        AtomicInteger maxKey = new AtomicInteger();
+        AtomicInteger maxKey = new AtomicInteger(0);
         int maxValue = Collections.max(map.values());
         map.keySet().forEach(key -> {
             if(map.get(key).equals(maxValue)) {
@@ -98,6 +87,21 @@ public class ImageReaderImpl implements ImageReader {
             return;
         });
         return maxKey.get();
+    }
+
+    private void printSimplePicture(int color) {
+        int blue = color & 0xff;
+        int green = (color & 0xff00) >> 8;
+        int red = (color & 0xff0000) >> 16;
+        if (blue > green && red > green) {
+            System.out.print("1");
+        } else if (blue > red && green > red) {
+            System.out.print("2");
+        } else if (green > blue && red > blue) {
+            System.out.print("4");
+        } else {
+            System.out.print("*");
+        }
     }
 
     public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
