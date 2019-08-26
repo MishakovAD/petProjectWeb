@@ -38,6 +38,7 @@ public class OpenCVImpl implements OpenCV {
         OpenCVImpl cv = new OpenCVImpl();
         cv.init();
         Mat img = cv.loadImage("C:/captcha_kino.jpg", Imgcodecs.IMREAD_GRAYSCALE);
+        //Mat img = cv.loadImage("C:/c.png", Imgcodecs.IMREAD_GRAYSCALE);
         Mat newImg = cv.processingImage(img);
 
         System.out.println();
@@ -107,7 +108,14 @@ public class OpenCVImpl implements OpenCV {
                     arr[8] = downRight;
                     double avgArr = avgArray(arr);
 
-                    int counterOfSimilar = (int) Arrays.stream(arr).filter(elem -> Math.abs(currentPixel - elem) > 13).count();
+                    int delta;
+                    if (j < cols/2) {
+                        delta = 7;
+                    } else {
+                        delta = 17;
+                    }
+
+                    int counterOfSimilar = (int) Arrays.stream(arr).filter(elem -> Math.abs(avgArr - elem) > delta).count();
                     if (counterOfSimilar > 4) {
                         if (currentPixel > 170) {
                             newImg.put(i, j, 255.0);
