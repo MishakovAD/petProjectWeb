@@ -34,27 +34,7 @@ public class OpenCVImpl implements OpenCV {
         cv.init();
         Mat img = cv.loadImage("C:/captcha_kino.jpg", Imgcodecs.IMREAD_GRAYSCALE);
         //Mat img = cv.loadImage("C:/c.png", Imgcodecs.IMREAD_GRAYSCALE);
-        Mat newImg = cv.processingImage(img);
-        Mat blackAndWhite = cv.blackAndWhiteMat(img);
-        Mat result = new Mat(img.rows(), img.cols(), CvType.CV_8U);
-
-        for (int i = 0; i < img.rows(); i++) {
-            for (int j = 0; j < img.cols(); j++) {
-                int delta;
-                if (j < img.cols()/2) {
-                    delta = 135;
-                } else {
-                    delta = 125;
-                }
-                if (Math.abs(newImg.get(i, j)[0] - blackAndWhite.get(i, j)[0]) < delta) {
-                    result.put(i, j, 225);
-                } else {
-                    result.put(i, j, 0);
-                }
-            }
-        }
-
-        System.out.println();
+        Mat result = cv.processingImage(img);
         boolean saveFile = imwrite("C:/test.jpg", result);
         System.out.println(saveFile);
 
@@ -90,73 +70,28 @@ public class OpenCVImpl implements OpenCV {
 
     @Override
     public Mat processingImage(Mat img) {
+        Mat dstMat = new Mat(img.rows(), img.cols(), CvType.CV_8U);
         if (img != null) {
-            Mat newImg = new Mat(img.rows(), img.cols(), CvType.CV_8U);
-            //Core.MinMaxLocResult minMaxLocResult = minMaxLoc(img);
+            Mat blackAndWhiteMat = blackAndWhiteMat(img);
+            Mat blackGreayAndWhiteMat = blacGreyAndWhiteMat(img);
 
-            int rows = img.rows();
-            int cols = img.cols();
-
-            for (int i = 1; i < rows - 1; i++) {
-                for (int j = 1; j < cols - 1; j++) {
-                    double[] arr = new double[9];
-                    double currentPixel = img.get(i, j)[0];
-                    double upLeft = img.get(i - 1, j - 1)[0];                    // * + +    * - up left
-                    double upCenter = img.get(i - 1, j)[0];                          // + ! $    ! - element,   $ - center right
-                    double upRight = img.get(i - 1, j + 1)[0];                  // + + %    % - down right
-                    double centerLeft = img.get(i, j - 1)[0];
-                    double centerRight = img.get(i, j + 1)[0];
-                    double downLeft = img.get(i + 1, j - 1)[0];
-                    double downCenter = img.get(i + 1, j)[0];
-                    double downRight = img.get(i + 1, j + 1)[0];
-
-                    arr[0] = upLeft;
-                    arr[1] = upCenter;
-                    arr[2] = upRight;
-                    arr[3] = centerLeft;
-                    arr[4] = currentPixel;
-                    arr[5] = centerRight;
-                    arr[6] = downLeft;
-                    arr[7] = downCenter;
-                    arr[8] = downRight;
-                    double avgArr = avgArray(arr);
-
+            for (int i = 0; i < img.rows(); i++) {
+                for (int j = 0; j < img.cols(); j++) {
                     int delta;
-                    if (j < cols/2) {
-                        delta = 7;
+                    if (j < img.cols()/2) {
+                        delta = 135;
                     } else {
-                        delta = 17;
+                        delta = 125;
                     }
-
-                    int counterOfSimilar = (int) Arrays.stream(arr).filter(elem -> Math.abs(avgArr - elem) > delta).count();
-                    if (counterOfSimilar > 4) {
-                        if (currentPixel > 170) {
-                            newImg.put(i, j, 255.0);
-                            System.out.print(" ");
-                        } else {
-                            newImg.put(i, j, 0.0);
-                            System.out.print(" ");
-                        }
+                    if (Math.abs(blackGreayAndWhiteMat.get(i, j)[0] - blackAndWhiteMat.get(i, j)[0]) < delta) {
+                        dstMat.put(i, j, 225);
                     } else {
-                        newImg.put(i, j, 128);
-                        System.out.print("*");
+                        dstMat.put(i, j, 0);
                     }
                 }
-                System.out.println();
             }
 
-//            double minValue = minMaxLocResult.minVal;
-//            Point minPosition = minMaxLocResult.minLoc;
-//            int x_min = (int) minPosition.x;
-//            int y_min = (int) minPosition.y;
-//
-//            double maxValue = minMaxLocResult.maxVal;
-//            Point maxPosition = minMaxLocResult.maxLoc;
-//            int x_max = (int) maxPosition.x;
-//            int y_max = (int) maxPosition.y;
-
-
-            return newImg;
+            return dstMat;
         } else {
             return new Mat(0, 0, CvType.CV_8U);
         }
@@ -207,6 +142,62 @@ public class OpenCVImpl implements OpenCV {
             }
         }
         return  dstMat;
+    }
+
+    private Mat blacGreyAndWhiteMat(Mat img) {
+        Mat dstMat = new Mat(img.rows(), img.cols(), CvType.CV_8U);
+
+        int rows = img.rows();
+        int cols = img.cols();
+
+        for (int i = 1; i < rows - 1; i++) {
+            for (int j = 1; j < cols - 1; j++) {
+                double[] arr = new double[9];
+                double currentPixel = img.get(i, j)[0];
+                double upLeft = img.get(i - 1, j - 1)[0];                    // * + +    * - up left
+                double upCenter = img.get(i - 1, j)[0];                          // + ! $    ! - element,   $ - center right
+                double upRight = img.get(i - 1, j + 1)[0];                  // + + %    % - down right
+                double centerLeft = img.get(i, j - 1)[0];
+                double centerRight = img.get(i, j + 1)[0];
+                double downLeft = img.get(i + 1, j - 1)[0];
+                double downCenter = img.get(i + 1, j)[0];
+                double downRight = img.get(i + 1, j + 1)[0];
+
+                arr[0] = upLeft;
+                arr[1] = upCenter;
+                arr[2] = upRight;
+                arr[3] = centerLeft;
+                arr[4] = currentPixel;
+                arr[5] = centerRight;
+                arr[6] = downLeft;
+                arr[7] = downCenter;
+                arr[8] = downRight;
+                double avgArr = avgArray(arr);
+
+                int delta;
+                if (j < cols/2) {
+                    delta = 7;
+                } else {
+                    delta = 17;
+                }
+
+                int counterOfSimilar = (int) Arrays.stream(arr).filter(elem -> Math.abs(avgArr - elem) > delta).count();
+                if (counterOfSimilar > 4) {
+                    if (currentPixel > 170) {
+                        dstMat.put(i, j, 255.0);
+                        System.out.print(" ");
+                    } else {
+                        dstMat.put(i, j, 0.0);
+                        System.out.print(" ");
+                    }
+                } else {
+                    dstMat.put(i, j, 128);
+                    System.out.print("*");
+                }
+            }
+            System.out.println();
+        }
+        return dstMat;
     }
 
     private double avgArray(double[] arr) {
