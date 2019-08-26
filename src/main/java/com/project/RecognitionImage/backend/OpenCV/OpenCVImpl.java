@@ -37,31 +37,8 @@ public class OpenCVImpl implements OpenCV {
     public static void main(String[] args) {
         OpenCVImpl cv = new OpenCVImpl();
         cv.init();
-        Mat img = cv.loadImage("C:/captcha_kino3.jpg", Imgcodecs.IMREAD_GRAYSCALE);
-        //cv.processingImage(img);
-        cv.processingImage(null);
-        Mat newImg = new Mat(img.rows(), img.cols(), CvType.CV_8U);
-        for (int i = 0; i < img.rows(); i++) {
-            for (int j = 0; j < (int) img.cols(); j++) {
-                try {
-                    double currentPixel = img.get(i, j)[0];
-                    if (currentPixel <= 255 && currentPixel > 150) {
-                        System.out.print("*");
-                        newImg.put(i, j, 255.0);
-                    } else if (currentPixel < 100) {
-                        System.out.print("%");
-                        newImg.put(i, j, 0.0);
-                    } else {
-                        System.out.print(" ");
-                        newImg.put(i, j, 125.0);
-                    }
-                } catch (Exception e) {
-                    System.out.print(" ");
-                }
-            }
-            System.out.println();
-        }
-
+        Mat img = cv.loadImage("C:/captcha_kino.jpg", Imgcodecs.IMREAD_GRAYSCALE);
+        Mat newImg = cv.processingImage(img);
 
         System.out.println();
         boolean saveFile = imwrite("C:/test.jpg", newImg);
@@ -108,6 +85,7 @@ public class OpenCVImpl implements OpenCV {
 
             for (int i = 1; i < rows - 1; i++) {
                 for (int j = 1; j < cols - 1; j++) {
+                    double[] arr = new double[9];
                     double currentPixel = img.get(i, j)[0];
                     double upLeft = img.get(i - 1, j - 1)[0];                    // * + +    * - up left
                     double upCenter = img.get(i - 1, j)[0];                          // + ! $    ! - element,   $ - center right
@@ -118,10 +96,44 @@ public class OpenCVImpl implements OpenCV {
                     double downCenter = img.get(i + 1, j)[0];
                     double downRight = img.get(i + 1, j + 1)[0];
 
-                    if (Math.abs(currentPixel - upLeft) > 40) {
+                    arr[0] = upLeft;
+                    arr[1] = upCenter;
+                    arr[2] = upRight;
+                    arr[3] = centerLeft;
+                    arr[4] = currentPixel;
+                    arr[5] = centerRight;
+                    arr[6] = downLeft;
+                    arr[7] = downCenter;
+                    arr[8] = downRight;
+                    double avgArr = avgArray(arr);
 
+                    int counterOfSimilar = (int) Arrays.stream(arr).filter(elem -> Math.abs(currentPixel - elem) > 13).count();
+                    if (counterOfSimilar > 4) {
+                        if (currentPixel > 170) {
+                            newImg.put(i, j, 255.0);
+                            System.out.print(" ");
+                        } else {
+                            newImg.put(i, j, 0.0);
+                            System.out.print(" ");
+                        }
+                    } else {
+                        newImg.put(i, j, 127.5);
+                        System.out.print("*");
                     }
+
+
+//                    if (Math.abs(currentPixel - avgArr) > currentPixel + 100 || Math.abs(currentPixel - avgArr) > currentPixel - 100) {
+//                        System.out.print("*");
+//                        newImg.put(i, j, 0.0);
+//                    } else if (Math.abs(currentPixel - avgArr) > currentPixel) {
+//                        System.out.print(" ");
+//                        newImg.put(i, j, 255.0);
+//                    } else if (Math.abs(currentPixel - avgArr) < currentPixel) {
+//                        System.out.print(" ");
+//                        newImg.put(i, j, 255.0);
+//                    }
                 }
+                System.out.println();
             }
 
             double minValue = minMaxLocResult.minVal;
@@ -139,6 +151,13 @@ public class OpenCVImpl implements OpenCV {
         } else {
             return new Mat(0, 0, CvType.CV_8U);
         }
+    }
+
+    private double avgArray(double[] arr) {
+        double avg = 0;
+        double sum = Arrays.stream(arr).sum();
+        avg = sum / arr.length;
+        return avg;
     }
 
     @Override
