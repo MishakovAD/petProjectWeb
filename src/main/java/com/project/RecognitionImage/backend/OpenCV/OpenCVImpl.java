@@ -4,12 +4,17 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import javax.swing.*;
+import javax.validation.constraints.NotNull;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.BufferedInputStream;
@@ -23,6 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 
+import static org.opencv.core.Core.minMaxLoc;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
 import static org.opencv.imgcodecs.Imgcodecs.imwrite;
 
@@ -31,52 +37,34 @@ public class OpenCVImpl implements OpenCV {
     public static void main(String[] args) {
         OpenCVImpl cv = new OpenCVImpl();
         cv.init();
-        Mat img = cv.loadImage("C:/captcha_kino.jpg", Imgcodecs.IMREAD_GRAYSCALE);
+        Mat img = cv.loadImage("C:/captcha_kino3.jpg", Imgcodecs.IMREAD_GRAYSCALE);
+        //cv.processingImage(img);
+        cv.processingImage(null);
+        Mat newImg = new Mat(img.rows(), img.cols(), CvType.CV_8U);
         for (int i = 0; i < img.rows(); i++) {
-            for (int j = 0; j < (int) img.cols() / 2; j++) {
+            for (int j = 0; j < (int) img.cols(); j++) {
                 try {
-                    double currentRowStart = img.get((int)(img.rows()/2), 0)[0];
-                    double currentRowEnd = img.get((int)(img.rows()/2), (int)(img.cols()/2) - 1)[0];
                     double currentPixel = img.get(i, j)[0];
-                    if (Math.abs(currentPixel - currentRowStart) > 20) {
+                    if (currentPixel <= 255 && currentPixel > 150) {
                         System.out.print("*");
-                    } else if(Math.abs(currentPixel - currentRowEnd) > 20) {
+                        newImg.put(i, j, 255.0);
+                    } else if (currentPixel < 100) {
                         System.out.print("%");
+                        newImg.put(i, j, 0.0);
                     } else {
                         System.out.print(" ");
+                        newImg.put(i, j, 125.0);
                     }
                 } catch (Exception e) {
                     System.out.print(" ");
                 }
-                StringBuilder RGB = new StringBuilder();
-                Arrays.stream(img.get(i, j)).forEach(s -> RGB.append(s).append(" "));
-                String color = RGB.toString().trim();
             }
             System.out.println();
         }
 
-        for (int i = 0; i < img.rows(); i++) {
-            for (int j = (int) img.cols() / 2; j < img.cols(); j++) {
-                try {
-                    double currentRowStart = img.get((int)(img.rows()/2), 100)[0];
-                    double currentRowEnd = img.get((int)(img.rows()/2), img.cols() - 50)[0];
-                    double currentPixel = img.get(i, j)[0];
-                    if (Math.abs(currentPixel - currentRowStart) > 55) {
-                        System.out.print("*");
-                    } else if(Math.abs(currentPixel - currentRowEnd) > 55) {
-                        System.out.print("%");
-                    } else {
-                        System.out.print(" ");
-                    }
-                } catch (Exception e) {
-                    System.out.print(" ");
-                }
-            }
-            System.out.println();
-        }
 
         System.out.println();
-        boolean saveFile = imwrite("C:/test.jpg", img, new MatOfInt(Imgcodecs.IMWRITE_PNG_COMPRESSION, 0));
+        boolean saveFile = imwrite("C:/test.jpg", newImg);
         System.out.println(saveFile);
 
     }
@@ -107,6 +95,50 @@ public class OpenCVImpl implements OpenCV {
             return null;
         }
         return img;
+    }
+
+    @Override
+    public Mat processingImage(Mat img) {
+        if (img != null) {
+            Mat newImg = new Mat(img.rows(), img.cols(), CvType.CV_8U);
+            Core.MinMaxLocResult minMaxLocResult = minMaxLoc(img);
+
+            int rows = img.rows();
+            int cols = img.cols();
+
+            for (int i = 1; i < rows - 1; i++) {
+                for (int j = 1; j < cols - 1; j++) {
+                    double currentPixel = img.get(i, j)[0];
+                    double upLeft = img.get(i - 1, j - 1)[0];                    // * + +    * - up left
+                    double upCenter = img.get(i - 1, j)[0];                          // + ! $    ! - element,   $ - center right
+                    double upRight = img.get(i - 1, j + 1)[0];                  // + + %    % - down right
+                    double centerLeft = img.get(i, j - 1)[0];
+                    double centerRight = img.get(i, j + 1)[0];
+                    double downLeft = img.get(i + 1, j - 1)[0];
+                    double downCenter = img.get(i + 1, j)[0];
+                    double downRight = img.get(i + 1, j + 1)[0];
+
+                    if (Math.abs(currentPixel - upLeft) > 40) {
+
+                    }
+                }
+            }
+
+            double minValue = minMaxLocResult.minVal;
+            Point minPosition = minMaxLocResult.minLoc;
+            int x_min = (int) minPosition.x;
+            int y_min = (int) minPosition.y;
+
+            double maxValue = minMaxLocResult.maxVal;
+            Point maxPosition = minMaxLocResult.maxLoc;
+            int x_max = (int) maxPosition.x;
+            int y_max = (int) maxPosition.y;
+
+
+            return newImg;
+        } else {
+            return new Mat(0, 0, CvType.CV_8U);
+        }
     }
 
     @Override

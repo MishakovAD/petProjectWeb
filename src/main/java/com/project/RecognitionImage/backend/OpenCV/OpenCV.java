@@ -28,6 +28,13 @@ public interface OpenCV {
     Mat loadImage(String filePath, int params);
 
     /**
+     * Обрабатываеет изображение для четкого разделения надписи и фона.
+     * @param img исходное изображение
+     * @return обработанное изображение
+     */
+    Mat processingImage(Mat img);
+
+    /**
      * Преобразование изображения в формате Mat в BufferedImage
      * @param m изображение в формате Mat
      * @return изображение в формате BufferedImage
