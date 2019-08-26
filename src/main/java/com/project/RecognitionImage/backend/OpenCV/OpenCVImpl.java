@@ -3,18 +3,13 @@ package com.project.RecognitionImage.backend.OpenCV;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
 import javax.swing.*;
-import javax.validation.constraints.NotNull;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.BufferedInputStream;
@@ -40,9 +35,27 @@ public class OpenCVImpl implements OpenCV {
         Mat img = cv.loadImage("C:/captcha_kino.jpg", Imgcodecs.IMREAD_GRAYSCALE);
         //Mat img = cv.loadImage("C:/c.png", Imgcodecs.IMREAD_GRAYSCALE);
         Mat newImg = cv.processingImage(img);
+        Mat blackAndWhite = cv.blackAndWhiteMat(img);
+        Mat result = new Mat(img.rows(), img.cols(), CvType.CV_8U);
+
+        for (int i = 0; i < img.rows(); i++) {
+            for (int j = 0; j < img.cols(); j++) {
+                int delta;
+                if (j < img.cols()/2) {
+                    delta = 135;
+                } else {
+                    delta = 125;
+                }
+                if (Math.abs(newImg.get(i, j)[0] - blackAndWhite.get(i, j)[0]) < delta) {
+                    result.put(i, j, 225);
+                } else {
+                    result.put(i, j, 0);
+                }
+            }
+        }
 
         System.out.println();
-        boolean saveFile = imwrite("C:/test.jpg", newImg);
+        boolean saveFile = imwrite("C:/test.jpg", result);
         System.out.println(saveFile);
 
     }
@@ -79,7 +92,7 @@ public class OpenCVImpl implements OpenCV {
     public Mat processingImage(Mat img) {
         if (img != null) {
             Mat newImg = new Mat(img.rows(), img.cols(), CvType.CV_8U);
-            Core.MinMaxLocResult minMaxLocResult = minMaxLoc(img);
+            //Core.MinMaxLocResult minMaxLocResult = minMaxLoc(img);
 
             int rows = img.rows();
             int cols = img.cols();
@@ -125,40 +138,75 @@ public class OpenCVImpl implements OpenCV {
                             System.out.print(" ");
                         }
                     } else {
-                        newImg.put(i, j, 127.5);
+                        newImg.put(i, j, 128);
                         System.out.print("*");
                     }
-
-
-//                    if (Math.abs(currentPixel - avgArr) > currentPixel + 100 || Math.abs(currentPixel - avgArr) > currentPixel - 100) {
-//                        System.out.print("*");
-//                        newImg.put(i, j, 0.0);
-//                    } else if (Math.abs(currentPixel - avgArr) > currentPixel) {
-//                        System.out.print(" ");
-//                        newImg.put(i, j, 255.0);
-//                    } else if (Math.abs(currentPixel - avgArr) < currentPixel) {
-//                        System.out.print(" ");
-//                        newImg.put(i, j, 255.0);
-//                    }
                 }
                 System.out.println();
             }
 
-            double minValue = minMaxLocResult.minVal;
-            Point minPosition = minMaxLocResult.minLoc;
-            int x_min = (int) minPosition.x;
-            int y_min = (int) minPosition.y;
-
-            double maxValue = minMaxLocResult.maxVal;
-            Point maxPosition = minMaxLocResult.maxLoc;
-            int x_max = (int) maxPosition.x;
-            int y_max = (int) maxPosition.y;
+//            double minValue = minMaxLocResult.minVal;
+//            Point minPosition = minMaxLocResult.minLoc;
+//            int x_min = (int) minPosition.x;
+//            int y_min = (int) minPosition.y;
+//
+//            double maxValue = minMaxLocResult.maxVal;
+//            Point maxPosition = minMaxLocResult.maxLoc;
+//            int x_max = (int) maxPosition.x;
+//            int y_max = (int) maxPosition.y;
 
 
             return newImg;
         } else {
             return new Mat(0, 0, CvType.CV_8U);
         }
+    }
+
+    private Mat blackAndWhiteMat(Mat srcMat) {
+        Mat dstMat = new Mat(srcMat.rows(), srcMat.cols(), CvType.CV_8U);
+        int rows = srcMat.rows();
+        int cols = srcMat.cols();
+
+        for (int i = 1; i < rows - 1; i++) {
+            for (int j = 1; j < cols - 1; j++) {
+                double[] arr = new double[9];
+                double currentPixel = srcMat.get(i, j)[0];
+                double upLeft = srcMat.get(i - 1, j - 1)[0];                    // * + +    * - up left
+                double upCenter = srcMat.get(i - 1, j)[0];                          // + ! $    ! - element,   $ - center right
+                double upRight = srcMat.get(i - 1, j + 1)[0];                  // + + %    % - down right
+                double centerLeft = srcMat.get(i, j - 1)[0];
+                double centerRight = srcMat.get(i, j + 1)[0];
+                double downLeft = srcMat.get(i + 1, j - 1)[0];
+                double downCenter = srcMat.get(i + 1, j)[0];
+                double downRight = srcMat.get(i + 1, j + 1)[0];
+
+                arr[0] = upLeft;
+                arr[1] = upCenter;
+                arr[2] = upRight;
+                arr[3] = centerLeft;
+                arr[4] = currentPixel;
+                arr[5] = centerRight;
+                arr[6] = downLeft;
+                arr[7] = downCenter;
+                arr[8] = downRight;
+                double avgArr = avgArray(arr);
+
+                int delta;
+                if (j < cols/2) {
+                    delta = 7;
+                } else {
+                    delta = 17;
+                }
+
+                int counterOfSimilar = (int) Arrays.stream(arr).filter(elem -> Math.abs(avgArr - elem) > delta).count();
+                if (counterOfSimilar > 4) {
+                    dstMat.put(i, j, 0);
+                } else {
+                    dstMat.put(i, j, 255);
+                }
+            }
+        }
+        return  dstMat;
     }
 
     private double avgArray(double[] arr) {
