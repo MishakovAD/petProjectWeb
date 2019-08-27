@@ -56,14 +56,15 @@ public class OpenCVImpl implements OpenCV {
                     .max()
                     .orElse(1);
             int delta = Math.abs((int) (maxElem - maxElem / 1.5 - 15));
-            delta = (int) cv.avgArray(column) / 2;
+            delta = (int) cv.avgArray(column) / 2 - 20;
             double borderPixel = 0;
             if (haveBorder) {
                 for (int j = firstIndex; j < img.rows() - 1; j++) {
                     double pixel = img.get(j, i)[0];
                     double nextPixel = img.get(j + 1, i)[0];
-                    if (borderPixel != 0 && Math.abs(pixel - borderPixel) > delta) { //если менять с больше на меньше, то у первого слова отчетливо видны контуры. можно объединить
+                    if (borderPixel != 0 && Math.abs(pixel - borderPixel) < delta) { //если менять с больше на меньше, то у первого слова отчетливо видны контуры. можно объединить
                         dstMat.put(j, i, 128);
+//                        borderPixel = pixel;
                     } else if (Math.abs(pixel - nextPixel) > delta) {
                         dstMat.put(j, i, 128);
                         borderPixel = pixel;
