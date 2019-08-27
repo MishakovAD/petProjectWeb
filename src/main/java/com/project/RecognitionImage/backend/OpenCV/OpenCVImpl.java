@@ -145,6 +145,20 @@ public class OpenCVImpl implements OpenCV {
         }
     }
 
+    private Mat findBorderOfElements (Mat img) {
+        int rows = img.rows();
+        int cols = img.cols();
+        Mat dstMat = new Mat(rows, cols, CvType.CV_8U);
+        for (int j = 0; j < cols; j++) {
+            for (int i = 0; i < rows; i++) {
+                double currentPixel = img.get(i, j)[0];
+
+            }
+        }
+
+        return dstMat;
+    }
+
     private boolean isGradient(double[] column) {
         boolean gradient = false;
         int firstIndex = findFirstNonEmptyPixel(column);
