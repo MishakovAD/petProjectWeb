@@ -32,7 +32,7 @@ public class OpenCVImpl implements OpenCV {
     public static void main(String[] args) {
         OpenCVImpl cv = new OpenCVImpl();
         cv.init();
-        Mat img = cv.loadImage("C:/captcha_kino.jpg", Imgcodecs.IMREAD_GRAYSCALE);
+        Mat img = cv.loadImage("C:/captcha_kino3.jpg", Imgcodecs.IMREAD_GRAYSCALE);
         //Mat img = cv.loadImage("C:/c.png", Imgcodecs.IMREAD_GRAYSCALE);
         Mat result = cv.processingImage(img);
         boolean saveFile = imwrite("C:/test.jpg", result);
@@ -95,6 +95,20 @@ public class OpenCVImpl implements OpenCV {
         } else {
             return new Mat(0, 0, CvType.CV_8U);
         }
+    }
+
+    private Mat findBorderOfElements (Mat img) {
+        int rows = img.rows();
+        int cols = img.cols();
+        Mat dstMat = new Mat(rows, cols, CvType.CV_8U);
+        for (int j = 0; j < cols; j++) {
+            for (int i = 0; i < rows; i++) {
+                double currentPixel = img.get(i, j)[0];
+
+            }
+        }
+
+        return dstMat;
     }
 
     private Mat blackAndWhiteMat(Mat srcMat) {
