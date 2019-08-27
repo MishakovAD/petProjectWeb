@@ -28,13 +28,60 @@ import static org.opencv.imgcodecs.Imgcodecs.imread;
 import static org.opencv.imgcodecs.Imgcodecs.imwrite;
 
 public class OpenCVImpl implements OpenCV {
+    //255 - white
+    //0 - black
     private Logger logger = LoggerFactory.getLogger(OpenCVImpl.class);
     public static void main(String[] args) {
         OpenCVImpl cv = new OpenCVImpl();
         cv.init();
+
         Mat img = cv.loadImage("C:/captcha_kino.jpg", Imgcodecs.IMREAD_GRAYSCALE);
         //Mat img = cv.loadImage("C:/c.png", Imgcodecs.IMREAD_GRAYSCALE);
-        Mat result = cv.processingImage(img);
+        Mat dstMat = new Mat(img.rows(), img.cols(), CvType.CV_8U);
+
+        for (int i = 0; i < img.cols(); i++) {
+            double[] column = new double[img.rows()];
+            for (int j = 0; j < img.rows(); j++) {
+                double pixel = img.get(j, i)[0];
+                column[j] = pixel;
+            }
+            boolean haveBorder = cv.isHaveBorder(column);
+            boolean gradient = cv.isGradient(column);
+            boolean diffPixels = cv.isDifferentPixels(column);
+            boolean oneColor = cv.isOneColor(column);
+            int firstIndex = cv.findFirstNonEmptyPixel(column);
+            double maxElem = Arrays.stream(column)
+                    .skip(firstIndex)
+                    .filter(elem -> elem != 255 && elem != 0)
+                    .max()
+                    .orElse(1);
+            int delta = Math.abs((int) (maxElem - maxElem / 1.5 - 15));
+            delta = (int) cv.avgArray(column) / 2;
+            double borderPixel = 0;
+            if (haveBorder) {
+                for (int j = firstIndex; j < img.rows() - 1; j++) {
+                    double pixel = img.get(j, i)[0];
+                    double nextPixel = img.get(j + 1, i)[0];
+                    if (borderPixel != 0 && Math.abs(pixel - borderPixel) > delta) { //если менять с больше на меньше, то у первого слова отчетливо видны контуры. можно объединить
+                        dstMat.put(j, i, 128);
+                    } else if (Math.abs(pixel - nextPixel) > delta) {
+                        dstMat.put(j, i, 128);
+                        borderPixel = pixel;
+                    }  else {
+                        dstMat.put(j, i, 255.0);
+                        borderPixel = 0;
+                    }
+                }
+            } else {
+                for (int j = 0; j < img.rows(); j++) {
+                    double pixel = 255.0;
+                    dstMat.put(j, i, pixel);
+                }
+            }
+        }
+
+        //Mat result = cv.processingImage(img);
+        Mat result = dstMat;
         boolean saveFile = imwrite("C:/test.jpg", result);
         System.out.println(saveFile);
 
@@ -95,6 +142,126 @@ public class OpenCVImpl implements OpenCV {
         } else {
             return new Mat(0, 0, CvType.CV_8U);
         }
+    }
+
+    private boolean isGradient(double[] column) {
+        boolean gradient = false;
+        int firstIndex = findFirstNonEmptyPixel(column);
+        double startElem = column[firstIndex];
+        for (int i = firstIndex + 1; i < column.length; i++) {
+            if (i == column.length - 1) {
+                gradient = true;
+                return gradient;
+            }
+            if (column[i] > startElem) {
+                startElem = column[i];
+                continue;
+            } else {
+                break;
+            }
+        }
+        startElem = column[firstIndex];
+        for (int i = 1; i < column.length; i++) {
+            if (i == column.length - 1) {
+                gradient = true;
+                return gradient;
+            }
+            if (column[i] < startElem) {
+                startElem = column[i];
+                continue;
+            } else {
+                break;
+            }
+        }
+        return gradient;
+    }
+
+    private boolean isOneColor(double[] column) {
+        boolean oneColor = false;
+        int firstIndex = findFirstNonEmptyPixel(column);
+        double startElem = column[firstIndex];
+        for (int i = firstIndex + 1; i < column.length; i++) {
+            if (i == column.length - 1) {
+                oneColor = true;
+                return oneColor;
+            }
+            if (Math.abs(column[i] - startElem) < 30) {
+                startElem = column[i];
+                continue;
+            } else {
+                break;
+            }
+        }
+        return oneColor;
+    }
+
+    private boolean isDifferentPixels(double[] column) {
+        boolean diffPixels = false;
+        int delta = column.length / 5;
+        long distinctPixels = Arrays.stream(column).distinct().count();
+        if (!isGradient(column) && column.length - distinctPixels <= delta) {
+            diffPixels = true;
+        }
+        return diffPixels;
+    }
+
+    private boolean isHaveBorder(double[] column) {
+        boolean haveBorder = false;
+        int firstIndex = findFirstNonEmptyPixel(column);
+        double startElem = column[firstIndex];
+        double maxElem = Arrays.stream(column)
+                .skip(firstIndex)
+                .filter(elem -> elem != 255 && elem != 0)
+                .max()
+                .orElse(1);
+        int delta = Math.abs((int) (maxElem - maxElem / 1.5 - 15));
+        delta = (int) avgArray(column) / 2;
+        for (int i = firstIndex + 1; i < column.length; i++) {
+            if (i == column.length - 1) {
+                return haveBorder;
+            }
+            if (Math.abs(startElem - column[i]) > delta) {
+                haveBorder = true;
+                return haveBorder;
+            } else {
+                startElem = column[i];
+            }
+        }
+        return haveBorder;
+    }
+
+    private boolean isBorder(double[] column, double currentPixel) {
+        boolean border = false;
+        int firstIndex = findFirstNonEmptyPixel(column);
+        double startElem = column[firstIndex];
+        double maxElem = Arrays.stream(column)
+                .skip(firstIndex)
+                .filter(elem -> elem != 255 && elem != 0)
+                .max()
+                .orElse(1);
+        int delta = (int) (maxElem - maxElem / 1.5);
+        for (int i = firstIndex + 1; i < column.length; i++) {
+            if (Math.abs(startElem - currentPixel) > delta) {
+                border = true;
+                return border;
+            } else {
+                startElem = column[i];
+            }
+        }
+        return border;
+    }
+
+    private int findFirstNonEmptyPixel(double[] arr) {
+        int firstIndex = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == 255.0 || arr[i] == 0) {
+                continue;
+            } else {
+                firstIndex = i;
+                break;
+            }
+        }
+        return firstIndex;
     }
 
     private Mat blackAndWhiteMat(Mat srcMat) {
