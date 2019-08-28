@@ -3,6 +3,8 @@ package com.project.RecognitionImage.backend.OpenCV;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -23,8 +25,11 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.*;
+import static org.bytedeco.leptonica.global.lept.COLOR_RED;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
 import static org.opencv.imgcodecs.Imgcodecs.imwrite;
 
@@ -36,18 +41,45 @@ public class OpenCVImpl implements OpenCV {
         OpenCVImpl cv = new OpenCVImpl();
         cv.init();
 
-        Mat img = cv.loadImage("C:/captcha_kino2.jpg", Imgcodecs.IMREAD_GRAYSCALE);
-        Mat lines = new Mat();
+        Mat img = cv.loadImage("C:/captcha_kino.jpg", Imgcodecs.IMREAD_GRAYSCALE);
+        //Mat img = cv.loadImage("C:/c.png", Imgcodecs.IMREAD_GRAYSCALE);
+        List<MatOfPoint> matOfPointList = new LinkedList<>();
+
+        Mat borderMat = drawBorderOfElements(img);
+        Mat black = blackAndWhiteMat(img);
+        for (int i = 0; i < borderMat.cols(); i++) {
+            MatOfPoint matOfPoint = new MatOfPoint();
+            List<Point> pointsList = new LinkedList<>();
+            for (int j = 0; j < borderMat.rows(); j++) {
+                Point point = new Point();
+                double pixel = borderMat.get(j, i)[0];
+                if (pixel == 0) {
+                    point.x = i;
+                    point.y = j;
+                    pointsList.add(point);
+                }
+            }
+            matOfPoint.fromList(pointsList);
+            matOfPointList.add(matOfPoint);
+        }
+
+
         Mat result = new Mat();
+        Mat resultEnd = new Mat();
+        Core.addWeighted(black, 1, borderMat, 1, 0, result);
+        Core.addWeighted(result, 0.5, img, 1, 0, resultEnd);
 
-        LineSegmentDetector d = Imgproc.createLineSegmentDetector();
-        d.detect(img, lines);
-        d.drawSegments(result, lines);
+        //Imgproc.polylines(borderMat, matOfPointList, false, new Scalar(0));
+        Mat lines = new Mat();
 
-        showImage(result, "");
+//        LineSegmentDetector d = Imgproc.createLineSegmentDetector();
+//        d.detect(img, lines);
+//        d.drawSegments(result, lines);
+//
+//        showImage(result, "");
 
 
-        boolean saveFile = imwrite("C:/test.jpg", result);
+        boolean saveFile = imwrite("C:/test.jpg", resultEnd);
 //        boolean saveFile2 = imwrite("C:/test2.jpg", bwg);
 //        boolean saveFile3 = imwrite("C:/test3.jpg", bw);
         //boolean saveFile4 = imwrite("C:/test4.jpg", bord);
