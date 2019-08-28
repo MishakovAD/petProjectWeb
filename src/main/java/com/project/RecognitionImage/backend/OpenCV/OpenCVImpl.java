@@ -3,7 +3,6 @@ package com.project.RecognitionImage.backend.OpenCV;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.slf4j.Logger;
@@ -36,50 +35,12 @@ public class OpenCVImpl implements OpenCV {
         cv.init();
 
         Mat img = cv.loadImage("C:/captcha_kino.jpg", Imgcodecs.IMREAD_GRAYSCALE);
-        //Mat img = cv.loadImage("C:/c.png", Imgcodecs.IMREAD_GRAYSCALE);
-        Mat dstMat = new Mat(img.rows(), img.cols(), CvType.CV_8U);
+//        Mat bwg = cv.blacGreyAndWhiteMat(img);
+//        Mat bw = cv.blackAndWhiteMat(bwg);
+        Mat dstMat = cv.drawBorderOfElements(img);
 
-        for (int i = 0; i < img.cols(); i++) {
-            double[] column = new double[img.rows()];
-            for (int j = 0; j < img.rows(); j++) {
-                double pixel = img.get(j, i)[0];
-                column[j] = pixel;
-            }
-            boolean haveBorder = cv.isHaveBorder(column);
-            boolean gradient = cv.isGradient(column);
-            boolean diffPixels = cv.isDifferentPixels(column);
-            boolean oneColor = cv.isOneColor(column);
-            int firstIndex = cv.findFirstNonEmptyPixel(column);
-            double maxElem = Arrays.stream(column)
-                    .skip(firstIndex)
-                    .filter(elem -> elem != 255 && elem != 0)
-                    .max()
-                    .orElse(1);
-            int delta = Math.abs((int) (maxElem - maxElem / 1.5 - 15));
-            delta = (int) cv.avgArray(column) / 2 - 20;
-            double borderPixel = 0;
-            if (haveBorder) {
-                for (int j = firstIndex; j < img.rows() - 1; j++) {
-                    double pixel = img.get(j, i)[0];
-                    double nextPixel = img.get(j + 1, i)[0];
-                    if (borderPixel != 0 && Math.abs(pixel - borderPixel) < delta) { //если менять с больше на меньше, то у первого слова отчетливо видны контуры. можно объединить
-                        dstMat.put(j, i, 128);
-//                        borderPixel = pixel;
-                    } else if (Math.abs(pixel - nextPixel) > delta) {
-                        dstMat.put(j, i, 128);
-                        borderPixel = pixel;
-                    }  else {
-                        dstMat.put(j, i, 255.0);
-                        borderPixel = 0;
-                    }
-                }
-            } else {
-                for (int j = 0; j < img.rows(); j++) {
-                    double pixel = 255.0;
-                    dstMat.put(j, i, pixel);
-                }
-            }
-        }
+        //Mat img = cv.loadImage("C:/c.png", Imgcodecs.IMREAD_GRAYSCALE);
+        //Mat dstMat = cv.drawBorderOfElements(img);
 
         //Mat result = cv.processingImage(img);
         Mat result = dstMat;
@@ -145,18 +106,75 @@ public class OpenCVImpl implements OpenCV {
         }
     }
 
-    private Mat findBorderOfElements (Mat img) {
-        int rows = img.rows();
-        int cols = img.cols();
-        Mat dstMat = new Mat(rows, cols, CvType.CV_8U);
-        for (int j = 0; j < cols; j++) {
-            for (int i = 0; i < rows; i++) {
-                double currentPixel = img.get(i, j)[0];
-
+    private Mat drawBorderOfElements(Mat img) {
+        Mat dstMat = new Mat(img.rows(), img.cols(), CvType.CV_8U);
+        double linePixel = 0;
+        double delta = 25; //сначала рассчитывать максимальные и минимальные значения и их количество и на основании данных выбирать дельту. Делать это для каждой колонки
+        for (int i = 0; i < img.cols(); i++) {
+            double borderPixel = 0; //для данного пикселя можно брать самый частый элемент столбца и уже сравнивать с ним и дельтой. Но тогда надо разобраться со знаками.
+            for (int j = 0; j < img.rows() - 1; j++) {
+                double pixel = img.get(j, i)[0];
+                double nextPixel = img.get(j + 1, i)[0];
+                if (Math.abs(pixel - nextPixel) < delta) { //меняя знак у border and pixel > or < можно придти к отличному результату при объединении
+                    dstMat.put(j + 1, i, 255);
+                    linePixel = nextPixel;
+                } else if (linePixel != 0 && Math.abs(pixel - linePixel) < delta) {
+                    dstMat.put(j + 1, i, 255);
+                } else {
+                    dstMat.put(j, i, 0);
+                    borderPixel = pixel;
+                }
             }
         }
 
-        return dstMat;
+        return  dstMat;
+    }
+
+    private Mat drawBorderOfElementsWithFlags(Mat img) {
+        Mat dstMat = new Mat(img.rows(), img.cols(), CvType.CV_8U);
+
+        for (int i = 0; i < img.cols(); i++) {
+            double[] column = new double[img.rows()];
+            for (int j = 0; j < img.rows(); j++) {
+                double pixel = img.get(j, i)[0];
+                column[j] = pixel;
+            }
+            boolean haveBorder = isHaveBorder(column);
+            boolean gradient = isGradient(column);
+            boolean diffPixels = isDifferentPixels(column);
+            boolean oneColor = isOneColor(column);
+            int firstIndex = findFirstNonEmptyPixel(column);
+            double maxElem = Arrays.stream(column)
+                    .skip(firstIndex)
+                    .filter(elem -> elem != 255 && elem != 0)
+                    .max()
+                    .orElse(1);
+            int delta = Math.abs((int) (maxElem - maxElem / 1.5 - 15));
+            delta = (int) avgArray(column) / 2;
+            double borderPixel = 0;
+            if (haveBorder) {
+                for (int j = firstIndex; j < img.rows() - 1; j++) {
+                    double pixel = img.get(j, i)[0];
+                    double nextPixel = img.get(j + 1, i)[0];
+                    if (borderPixel != 0 && Math.abs(pixel - borderPixel) < delta) { //если менять с больше на меньше, то у первого слова отчетливо видны контуры. можно объединить
+                        dstMat.put(j, i, 128);
+                        //borderPixel = pixel;
+                    } else if (Math.abs(pixel - nextPixel) < delta) {
+                        dstMat.put(j, i, 128);
+                        //borderPixel = pixel;
+                    }  else {
+                        dstMat.put(j, i, 255.0);
+                        borderPixel = pixel;
+                    }
+                }
+            } else {
+                for (int j = 0; j < img.rows(); j++) {
+                    double pixel = 255.0;
+                    dstMat.put(j, i, pixel);
+                }
+            }
+        }
+        return  dstMat;
     }
 
     private boolean isGradient(double[] column) {
