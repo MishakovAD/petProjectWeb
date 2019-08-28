@@ -34,7 +34,7 @@ public class OpenCVImpl implements OpenCV {
         OpenCVImpl cv = new OpenCVImpl();
         cv.init();
 
-        Mat img = cv.loadImage("C:/captcha_kino2.jpg", Imgcodecs.IMREAD_GRAYSCALE);
+        Mat img = cv.loadImage("C:/captcha_kino.jpg", Imgcodecs.IMREAD_GRAYSCALE);
 //        Mat bwg = cv.blacGreyAndWhiteMat(img);
 //        Mat bw = cv.blackAndWhiteMat(bwg);
         Mat dstMat = cv.drawBorderOfElements(img);
@@ -108,14 +108,24 @@ public class OpenCVImpl implements OpenCV {
 
     private Mat drawBorderOfElements(Mat img) {
         Mat dstMat = new Mat(img.rows(), img.cols(), CvType.CV_8U);
+        boolean changeValue = false;
+        double value = 255;
         double delta = 20; //сначала рассчитывать максимальные и минимальные значения и их количество и на основании данных выбирать дельту. Делать это для каждой колонки
         for (int i = 0; i < img.cols(); i++) {
             double borderPixel = img.get(0, i)[0];
             for (int j = 0; j < img.rows(); j++) {
                 double currentPixel = img.get(j, i)[0];
                 if (Math.abs(currentPixel - borderPixel) < delta) {
-                    dstMat.put(j, i, 255);
+                    if (changeValue) {
+                        changeValue = false;
+                        value = 255;
+                    }
+                    dstMat.put(j, i, value);
                 } else {
+                    if (!changeValue) {
+                        changeValue = true;
+                        value = 0;
+                    }
                     borderPixel = currentPixel;
                     dstMat.put(j, i, 0);
                 }
