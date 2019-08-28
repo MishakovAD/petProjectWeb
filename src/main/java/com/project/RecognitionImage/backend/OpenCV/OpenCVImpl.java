@@ -34,7 +34,7 @@ public class OpenCVImpl implements OpenCV {
         OpenCVImpl cv = new OpenCVImpl();
         cv.init();
 
-        Mat img = cv.loadImage("C:/captcha_kino.jpg", Imgcodecs.IMREAD_GRAYSCALE);
+        Mat img = cv.loadImage("C:/captcha_kino2.jpg", Imgcodecs.IMREAD_GRAYSCALE);
 //        Mat bwg = cv.blacGreyAndWhiteMat(img);
 //        Mat bw = cv.blackAndWhiteMat(bwg);
         Mat dstMat = cv.drawBorderOfElements(img);
@@ -108,22 +108,18 @@ public class OpenCVImpl implements OpenCV {
 
     private Mat drawBorderOfElements(Mat img) {
         Mat dstMat = new Mat(img.rows(), img.cols(), CvType.CV_8U);
-        double linePixel = 0;
-        double delta = 25; //сначала рассчитывать максимальные и минимальные значения и их количество и на основании данных выбирать дельту. Делать это для каждой колонки
+        double delta = 20; //сначала рассчитывать максимальные и минимальные значения и их количество и на основании данных выбирать дельту. Делать это для каждой колонки
         for (int i = 0; i < img.cols(); i++) {
-            double borderPixel = 0; //для данного пикселя можно брать самый частый элемент столбца и уже сравнивать с ним и дельтой. Но тогда надо разобраться со знаками.
-            for (int j = 0; j < img.rows() - 1; j++) {
-                double pixel = img.get(j, i)[0];
-                double nextPixel = img.get(j + 1, i)[0];
-                if (Math.abs(pixel - nextPixel) < delta) { //меняя знак у border and pixel > or < можно придти к отличному результату при объединении
-                    dstMat.put(j + 1, i, 255);
-                    linePixel = nextPixel;
-                } else if (linePixel != 0 && Math.abs(pixel - linePixel) < delta) {
-                    dstMat.put(j + 1, i, 255);
+            double borderPixel = img.get(0, i)[0];
+            for (int j = 0; j < img.rows(); j++) {
+                double currentPixel = img.get(j, i)[0];
+                if (Math.abs(currentPixel - borderPixel) < delta) {
+                    dstMat.put(j, i, 255);
                 } else {
+                    borderPixel = currentPixel;
                     dstMat.put(j, i, 0);
-                    borderPixel = pixel;
                 }
+
             }
         }
 
