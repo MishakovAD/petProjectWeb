@@ -1,11 +1,130 @@
 package com.project.RecognitionImage.backend.OpenCV.Utils;
 
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.Arrays;
 
+import static org.opencv.imgproc.Imgproc.filter2D;
+
 public class OpenCVUtils {
+    /**
+     * Метод, повышающий резкость изображения
+     * @param img первоначальное изображение
+     * @return обработанное изображение
+     */
+    public static Mat sharpeningToMat (Mat img) {
+        Mat dstMat = new Mat();
+        double k = 0.5;
+        Mat kernel2 = new Mat(3, 3, CvType.CV_32FC1);
+        kernel2.put(0, 0,
+                -k, k - 1, -k,
+                k - 1, k + 5, k - 1,
+                -k, k - 1, -k);
+        Core.divide(kernel2, new Scalar(k + 1), kernel2);
+        filter2D(img, dstMat, -1, kernel2);
+        return dstMat;
+    }
+
+    /**
+     * Преобразование матрицы чернобелого изображения в цветное.
+     * @param img ЧБ изображение
+     * @return цветное изображение
+     */
+    public static Mat getColorMat (Mat img) {
+        Mat dstMat = new Mat();
+        Imgproc.cvtColor(img, dstMat, Imgproc.COLOR_GRAY2BGR);
+        return dstMat;
+    }
+
+    /**
+     * Преобразование матрицы цветного изображения в чб.
+     * @param img цветное изображение
+     * @return ЧБ изображение
+     */
+    public static Mat getGrayMat (Mat img) {
+        Mat dstMat = new Mat();
+        Imgproc.cvtColor(img, dstMat, Imgproc.COLOR_BGR2GRAY);
+        return dstMat;
+    }
+
+    /**
+     * Метод, объединяющий две матрицы.
+     * dstMat(i) = firstMat(i) * alpha + secondMat(i) * beta + gamma;
+     * @param firstMat матрица первого изображения
+     * @param secondMat матрица второго изображения
+     * @param alpha коэффициент (может быть null)
+     * @param beta коэффициент (может быть null)
+     * @param gamma коэффициент (может быть null)
+     * @return результирующая матрица
+     */
+    public static Mat joinMat(Mat firstMat, Mat secondMat, Double alpha, Double beta, Double gamma) {
+        alpha = alpha == null ? 1 : alpha;
+        beta = beta == null ? 1 : beta;
+        gamma = gamma == null ? 1 : gamma;
+        Mat dstMat = new Mat();
+        if (firstMat != null && secondMat != null) {
+            Core.addWeighted(firstMat, alpha, secondMat, beta, gamma, dstMat);
+        }
+        return dstMat;
+    }
+
+    public static Mat joinMat(Mat firstMat, Mat secondMat) {
+        return joinMat(firstMat, secondMat, null, null, null);
+    }
+
+    /**
+     * Метод, применяющий преобразование Лапласса к матрице изображения.
+     * @param img матрица исходного изображения
+     * @return результирующая матрица
+     */
+    public static Mat getMatAfterLaplassian(Mat img) {
+        Mat dstMat = new Mat(img.rows(), img.cols(), CvType.CV_8U);
+        Imgproc.Laplacian(img, dstMat, CvType.CV_8U);
+        return dstMat;
+    }
+
+    /**
+     * Метод, выделяющий границы объектов у изображения.
+     * @param img матрица исходного изображения
+     * @return результирующая матрица
+     */
+    public static Mat getMatWithBordersFromSobel(Mat img) {
+        Mat dstMat = new Mat(img.rows(), img.cols(), CvType.CV_8U);
+        Mat dstSobelX = new Mat();
+        Imgproc.Sobel(img, dstSobelX, CvType.CV_32F, 1, 0);
+        Mat dstSobelY = new Mat();
+        Imgproc.Sobel(img, dstSobelY, CvType.CV_32F, 0, 1);
+        Mat imgSobelX = new Mat();
+        Core.convertScaleAbs(dstSobelX, imgSobelX);
+        Mat imgSobelY = new Mat();
+        Core.convertScaleAbs(dstSobelY, imgSobelY);
+        Core.addWeighted(imgSobelX, 1, imgSobelY, 1, 0, dstMat);
+        return dstMat;
+    }
+
+    /**
+     * Метод, выделяющий границы объектов у изображения.
+     * @param img матрица исходного изображения
+     * @return результирующая матрица
+     */
+    public static Mat getMatWithBordersFromScharr(Mat img) {
+        Mat dstMat = new Mat(img.rows(), img.cols(), CvType.CV_8U);
+        Mat dstScharrX = new Mat();
+        Imgproc.Scharr(img, dstScharrX, CvType.CV_32F, 1, 0);
+        Mat dstScharrY = new Mat();
+        Imgproc.Scharr(img, dstScharrY, CvType.CV_32F, 0, 1);
+        Mat imgScharrX = new Mat();
+        Core.convertScaleAbs(dstScharrX, imgScharrX);
+        Mat imgScharrY = new Mat();
+        Core.convertScaleAbs(dstScharrY, imgScharrY);
+        Core.addWeighted(imgScharrX, 1, imgScharrY, 1, 0, dstMat);
+        return dstMat;
+    }
+
     /**
      * Метод, преобразующий изображение только в трехцветное 0, 128, 255.
      * @param img Матрица изображения

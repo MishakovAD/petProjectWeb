@@ -165,18 +165,18 @@ public class PlHttpClient implements PliHttpClient {
 
     private HttpGet getRequestWithHeaders(String url) {
         HttpGet request = new HttpGet(url);
-        request.setHeader("path", url.replaceAll("https://www.kinopoisk.ru/", ""));
-        request.setHeader("accept", accept);
-        request.setHeader("user-agent", user_agent);
-        request.setHeader("authority", authority);
-        request.setHeader("method", method);
-        request.setHeader("scheme", scheme);
-        request.setHeader("accept-encoding", accept_encoding);
-        request.setHeader("accept-language", accept_language);
-        request.setHeader("sec-fetch-mode", sec_fetch_mode);
-        request.setHeader("sec-fetch-cite", sec_fetch_cite);
-        request.setHeader("sec-fetch-user", sec_fetch_user);
-        request.setHeader("upgrade-insecure-requests", upgrade_insecure_requests);
+//        request.setHeader("path", url.replaceAll("https://www.kinopoisk.ru/", ""));
+//        request.setHeader("accept", accept);
+//        request.setHeader("user-agent", user_agent);
+//        request.setHeader("authority", authority);
+//        request.setHeader("method", method);
+//        request.setHeader("scheme", scheme);
+//        request.setHeader("accept-encoding", accept_encoding);
+//        request.setHeader("accept-language", accept_language);
+//        request.setHeader("sec-fetch-mode", sec_fetch_mode);
+//        request.setHeader("sec-fetch-cite", sec_fetch_cite);
+//        request.setHeader("sec-fetch-user", sec_fetch_user);
+//        request.setHeader("upgrade-insecure-requests", upgrade_insecure_requests);
         return request;
     }
 

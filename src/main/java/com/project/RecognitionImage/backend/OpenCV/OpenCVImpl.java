@@ -3,13 +3,10 @@ package com.project.RecognitionImage.backend.OpenCV;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.imgproc.LineSegmentDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,81 +23,62 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
-import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.*;
-import static org.bytedeco.leptonica.global.lept.COLOR_RED;
+import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getColorMat;
+import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getGrayMat;
+import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getMatWithBordersFromSobel;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
 import static org.opencv.imgcodecs.Imgcodecs.imwrite;
-import static org.opencv.imgproc.Imgproc.MORPH_CROSS;
-import static org.opencv.imgproc.Imgproc.erode;
-import static org.opencv.imgproc.Imgproc.getStructuringElement;
+import static org.opencv.imgproc.Imgproc.Canny;
+import static org.opencv.imgproc.Imgproc.GaussianBlur;
+import static org.opencv.imgproc.Imgproc.THRESH_BINARY;
+import static org.opencv.imgproc.Imgproc.THRESH_OTSU;
+import static org.opencv.imgproc.Imgproc.cvtColor;
+import static org.opencv.imgproc.Imgproc.filter2D;
+import static org.opencv.imgproc.Imgproc.threshold;
 
 public class OpenCVImpl implements OpenCV {
     //255 - white
     //0 - black
     private Logger logger = LoggerFactory.getLogger(OpenCVImpl.class);
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         OpenCVImpl cv = new OpenCVImpl();
         cv.init();
 
-        Mat img = cv.loadImage("C:/captcha_kino2.jpg", Imgcodecs.IMREAD_GRAYSCALE);
-        //Mat img = cv.loadImage("C:/d.jpg", Imgcodecs.IMREAD_GRAYSCALE);
-        List<MatOfPoint> matOfPointList = new LinkedList<>();
+        Mat imgGray = getGrayMat(cv.processingImage(cv.loadImage("C:/9.jpg", Imgcodecs.IMREAD_GRAYSCALE)));
 
-        Mat borderMat = drawBorderOfElements(img);
-        Mat black = blackAndWhiteMat(img);
-        Mat blackGreayAndWhiteMat = blackGreyAndWhiteMat(img);
+        //Mat img = cv.loadImage("C:/9.jpg", Imgcodecs.IMREAD_GRAYSCALE);
+        //Mat img = cv.loadImage("C:/captcha_kino.jpg", Imgcodecs.IMREAD_GRAYSCALE);
+        showImage(imgGray, "GRAY");
+        Mat edges = new Mat();
+        Canny(imgGray, edges, 80, 200);
+        showImage(edges, "Canny");
+        Mat img3 = new Mat();
+        threshold(imgGray, img3, 100, 255,
+                THRESH_BINARY | THRESH_OTSU);
+        Mat edges2 = new Mat();
+        Imgproc.Canny(img3, edges2, 80, 200);
+        showImage(edges2, "Canny + THRESH_OTSU");
+        Mat img4 = new Mat();
+        Imgproc.adaptiveThreshold(imgGray, img4, 255,
+                Imgproc.ADAPTIVE_THRESH_MEAN_C,
+                Imgproc.THRESH_BINARY, 3, 5);
+        Mat edges3 = new Mat();
+        Imgproc.Canny(img4, edges3, 80, 200);
+        showImage(edges3, "Canny + adaptiveThreshold");
+//        img.release(); img3.release(); img4.release();
+//        imgGray.release();
+//        edges.release(); edges2.release(); edges3.release();
 
 
+//        Mat result1234 = cv.processingImage(result2);
+//        boolean saveFile = imwrite("C:/result.jpg", result1234);
 
-//        for (int i = 0; i < borderMat.cols(); i++) {
-//            MatOfPoint matOfPoint = new MatOfPoint();
-//            List<Point> pointsList = new LinkedList<>();
-//            for (int j = 0; j < borderMat.rows(); j++) {
-//                Point point = new Point();
-//                double pixel = borderMat.get(j, i)[0];
-//                if (pixel == 0) {
-//                    point.x = i;
-//                    point.y = j;
-//                    pointsList.add(point);
-//                }
-//            }
-//            matOfPoint.fromList(pointsList);
-//            matOfPointList.add(matOfPoint);
-//        }
-//        Mat result = new Mat();
-//        Mat resultEnd = new Mat();
-//        Core.addWeighted(black, 1, borderMat, 1, 0, result);
-//        Core.addWeighted(result, 0.5, img, 1, 0, resultEnd);
 
-//        Imgproc.polylines(borderMat, matOfPointList, false, new Scalar(0));
-//        Mat lines = new Mat();
-
-//        LineSegmentDetector d = Imgproc.createLineSegmentDetector();
-//        d.detect(img, lines);
-//        d.drawSegments(result, lines);
-//
-//        showImage(result, "");
-
-        Mat res = cv.processingImage(img);
-        Mat result = new Mat();
-        Mat result2 = new Mat();
-        result = blackAndWhiteMat(img);
-        //Imgproc.GaussianBlur(result, result2, new Size(3, 3), 5, 2);
-        //Mat result2 = new Mat();
-        //Core.addWeighted(res, 1, blackGreayAndWhiteMat, 1, 0, result);
-        //Core.addWeighted(res, 1, result, 1, 0, result2);
-        Mat kernel =  getStructuringElement(MORPH_CROSS, new Size(3, 3)); //Крутой метод.
-        //для вычисления границ посмотрет ьметоды Sobel and Scharr
-        erode(res, result2, kernel);
-
-        boolean saveFile = imwrite("C:/test.jpg", result2);
-//        boolean saveFile2 = imwrite("C:/test2.jpg", bwg);
-//        boolean saveFile3 = imwrite("C:/test3.jpg", bw);
-        //boolean saveFile4 = imwrite("C:/test4.jpg", bord);
-        //System.out.println(saveFile);
+        //        result = blackAndWhiteMat(img);
+//        Mat kernel =  getStructuringElement(MORPH_CROSS, new Size(3, 3)); //Крутой метод.
+//        //для вычисления границ посмотрет ьметоды Sobel and Scharr
+//        erode(res, result2, kernel);
 
     }
 
@@ -134,20 +112,23 @@ public class OpenCVImpl implements OpenCV {
 
     @Override
     public Mat processingImage(Mat img) {
-        Mat dstMat = new Mat(img.rows(), img.cols(), CvType.CV_8U);
+        logger.info("Start processingImage() in OpenCVImpl.class");
+        Mat dstMat;
         if (img != null) {
-            Mat blackAndWhiteMat = blackAndWhiteMat(img);
-            Mat blackGreayAndWhiteMat = blackGreyAndWhiteMat(img);
-            Mat borderMat = drawBorderOfElements(img);
-
-            Mat result = new Mat();
-            Mat resultEnd = new Mat();
-            Core.addWeighted(blackAndWhiteMat, 1, borderMat, 1, 0, result);
-            Core.addWeighted(result, 0.5, img, 1, 0, resultEnd);
-            dstMat = resultEnd;
-
-            return dstMat;
+            Mat imgWithBorder = getMatWithBordersFromSobel(img);
+            Mat colorMat = getColorMat(imgWithBorder);
+            for (int i = 0; i < imgWithBorder.rows(); i++) {
+                for (int j = 0; j < imgWithBorder.cols(); j++) {
+                    double currentPixel = imgWithBorder.get(i, j)[0];
+                    if (currentPixel > 100) {
+                        colorMat.put(i, j, 0, 255, 0);
+                    }
+                }
+            }
+            logger.info("End of processingImage() in OpenCVImpl.class");
+            return colorMat;
         } else {
+            logger.info("End of processingImage() in OpenCVImpl.class with empty Mat");
             return new Mat(0, 0, CvType.CV_8U);
         }
     }
