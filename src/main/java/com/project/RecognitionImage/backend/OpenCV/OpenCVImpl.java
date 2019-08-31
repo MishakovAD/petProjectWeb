@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 
+import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.blackAndWhiteMat;
+import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.blackGreyAndWhiteMat;
 import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getColorMat;
 import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getGrayMat;
 import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getMatWithBordersFromSobel;
@@ -40,35 +42,35 @@ import static org.opencv.imgproc.Imgproc.threshold;
 public class OpenCVImpl implements OpenCV {
     //255 - white
     //0 - black
+    private static String path = "src/main/java/com/project/RecognitionImage/backend/OpenCV/test/";
     private Logger logger = LoggerFactory.getLogger(OpenCVImpl.class);
     public static void main(String[] args) throws InterruptedException {
         OpenCVImpl cv = new OpenCVImpl();
         cv.init();
 
-        Mat imgGray = getGrayMat(cv.processingImage(cv.loadImage("C:/9.jpg", Imgcodecs.IMREAD_GRAYSCALE)));
-
-        //Mat img = cv.loadImage("C:/9.jpg", Imgcodecs.IMREAD_GRAYSCALE);
-        //Mat img = cv.loadImage("C:/captcha_kino.jpg", Imgcodecs.IMREAD_GRAYSCALE);
-        showImage(imgGray, "GRAY");
-        Mat edges = new Mat();
-        Canny(imgGray, edges, 80, 200);
-        showImage(edges, "Canny");
-        Mat img3 = new Mat();
-        threshold(imgGray, img3, 100, 255,
-                THRESH_BINARY | THRESH_OTSU);
-        Mat edges2 = new Mat();
-        Imgproc.Canny(img3, edges2, 80, 200);
-        showImage(edges2, "Canny + THRESH_OTSU");
-        Mat img4 = new Mat();
-        Imgproc.adaptiveThreshold(imgGray, img4, 255,
-                Imgproc.ADAPTIVE_THRESH_MEAN_C,
-                Imgproc.THRESH_BINARY, 3, 5);
-        Mat edges3 = new Mat();
-        Imgproc.Canny(img4, edges3, 80, 200);
-        showImage(edges3, "Canny + adaptiveThreshold");
-//        img.release(); img3.release(); img4.release();
-//        imgGray.release();
-//        edges.release(); edges2.release(); edges3.release();
+        //Mat imgGray = cv.loadImage(path + "russian_text.PNG", Imgcodecs.IMREAD_GRAYSCALE);
+        Mat imgGray = cv.loadImage(path + "1.jpg", Imgcodecs.IMREAD_GRAYSCALE);
+        Mat processImg = cv.processingImage(imgGray);
+        Mat border = getMatWithBordersFromSobel(imgGray);
+        Mat bw = blackAndWhiteMat(imgGray);
+        Mat bwg = blackGreyAndWhiteMat(imgGray);
+        Mat result = new Mat(imgGray.rows(), imgGray.cols(), CvType.CV_8U);
+        for (int i = 0; i < imgGray.rows(); i++) {
+            for (int j = 0; j < imgGray.cols(); j++) {
+                double currentPixel = bwg.get(i, j)[0];
+                if (currentPixel == 0) {
+                    result.put(i, j, 0);
+                } else {
+                    result.put(i, j, 255);
+                }
+            }
+        }
+//        showImage(processImg, "Processing img");
+//        showImage(imgGray, "Original");
+//        showImage(border, "Border");
+        showImage(result, "Result");
+        showImage(bw, "BW");
+        showImage(bwg, "BWG");
 
 
 //        Mat result1234 = cv.processingImage(result2);
