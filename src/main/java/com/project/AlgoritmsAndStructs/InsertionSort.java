@@ -22,6 +22,18 @@ public class InsertionSort {
         });
     }
 
+    public static <K extends Object, V extends Object> Map<K, V> sort(Map<K, V> map, boolean byValue) {
+        return sort(map, byValue, true);
+    }
+
+    public static <K extends Object, V extends Object> Map<K, V> sort(Map<K, V> map, boolean byValue, boolean ASC) {
+        if (byValue) {
+            return sortByValue(map, ASC);
+        } else {
+            return sortByKey(map, ASC);
+        }
+    }
+
     public static <K extends Object, V extends Object> Map<K, V> sortByValue(Map<K, V> map) {
         return sortByValue(map, true);
     }
