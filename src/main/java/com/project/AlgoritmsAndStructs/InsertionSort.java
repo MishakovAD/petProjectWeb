@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Класс, предназначенный для сортировки часто используемых структур методом вставок.
+ * Все методы, которые имею javadoc - основные методы сортировки.
+ * Все остальные - лишь обертка.
+ */
 public class InsertionSort {
     public static void main(String[] args) {
         Map<Integer, Integer> map = new HashMap<>();
@@ -38,6 +43,14 @@ public class InsertionSort {
         return sortByValue(map, true);
     }
 
+    /**
+     *
+     * @param map
+     * @param ASC
+     * @param <K>
+     * @param <V>
+     * @return
+     */
     public static <K extends Object, V extends Object> Map<K, V> sortByValue(Map<K, V> map, boolean ASC) {
         Map<K, V> sortedMap = new LinkedHashMap<>();
         List<V> valuesList = new LinkedList<>(map.values());
@@ -60,6 +73,14 @@ public class InsertionSort {
         return sortByKey(map, true);
     }
 
+    /**
+     *
+     * @param map
+     * @param ASC
+     * @param <K>
+     * @param <V>
+     * @return
+     */
     public static <K extends Object, V extends Object> Map<K, V> sortByKey(Map<K, V> map, boolean ASC) {
         Map<K, V> sortedMap = new LinkedHashMap<>();
         List<K> keySet = new LinkedList<>(map.keySet());
@@ -72,6 +93,13 @@ public class InsertionSort {
         return sort(list, true);
     }
 
+    /**
+     *
+     * @param list
+     * @param ASC
+     * @param <T>
+     * @return
+     */
     public static <T extends Object> List<T> sort(List<T> list, boolean ASC) {
         List<T> sortedList = new LinkedList<>();
         int len = list.size();
@@ -132,6 +160,13 @@ public class InsertionSort {
         }
     }
 
+    /**
+     * СЕРДЦЕ алгоритма сортировки вставками по возрастанию.
+     * На этом алгоритме завязаны все вышестоящие сортировки List, Map.
+     * @param arr
+     * @param <T>
+     * @return
+     */
     public static <T extends Object> T[] sortByASC(T[] arr) {
         for (int i = 1; i < arr.length; i++) {
             int j = i - 1;
@@ -185,6 +220,13 @@ public class InsertionSort {
         return arr;
     }
 
+    /**
+     * СЕРДЦЕ алгоритма сортировки вставками по убыванию.
+     * На этом алгоритме завязаны все вышестоящие сортировки List, Map.
+     * @param arr
+     * @param <T>
+     * @return
+     */
     public static <T extends Object> T[] sortByDESC(T[] arr) {
         for (int i = 1; i < arr.length; i++) {
             int j = i - 1;
@@ -250,6 +292,11 @@ public class InsertionSort {
         }
     }
 
+    /**
+     *
+     * @param arr
+     * @return
+     */
     public static int[] sortByASC(int[] arr) {
         for (int i = 1; i < arr.length; i++) {
             int j = i - 1;
@@ -265,6 +312,11 @@ public class InsertionSort {
         return arr;
     }
 
+    /**
+     *
+     * @param arr
+     * @return
+     */
     public static int[] sortByDESC(int[] arr) {
         for (int i = 1; i < arr.length; i++) {
             int j = i - 1;
@@ -292,6 +344,11 @@ public class InsertionSort {
         }
     }
 
+    /**
+     *
+     * @param arr
+     * @return
+     */
     public static double[] sortByASC(double[] arr) {
         for (int i = 1; i < arr.length; i++) {
             int j = i - 1;
@@ -307,6 +364,11 @@ public class InsertionSort {
         return arr;
     }
 
+    /**
+     *
+     * @param arr
+     * @return
+     */
     public static double[] sortByDESC(double[] arr) {
         for (int i = 1; i < arr.length; i++) {
             int j = i - 1;
@@ -334,6 +396,11 @@ public class InsertionSort {
         }
     }
 
+    /**
+     *
+     * @param arr
+     * @return
+     */
     public static char[] sortByASC(char[] arr) {
         for (int i = 1; i < arr.length; i++) {
             int j = i - 1;
@@ -349,6 +416,11 @@ public class InsertionSort {
         return arr;
     }
 
+    /**
+     *
+     * @param arr
+     * @return
+     */
     public static char[] sortByDESC(char[] arr) {
         for (int i = 1; i < arr.length; i++) {
             int j = i - 1;
@@ -376,6 +448,11 @@ public class InsertionSort {
         }
     }
 
+    /**
+     *
+     * @param arr
+     * @return
+     */
     public static String[] sortByASC(String[] arr) {
         for (int i = 1; i < arr.length; i++) {
             int j = i - 1;
@@ -401,6 +478,11 @@ public class InsertionSort {
         return arr;
     }
 
+    /**
+     *
+     * @param arr
+     * @return
+     */
     public static String[] sortByDESC(String[] arr) {
         for (int i = 1; i < arr.length; i++) {
             int j = i - 1;
