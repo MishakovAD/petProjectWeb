@@ -57,6 +57,7 @@ public class PlHttpClient implements PliHttpClient {
     @Override
     public Document getDocumentFromInternet(String url) throws IOException {
         logger.info("Start method getDocumentFromInternet() at " + LocalDateTime.now());
+        System.out.println(url);
         StringBuilder htmlDocumentAtString = new StringBuilder();
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpContext context = new HttpClientContext();
