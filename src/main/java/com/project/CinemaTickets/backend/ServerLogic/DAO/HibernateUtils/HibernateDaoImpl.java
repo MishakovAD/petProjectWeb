@@ -79,6 +79,7 @@ public class HibernateDaoImpl implements HibernateDao {
                         cinemasNameSet.add(cinemaObj.getCinemaName());
                         cinema_movie.setCinemaId(cinemaObj.getCinema_id());
                         session.save(cinemaObj);
+                        logger.info("cinema save at " + LocalDateTime.now());
                     } else if (sessionObj != null) {
                         String cinemaId = uniqueCinemasMap.get(cinemaObj.getCinemaName()).getCinema_id();
                         cinema_movie.setCinemaId(cinemaId);
@@ -92,6 +93,7 @@ public class HibernateDaoImpl implements HibernateDao {
                         moviesNameSet.add(movieObj.getMovieName());
                         cinema_movie.setMovieId(movieObj.getMovie_id());
                         session.save(movieObj);
+                        logger.info("movie save at " + LocalDateTime.now());
                     } else if (sessionObj != null) {
                         String movieId = uniqueMoviesMap.get(movieObj.getMovieName()).getMovie_id();
                         cinema_movie.setMovieId(movieId);
@@ -103,6 +105,7 @@ public class HibernateDaoImpl implements HibernateDao {
                     if (!uniqueCinema_MovieSet.contains(cinema_movie)) {
                         session.save(cinema_movie);
                         uniqueCinema_MovieSet.add(cinema_movie);
+                        logger.info("cinema_movie save at " + LocalDateTime.now());
                     }
                 }
 
@@ -111,6 +114,7 @@ public class HibernateDaoImpl implements HibernateDao {
                     if(!uniqueSessionsSet.contains(sessionObj) && sList.size() == 0) {
                         uniqueSessionsSet.add(sessionObj);
                         session.save(sessionObj);
+                        logger.info("session save at " + LocalDateTime.now());
                     }
                 }
             });

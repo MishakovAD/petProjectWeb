@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * На смену классу пришел PlHttpClient.
+ */
 @Deprecated
 public class PlServer implements PliServer {
 
