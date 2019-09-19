@@ -1,10 +1,12 @@
 package com.project.AlgoritmsAndStructs.Utils;
 
 import com.project.AlgoritmsAndStructs.InsertionSort;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class SortImpl implements SortI {
     @Override
     public <T> T[] insertionSort(T[] arr, boolean ASC) {
