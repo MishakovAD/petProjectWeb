@@ -1,25 +1,28 @@
-package com.project.NeuralNetwork.Base;
+package com.project.NeuralNetwork.Base.Neuron.base;
 
 import java.util.Arrays;
-import java.util.Random;
 
 public class Neuron {
     private int countInputs;
+    private int countOutputs;
     private double[] inputs; //входы. Для входного слоя 1шт.
+    private double[] outputs;
+    private double output;
     private double[] weights; //веса. Для входного слоя 1шт. = 1.
     private boolean sigma = true; //сигмоидальная функция активации
     private boolean tanh = false; //гиперболический тангенс
     private boolean leap = false; //функция единичного скачка
-    private double output;
 
     //Parameters
     private double b = 1; //порог
     private double a = 1; //крутизна сигмы, тангенса
 
-    public Neuron(int countInputs) {
+    public Neuron(int countInputs, int countOutputs) {
         this.countInputs = countInputs;
+        this.countOutputs = countOutputs;
         this.inputs = new double[countInputs];
-        this.weights = new double[countInputs];
+        this.weights = new double[countOutputs];
+        this.outputs = new double[countOutputs];
         this.weights = Arrays.stream(this.weights).map(weight -> weight += Math.random()).toArray();
     }
 
@@ -27,20 +30,44 @@ public class Neuron {
         return countInputs;
     }
 
+    public int getCountOutputs() {
+        return countOutputs;
+    }
+
     public double[] getInputs() {
         return inputs;
+    }
+
+    public void setInputs(double[] inputs) {
+        this.inputs = inputs;
     }
 
     public double getInput(int index) {
         return inputs[index];
     }
 
+    public void setInput(int index, double input) {
+        this.inputs[index] = input;
+    }
+
+    public void setInput(double input) {
+        this.inputs[0] = input;
+    }
+
     public double[] getWeights() {
         return weights;
     }
 
+    public void setWeights(double[] weights) {
+        this.weights = weights;
+    }
+
     public double getWeight(int index) {
         return weights[index];
+    }
+
+    public void setWeight(int index, double weight) {
+        this.weights[index] = weight;
     }
 
     public double getOutput() {
@@ -59,23 +86,17 @@ public class Neuron {
                 output = 0;
             }
         }
+        this.outputs = Arrays.stream(this.outputs).map(out -> out = this.output).toArray();
         return output;
     }
 
-    public void setInputs(double[] inputs) {
-        this.inputs = inputs;
+    public double[] getOutputs() {
+        this.getOutput();
+        return outputs;
     }
 
-    public void setInput(int index, double input) {
-        this.inputs[index] = input;
-    }
-
-    public void setWeights(double[] weights) {
-        this.weights = weights;
-    }
-
-    public void setWeight(int index, double weight) {
-        this.weights[index] = weight;
+    public void setOutputs(double[] outputs) {
+        this.outputs = outputs;
     }
 
     public void setSigma() {
