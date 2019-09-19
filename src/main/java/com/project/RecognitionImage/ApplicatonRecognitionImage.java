@@ -17,7 +17,7 @@ public class ApplicatonRecognitionImage extends SpringBootServletInitializer {
         return application.sources(ApplicationCinemaTickets.class);
     }
 
-    public static void main(String[] args) {
-        ConfigurableApplicationContext context = SpringApplication.run(ApplicationCinemaTickets.class, args);
-    }
+//    public static void main(String[] args) {
+//        ConfigurableApplicationContext context = SpringApplication.run(ApplicationCinemaTickets.class, args);
+//    }
 }
