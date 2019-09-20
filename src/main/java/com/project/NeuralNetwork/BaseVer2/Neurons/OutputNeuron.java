@@ -73,6 +73,7 @@ public class OutputNeuron {
 
     public void setInputs(double[] inputs) {
         this.inputs = inputs;
+        calculation();
     }
 
     public void setInput(int index, double input) {

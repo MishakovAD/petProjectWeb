@@ -1,6 +1,10 @@
 package com.project.NeuralNetwork.BaseVer2.Layers;
 
 import com.project.NeuralNetwork.BaseVer2.Neurons.HiddenNeuron;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class HiddenLayer {
     private int neuronsCount; //Количество нейронов в каждом слое
@@ -35,5 +39,26 @@ public class HiddenLayer {
 
     public int getNeuronsCount() {
         return neuronsCount;
+    }
+
+    public List<Double[]> getWeightsList() {
+        List<Double[]> hiddenWeights = new LinkedList<>();
+        for (int i = 0; i < this.hiddenNeuronsArray.length; i++) {
+            double[] weights = getHiddenNeuron(i).getWeights();
+            hiddenWeights.add(ArrayUtils.toObject(weights));
+        }
+        return hiddenWeights;
+    }
+
+    public void setWeights(List<Double[]> weights) {
+        for (int i = 0; i < this.hiddenNeuronsArray.length; i++) {
+            this.hiddenNeuronsArray[i].setWeights(ArrayUtils.toPrimitive(weights.get(i)));
+        }
+    }
+
+    public void setInputs(double[] inputs) {
+        for (int i = 0; i < this.hiddenNeuronsArray.length; i++) {
+            this.hiddenNeuronsArray[i].setInputs(inputs);
+        }
     }
 }

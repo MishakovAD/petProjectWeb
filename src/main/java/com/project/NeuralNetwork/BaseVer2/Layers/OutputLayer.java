@@ -1,6 +1,10 @@
 package com.project.NeuralNetwork.BaseVer2.Layers;
 
 import com.project.NeuralNetwork.BaseVer2.Neurons.OutputNeuron;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class OutputLayer {
     private int neuronsCount;
@@ -35,5 +39,26 @@ public class OutputLayer {
 
     public int getNeuronsCount() {
         return neuronsCount;
+    }
+
+    public List<Double[]> getWeightsList() {
+        List<Double[]> outputWeights = new LinkedList<>();
+        for (int i = 0; i < this.outputNeuronsArray.length; i++) {
+            double[] weights = getHiddenNeuron(i).getWeights();
+            outputWeights.add(ArrayUtils.toObject(weights));
+        }
+        return outputWeights;
+    }
+
+    public void setWeights(List<Double[]> weights) {
+        for (int i = 0; i < this.outputNeuronsArray.length; i++) {
+            this.outputNeuronsArray[i].setWeights(ArrayUtils.toPrimitive(weights.get(i)));
+        }
+    }
+
+    public void setInputs(double[] inputs) {
+        for (int i = 0; i < this.outputNeuronsArray.length; i++) {
+            this.outputNeuronsArray[i].setInputs(inputs);
+        }
     }
 }

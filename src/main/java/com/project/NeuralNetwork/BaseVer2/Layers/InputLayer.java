@@ -7,6 +7,18 @@ public class InputLayer {
     private double[] data;
     private InputNeuron[] inputNeuronsArray;
 
+    public InputLayer(int neuronsCount) {
+        if (neuronsCount < 1) {
+            neuronsCount = 1;
+        }
+        this.neuronsCount = neuronsCount;
+        this.inputNeuronsArray = new InputNeuron[neuronsCount];
+        for (int i = 0; i < neuronsCount; i++) {
+            InputNeuron inputNeuron = new InputNeuron(0);
+            this.inputNeuronsArray[i] = inputNeuron;
+        }
+    }
+
     public InputLayer(int neuronsCount, double[] data) {
         if (neuronsCount < 1) {
             neuronsCount = 1;
