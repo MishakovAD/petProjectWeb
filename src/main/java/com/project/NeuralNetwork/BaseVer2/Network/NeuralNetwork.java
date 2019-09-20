@@ -86,6 +86,7 @@ public class NeuralNetwork {
     }
 
     public void setInputData(double[] data) {
+        //TODO: сделать проверку на размер входных данных и уже созданную сеть. Если разный, сообщить.
         for (int i = 0; i < this.inputLayer.getNeuronsCount(); i++) {
             this.inputLayer.getInputNeuron(i).setInput(data[i]);
         }
