@@ -7,6 +7,7 @@ public class HiddenNeuron {
     private double[] inputs;
     private double output;
     private double[] weights;
+    private double delta;
     private boolean sigma = true; //сигмоидальная функция активации
     private boolean tanh = false; //гиперболический тангенс
     private boolean leap = false; //функция единичного скачка
@@ -130,6 +131,14 @@ public class HiddenNeuron {
 
     public void setA(double a) {
         this.a = a;
+    }
+
+    public double getDelta() {
+        return delta;
+    }
+
+    public void setDelta(double delta) {
+        this.delta = delta;
     }
 
     //Методы обратного распространения

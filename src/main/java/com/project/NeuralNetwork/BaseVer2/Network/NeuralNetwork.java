@@ -125,4 +125,20 @@ public class NeuralNetwork {
         List<Double[]> outputWeight = this.outputLayer.getWeightsList();
         return outputWeight;
     }
+
+    public double[] getOutputs() {
+        double[] outputs = new double[this.counterOutputNeurons];
+        for (int i = 0; i < this.counterOutputNeurons; i++) {
+            outputs[i] = this.outputLayer.getOutputNeuron(i).getOutput();
+        }
+        return outputs;
+    }
+
+    public OutputLayer getOutputLayer() {
+        return this.outputLayer;
+    }
+
+    public HiddenLayer[] getHiddenLayerArray() {
+        return hiddenLayer;
+    }
 }

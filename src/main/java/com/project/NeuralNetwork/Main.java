@@ -1,6 +1,7 @@
 package com.project.NeuralNetwork;
 
 import com.project.NeuralNetwork.BaseVer2.Network.NeuralNetwork;
+import com.project.NeuralNetwork.BaseVer2.Training.Trainer;
 
 import java.time.LocalTime;
 
@@ -18,6 +19,12 @@ public class Main {
         System.out.println(LocalTime.now());
         NeuralNetwork net2 = new NeuralNetwork(inp, 1, 5, 1);
         System.out.println(LocalTime.now());
+        Trainer trainer = new Trainer(1, 10);
+        trainer.calculateError(1, net2.getOutputs()[0], 0);
+        double[] ref = new double[1];
+        ref[0] = 1.0;
+        trainer.calculateDeltaForOutput(ref, net2.getOutputLayer());
+        trainer.calculateDeltaForHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
         //net2.setInputData(inp2);
         System.out.println(LocalTime.now());
     }

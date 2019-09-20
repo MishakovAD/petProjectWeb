@@ -33,7 +33,7 @@ public class OutputLayer {
         return outputNeuronsArray;
     }
 
-    public OutputNeuron getHiddenNeuron(int index) {
+    public OutputNeuron getOutputNeuron(int index) {
         return outputNeuronsArray[index];
     }
 
@@ -44,7 +44,7 @@ public class OutputLayer {
     public List<Double[]> getWeightsList() {
         List<Double[]> outputWeights = new LinkedList<>();
         for (int i = 0; i < this.outputNeuronsArray.length; i++) {
-            double[] weights = getHiddenNeuron(i).getWeights();
+            double[] weights = getOutputNeuron(i).getWeights();
             outputWeights.add(ArrayUtils.toObject(weights));
         }
         return outputWeights;
