@@ -6,6 +6,7 @@ import com.project.NeuralNetwork.Base.Neuron.HiddenNeuron;
 import com.project.NeuralNetwork.Base.Neuron.InputNeuron;
 import com.project.NeuralNetwork.Base.Neuron.OutputNeuron;
 import com.project.NeuralNetwork.Base.Neuron.base.Neuron;
+import com.project.NeuralNetwork.BaseVer2.Network.NeuralNetwork;
 
 import java.util.Arrays;
 
@@ -15,6 +16,7 @@ public class Main {
         double[] inp = new double[2];
         inp[0] = 1.0;
         inp[1] = 0.0;
+        NeuralNetwork net2 = new NeuralNetwork(inp, 1, 5, 1);
         net.setInputs(inp);
         net.getResult();
         InputNeuron input1 = new InputNeuron(5);
