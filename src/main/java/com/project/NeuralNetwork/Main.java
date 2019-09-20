@@ -1,6 +1,5 @@
 package com.project.NeuralNetwork;
 
-import com.project.NeuralNetwork.Base.Network.NeuronNetwork;
 import com.project.NeuralNetwork.BaseVer2.Network.NeuralNetwork;
 
 import java.time.LocalTime;
