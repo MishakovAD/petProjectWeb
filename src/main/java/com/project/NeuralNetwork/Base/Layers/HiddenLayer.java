@@ -14,7 +14,11 @@ public class HiddenLayer {
         this.counterNeuronsPreviousLayer = counterNeuronsPreviousLayer;
         this.hiddenNeuronsLayer = new HiddenNeuron[counterNeurons];
         for (int i = 0; i < counterNeurons; i++) {
-            hiddenNeuronsLayer[i] = new HiddenNeuron(counterNeuronsPreviousLayer, counterNeuronsNextLayer);
+            this.hiddenNeuronsLayer[i] = new HiddenNeuron(counterNeuronsPreviousLayer, counterNeuronsNextLayer);
         }
+    }
+
+    public HiddenNeuron[] getHiddenNeurons() {
+        return this.hiddenNeuronsLayer;
     }
 }

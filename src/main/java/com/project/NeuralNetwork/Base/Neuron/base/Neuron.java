@@ -40,6 +40,7 @@ public class Neuron {
 
     public void setInputs(double[] inputs) {
         this.inputs = inputs;
+        getResultComputing();
     }
 
     public double getInput(int index) {
@@ -48,10 +49,12 @@ public class Neuron {
 
     public void setInput(int index, double input) {
         this.inputs[index] = input;
+        getResultComputing();
     }
 
     public void setInput(double input) {
         this.inputs[0] = input;
+        getResultComputing();
     }
 
     public double[] getWeights() {
@@ -71,27 +74,10 @@ public class Neuron {
     }
 
     public double getOutput() {
-        double sum = 0;
-        for (int i = 0; i < countInputs; i++) {
-            sum += inputs[i] * weights[i];
-        }
-        if (sigma) {
-            output = 1 / (1 + Math.exp(-a * sum));
-        } else if (tanh) {
-            output = Math.tanh(sum / a);
-        } else if (leap) {
-            if (sum >= b) {
-                output = 1;
-            } else {
-                output = 0;
-            }
-        }
-        this.outputs = Arrays.stream(this.outputs).map(out -> out = this.output).toArray();
         return output;
     }
 
     public double[] getOutputs() {
-        this.getOutput();
         return outputs;
     }
 
@@ -123,5 +109,29 @@ public class Neuron {
 
     public void setA(double a) {
         this.a = a;
+    }
+
+    private void getResultComputing() {
+        double sum = 0;
+        for (int i = 0; i < this.countInputs; i++) {
+            try {
+                sum += this.inputs[i] * this.weights[i];
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                //todo nothing
+            }
+
+        }
+        if (this.sigma) {
+            this.output = 1 / (1 + Math.exp(-a * sum));
+        } else if (this.tanh) {
+            this.output = Math.tanh(sum / a);
+        } else if (this.leap) {
+            if (sum >= b) {
+                this.output = 1;
+            } else {
+                this.output = 0;
+            }
+        }
+        this.outputs = Arrays.stream(this.outputs).map(out -> out = this.output).toArray();
     }
 }

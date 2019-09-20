@@ -11,12 +11,12 @@ public class InputLayer {
         this.counterNeurons = counterNeurons;
         this.inputNeuronsLayer = new InputNeuron[counterNeurons];
         for (int i = 0; i < counterNeurons; i++) {
-            inputNeuronsLayer[i] = new InputNeuron(countOutputs);
+            this.inputNeuronsLayer[i] = new InputNeuron(countOutputs);
         }
     }
 
-    public Neuron[] getInputNeuronsLayer() {
-        return inputNeuronsLayer;
+    public InputNeuron[] getInputNeurons() {
+        return this.inputNeuronsLayer;
     }
 
     public void setInputNeuronsLayer(InputNeuron[] inputNeuronsLayer) {

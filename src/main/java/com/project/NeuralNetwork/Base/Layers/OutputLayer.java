@@ -22,4 +22,8 @@ public class OutputLayer {
         }
         return result;
     }
+
+    public OutputNeuron[] getOutputNeurons() {
+        return this.outputNeuronsLayer;
+    }
 }

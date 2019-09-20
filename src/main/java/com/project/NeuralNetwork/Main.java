@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
-        NeuronNetwork net = new NeuronNetwork(2, 2, 5, 1);
+        NeuronNetwork net = new NeuronNetwork(1, 2, 4, 1);
         double[] inp = new double[2];
         inp[0] = 1.0;
         inp[1] = 0.0;
@@ -35,7 +35,7 @@ public class Main {
         neuron.getOutput();
         System.out.println(neuron);
         InputLayer inpL = new InputLayer(10, 10);
-        Arrays.stream(inpL.getInputNeuronsLayer()).forEach(neuron1 -> System.out.println(neuron1));
+        Arrays.stream(inpL.getInputNeurons()).forEach(neuron1 -> System.out.println(neuron1));
         System.out.println();
     }
 }
