@@ -7,7 +7,9 @@ import com.project.NeuralNetwork.BaseVer2.Layers.OutputLayer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
+//TODO: добавить нейрон смещения(активации) в каждый уровень.
+//TODO: добавить добавление предыдущих уровней в том случае, если скрытый слой 1
+//а так же, для первого скрытого слоя, чтобы он работал со входным слоем.
 public class NeuralNetwork {
     private InputLayer inputLayer;
     private HiddenLayer[] hiddenLayer;
@@ -34,15 +36,19 @@ public class NeuralNetwork {
         this.hiddenLayer = new HiddenLayer[counterHiddenLayers];
         if (counterHiddenLayers > 1) {
             this.hiddenLayer[0] = new HiddenLayer(counterHiddenNeurons, counterInputNeurons, outputDataFromInputLayer);
+            //TODO: Тут добавить, чтобы заполнялись инпуты с входного слоя
             for (int i = 1; i < counterHiddenLayers; i++) {
                 double[] outputDataFromPreviousHiddenLayer = new double[counterHiddenNeurons];
                 for (int j = 0; j < counterHiddenNeurons; j++) {
                     outputDataFromPreviousHiddenLayer[j] = this.hiddenLayer[i - 1].getHiddenNeuron(j).getOutput();
                 }
                 this.hiddenLayer[i] = new HiddenLayer(counterHiddenNeurons, counterHiddenNeurons, outputDataFromPreviousHiddenLayer);
+                double[] inputDataFromPreviousHiddenLayer = this.hiddenLayer[i - 1].getHiddenNeuron(0).getInputs();
+                this.hiddenLayer[i].setPreviousInputs(inputDataFromPreviousHiddenLayer);
             }
         } else if (counterHiddenLayers == 1) {
             this.hiddenLayer[0] = new HiddenLayer(counterHiddenNeurons, counterInputNeurons, outputDataFromInputLayer);
+            //TODO: Тут добавить, чтобы заполнялись инпуты с входного слоя
         }
         double[] outputDataFromLastHiddenLayer = new double[counterHiddenNeurons];
         for (int j = 0; j < counterHiddenNeurons; j++) {
@@ -68,15 +74,19 @@ public class NeuralNetwork {
         this.hiddenLayer = new HiddenLayer[counterHiddenLayers];
         if (counterHiddenLayers > 1) {
             this.hiddenLayer[0] = new HiddenLayer(counterHiddenNeurons, counterInputNeurons, outputDataFromInputLayer);
+            //TODO: Тут добавить, чтобы заполнялись инпуты с входного слоя
             for (int i = 1; i < counterHiddenLayers; i++) {
                 double[] outputDataFromPreviousHiddenLayer = new double[counterHiddenNeurons];
                 for (int j = 0; j < counterHiddenNeurons; j++) {
                     outputDataFromPreviousHiddenLayer[j] = this.hiddenLayer[i - 1].getHiddenNeuron(j).getOutput();
                 }
                 this.hiddenLayer[i] = new HiddenLayer(counterHiddenNeurons, counterHiddenNeurons, outputDataFromPreviousHiddenLayer);
+                double[] inputDataFromPreviousHiddenLayer = this.hiddenLayer[i - 1].getHiddenNeuron(0).getInputs();
+                this.hiddenLayer[i].setPreviousInputs(inputDataFromPreviousHiddenLayer);
             }
         } else if (counterHiddenLayers == 1) {
             this.hiddenLayer[0] = new HiddenLayer(counterHiddenNeurons, counterInputNeurons, outputDataFromInputLayer);
+            //TODO: Тут добавить, чтобы заполнялись инпуты с входного слоя
         }
         double[] outputDataFromLastHiddenLayer = new double[counterHiddenNeurons];
         for (int j = 0; j < counterHiddenNeurons; j++) {

@@ -11,6 +11,9 @@ public class HiddenNeuron {
     private boolean sigma = true; //сигмоидальная функция активации
     private boolean tanh = false; //гиперболический тангенс
     private boolean leap = false; //функция единичного скачка
+    private double[] inputsForPreviousLayer;
+    // Для обратного распространения. Подсчета ошибки, чтобы не передавать лишюю инфу в конструктор.
+    // Вход с предыдущего уровня
 
     //Parameters
     private double b = 1; //порог
@@ -22,6 +25,7 @@ public class HiddenNeuron {
         }
         this.countInputs = countInputs;
         this.inputs = new double[countInputs];
+        this.inputsForPreviousLayer = new double[countInputs];
         this.weights = new double[countInputs];
         this.weights = Arrays.stream(this.weights).map(weight -> weight += Math.random()).toArray();
     }
@@ -32,6 +36,7 @@ public class HiddenNeuron {
         }
         this.countInputs = countInputs;
         this.inputs = inputs;
+        this.inputsForPreviousLayer = new double[countInputs];
         this.weights = new double[countInputs];
         this.weights = Arrays.stream(this.weights).map(weight -> weight += Math.random()).toArray();
         calculation();
@@ -142,4 +147,21 @@ public class HiddenNeuron {
     }
 
     //Методы обратного распространения
+
+
+    public double[] getInputsForPreviousLayer() {
+        return inputsForPreviousLayer;
+    }
+
+    public double getInputForPreviousLayer(int index) {
+        return inputsForPreviousLayer[index];
+    }
+
+    public void setInputsForPreviousLayer(double[] inputsForPreviousLayer) {
+        this.inputsForPreviousLayer = inputsForPreviousLayer;
+    }
+
+    public void setInputForPreviousLayer(int index, double inputForPreviousLayer) {
+        this.inputsForPreviousLayer[index] = inputForPreviousLayer;
+    }
 }

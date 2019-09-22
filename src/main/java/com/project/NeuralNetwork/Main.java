@@ -17,7 +17,7 @@ public class Main {
         inp3[0] = 1.0;
         inp3[1] = 1.0;
         System.out.println(LocalTime.now());
-        NeuralNetwork net2 = new NeuralNetwork(inp, 1, 5, 1);
+        NeuralNetwork net2 = new NeuralNetwork(inp, 3, 5, 1);
         System.out.println(LocalTime.now());
         Trainer trainer = new Trainer(1, 10);
         trainer.calculateError(1, net2.getOutputs()[0], 0);

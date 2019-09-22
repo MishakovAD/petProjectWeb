@@ -61,4 +61,10 @@ public class HiddenLayer {
             this.hiddenNeuronsArray[i].setInputs(inputs);
         }
     }
+
+    public void setPreviousInputs(double[] previousInputs) {
+        for (int i = 0; i < this.hiddenNeuronsArray.length; i++) {
+            this.hiddenNeuronsArray[i].setInputsForPreviousLayer(previousInputs);
+        }
+    }
 }
