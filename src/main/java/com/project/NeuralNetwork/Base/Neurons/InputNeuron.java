@@ -27,8 +27,9 @@ public class InputNeuron {
     }
 
     private void normalize() {
-        double output = 1 / (1 + Math.exp(this.input));
+        //double output = 1 / (1 + Math.exp(this.input));
         //double output = 1 / this.input; //если input == 0 не прокатит
+        double output = this.input;
         this.output = output;
     }
 

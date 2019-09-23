@@ -61,4 +61,10 @@ public class OutputLayer {
             this.outputNeuronsArray[i].setInputs(inputs);
         }
     }
+
+    public void correctWeightsOfOutputLayer() {
+        for (int i = 0; i < outputNeuronsArray.length; i++) {
+            outputNeuronsArray[i].correctWeights();
+        }
+    }
 }

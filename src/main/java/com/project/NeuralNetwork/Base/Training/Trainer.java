@@ -9,7 +9,10 @@ import com.project.NeuralNetwork.Base.Layers.OutputLayer;
  *
  * !!!https://habr.com/ru/post/198268/
  */
+
+//На предыдущий слой передаю дельту, а надо сигму! Ввести новое поле в нейронах и брать для расчетов именно его.
 public class Trainer {
+    //TODO: Подумать, может корректировка весов будет лучше тут
     private double reference; //эталон
     private double error = 0; //ошибка
     private double result;

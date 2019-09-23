@@ -175,4 +175,10 @@ public class HiddenNeuron {
     public void setCountOutputs(int countOutputs) {
         this.countOutputs = countOutputs;
     }
+
+    public void correctWeights() {
+        for (int i = 0; i < weights.length; i++) {
+            weights[i] = weights[i] + delta[i];
+        }
+    }
 }

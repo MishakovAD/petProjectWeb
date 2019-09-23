@@ -142,4 +142,10 @@ public class OutputNeuron {
     }
 
     //Методы обратного распространения
+
+    public void correctWeights() {
+        for (int i = 0; i < weights.length; i++) {
+            weights[i] = weights[i] + delta[i];
+        }
+    }
 }

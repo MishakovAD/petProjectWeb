@@ -186,4 +186,11 @@ public class NeuralNetwork {
     public HiddenLayer[] getHiddenLayerArray() {
         return hiddenLayer;
     }
+
+    public void correctWeightsOfNetwork() {
+        outputLayer.correctWeightsOfOutputLayer();
+        for (int i = 0; i < counterHiddenLayers; i++) {
+            hiddenLayer[i].correctWeightsOfHiddenLayer();
+        }
+    }
 }

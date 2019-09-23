@@ -67,4 +67,10 @@ public class HiddenLayer {
             this.hiddenNeuronsArray[i].setInputsForPreviousLayer(previousInputs);
         }
     }
+
+    public void correctWeightsOfHiddenLayer() {
+        for (int i = 0; i < hiddenNeuronsArray.length; i++) {
+            hiddenNeuronsArray[i].correctWeights();
+        }
+    }
 }
