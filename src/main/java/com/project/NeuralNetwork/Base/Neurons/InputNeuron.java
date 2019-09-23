@@ -1,4 +1,4 @@
-package com.project.NeuralNetwork.BaseVer2.Neurons;
+package com.project.NeuralNetwork.Base.Neurons;
 
 
 public class InputNeuron {

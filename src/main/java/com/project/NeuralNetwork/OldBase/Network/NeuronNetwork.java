@@ -1,8 +1,8 @@
-package com.project.NeuralNetwork.Base.Network;
+package com.project.NeuralNetwork.OldBase.Network;
 
-import com.project.NeuralNetwork.Base.Layers.HiddenLayer;
-import com.project.NeuralNetwork.Base.Layers.InputLayer;
-import com.project.NeuralNetwork.Base.Layers.OutputLayer;
+import com.project.NeuralNetwork.OldBase.Layers.HiddenLayer;
+import com.project.NeuralNetwork.OldBase.Layers.InputLayer;
+import com.project.NeuralNetwork.OldBase.Layers.OutputLayer;
 
 public class NeuronNetwork {
     private InputLayer inputLayer;

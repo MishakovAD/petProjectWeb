@@ -1,4 +1,4 @@
-package com.project.NeuralNetwork.BaseVer2.Neurons;
+package com.project.NeuralNetwork.Base.Neurons;
 
 import java.util.Arrays;
 
@@ -6,8 +6,9 @@ public class HiddenNeuron {
     private int countInputs;
     private double[] inputs;
     private double output;
+    private int countOutputs;
     private double[] weights;
-    private double delta;
+    private double[] delta;
     private boolean sigma = true; //сигмоидальная функция активации
     private boolean tanh = false; //гиперболический тангенс
     private boolean leap = false; //функция единичного скачка
@@ -26,6 +27,7 @@ public class HiddenNeuron {
         this.countInputs = countInputs;
         this.inputs = new double[countInputs];
         this.inputsForPreviousLayer = new double[countInputs];
+        this.delta = new double[countInputs];
         this.weights = new double[countInputs];
         this.weights = Arrays.stream(this.weights).map(weight -> weight += Math.random()).toArray();
     }
@@ -37,6 +39,7 @@ public class HiddenNeuron {
         this.countInputs = countInputs;
         this.inputs = inputs;
         this.inputsForPreviousLayer = new double[countInputs];
+        this.delta = new double[countInputs];
         this.weights = new double[countInputs];
         this.weights = Arrays.stream(this.weights).map(weight -> weight += Math.random()).toArray();
         calculation();
@@ -138,11 +141,11 @@ public class HiddenNeuron {
         this.a = a;
     }
 
-    public double getDelta() {
+    public double[] getDelta() {
         return delta;
     }
 
-    public void setDelta(double delta) {
+    public void setDelta(double[] delta) {
         this.delta = delta;
     }
 
@@ -163,5 +166,13 @@ public class HiddenNeuron {
 
     public void setInputForPreviousLayer(int index, double inputForPreviousLayer) {
         this.inputsForPreviousLayer[index] = inputForPreviousLayer;
+    }
+
+    public int getCountOutputs() {
+        return countOutputs;
+    }
+
+    public void setCountOutputs(int countOutputs) {
+        this.countOutputs = countOutputs;
     }
 }

@@ -1,4 +1,4 @@
-package com.project.NeuralNetwork.BaseVer2.Neurons;
+package com.project.NeuralNetwork.Base.Neurons;
 
 import java.util.Arrays;
 
@@ -7,7 +7,7 @@ public class OutputNeuron {
     private double[] inputs;
     private double output;
     private double[] weights;
-    private double delta;
+    private double[] delta;
     private boolean sigma = true; //сигмоидальная функция активации
     private boolean tanh = false; //гиперболический тангенс
     private boolean leap = false; //функция единичного скачка
@@ -133,11 +133,11 @@ public class OutputNeuron {
         this.a = a;
     }
 
-    public double getDelta() {
+    public double[] getDelta() {
         return delta;
     }
 
-    public void setDelta(double delta) {
+    public void setDelta(double[] delta) {
         this.delta = delta;
     }
 

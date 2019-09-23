@@ -1,4 +1,4 @@
-package com.project.NeuralNetwork.BaseVer2.Training;
+package com.project.NeuralNetwork.Base.Training;
 
 public class Gym {
     private int counter; //одна пройденная тренировка (тренировка состоит из сетов, т.е. заранее подготовленных данных) Один пройденный сет - одна эпоха.

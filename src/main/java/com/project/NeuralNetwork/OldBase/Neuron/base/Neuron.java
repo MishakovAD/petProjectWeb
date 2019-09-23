@@ -1,4 +1,4 @@
-package com.project.NeuralNetwork.Base.Neuron.base;
+package com.project.NeuralNetwork.OldBase.Neuron.base;
 
 import java.util.Arrays;
 

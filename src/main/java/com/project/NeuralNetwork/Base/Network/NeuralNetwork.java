@@ -1,10 +1,9 @@
-package com.project.NeuralNetwork.BaseVer2.Network;
+package com.project.NeuralNetwork.Base.Network;
 
-import com.project.NeuralNetwork.BaseVer2.Layers.HiddenLayer;
-import com.project.NeuralNetwork.BaseVer2.Layers.InputLayer;
-import com.project.NeuralNetwork.BaseVer2.Layers.OutputLayer;
+import com.project.NeuralNetwork.Base.Layers.HiddenLayer;
+import com.project.NeuralNetwork.Base.Layers.InputLayer;
+import com.project.NeuralNetwork.Base.Layers.OutputLayer;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 //TODO: добавить нейрон смещения(активации) в каждый уровень.
@@ -36,8 +35,16 @@ public class NeuralNetwork {
         this.hiddenLayer = new HiddenLayer[counterHiddenLayers];
         if (counterHiddenLayers > 1) {
             this.hiddenLayer[0] = new HiddenLayer(counterHiddenNeurons, counterInputNeurons, outputDataFromInputLayer);
-            //TODO: Тут добавить, чтобы заполнялись инпуты с входного слоя
+
+            double[] inputDataFromInputLayer = this.hiddenLayer[0].getHiddenNeuron(0).getInputs();
+            this.hiddenLayer[0].setPreviousInputs(inputDataFromInputLayer);
+
             for (int i = 1; i < counterHiddenLayers; i++) {
+                //Для обратного распространения ошибки. Возможно в будущем будет смысл записывать и значения.
+                for(int neurIndex = 0; neurIndex < this.hiddenLayer[i-1].getNeuronsCount(); neurIndex++) {
+                    this.hiddenLayer[i-1].getHiddenNeuron(neurIndex).setCountOutputs(counterHiddenNeurons);
+                }
+
                 double[] outputDataFromPreviousHiddenLayer = new double[counterHiddenNeurons];
                 for (int j = 0; j < counterHiddenNeurons; j++) {
                     outputDataFromPreviousHiddenLayer[j] = this.hiddenLayer[i - 1].getHiddenNeuron(j).getOutput();
@@ -46,9 +53,20 @@ public class NeuralNetwork {
                 double[] inputDataFromPreviousHiddenLayer = this.hiddenLayer[i - 1].getHiddenNeuron(0).getInputs();
                 this.hiddenLayer[i].setPreviousInputs(inputDataFromPreviousHiddenLayer);
             }
+            //Для обратного распространения ошибки. Возможно в будущем будет смысл записывать и значения.
+            for(int neurIndex = 0; neurIndex < this.hiddenLayer[counterHiddenLayers-1].getNeuronsCount(); neurIndex++) {
+                this.hiddenLayer[counterHiddenLayers-1].getHiddenNeuron(neurIndex).setCountOutputs(counterOutputNeurons);
+            }
+
         } else if (counterHiddenLayers == 1) {
             this.hiddenLayer[0] = new HiddenLayer(counterHiddenNeurons, counterInputNeurons, outputDataFromInputLayer);
-            //TODO: Тут добавить, чтобы заполнялись инпуты с входного слоя
+            double[] inputDataFromInputLayer = this.hiddenLayer[0].getHiddenNeuron(0).getInputs();
+            this.hiddenLayer[0].setPreviousInputs(inputDataFromInputLayer);
+            //Для обратного распространения ошибки. Возможно в будущем будет смысл записывать и значения.
+            for(int neurIndex = 0; neurIndex < this.hiddenLayer[0].getNeuronsCount(); neurIndex++) {
+                this.hiddenLayer[0].getHiddenNeuron(neurIndex).setCountOutputs(counterOutputNeurons);
+            }
+
         }
         double[] outputDataFromLastHiddenLayer = new double[counterHiddenNeurons];
         for (int j = 0; j < counterHiddenNeurons; j++) {
@@ -74,8 +92,14 @@ public class NeuralNetwork {
         this.hiddenLayer = new HiddenLayer[counterHiddenLayers];
         if (counterHiddenLayers > 1) {
             this.hiddenLayer[0] = new HiddenLayer(counterHiddenNeurons, counterInputNeurons, outputDataFromInputLayer);
-            //TODO: Тут добавить, чтобы заполнялись инпуты с входного слоя
+            double[] inputDataFromInputLayer = this.hiddenLayer[0].getHiddenNeuron(0).getInputs();
+            this.hiddenLayer[0].setPreviousInputs(inputDataFromInputLayer);
             for (int i = 1; i < counterHiddenLayers; i++) {
+                //Для обратного распространения ошибки. Возможно в будущем будет смысл записывать и значения.
+                for(int neurIndex = 0; neurIndex < this.hiddenLayer[i-1].getNeuronsCount(); neurIndex++) {
+                    this.hiddenLayer[i-1].getHiddenNeuron(neurIndex).setCountOutputs(counterHiddenNeurons);
+                }
+
                 double[] outputDataFromPreviousHiddenLayer = new double[counterHiddenNeurons];
                 for (int j = 0; j < counterHiddenNeurons; j++) {
                     outputDataFromPreviousHiddenLayer[j] = this.hiddenLayer[i - 1].getHiddenNeuron(j).getOutput();
@@ -84,9 +108,20 @@ public class NeuralNetwork {
                 double[] inputDataFromPreviousHiddenLayer = this.hiddenLayer[i - 1].getHiddenNeuron(0).getInputs();
                 this.hiddenLayer[i].setPreviousInputs(inputDataFromPreviousHiddenLayer);
             }
+            //Для обратного распространения ошибки. Возможно в будущем будет смысл записывать и значения.
+            for(int neurIndex = 0; neurIndex < this.hiddenLayer[counterHiddenLayers-1].getNeuronsCount(); neurIndex++) {
+                this.hiddenLayer[counterHiddenLayers-1].getHiddenNeuron(neurIndex).setCountOutputs(counterOutputNeurons);
+            }
+
         } else if (counterHiddenLayers == 1) {
             this.hiddenLayer[0] = new HiddenLayer(counterHiddenNeurons, counterInputNeurons, outputDataFromInputLayer);
-            //TODO: Тут добавить, чтобы заполнялись инпуты с входного слоя
+            double[] inputDataFromInputLayer = this.hiddenLayer[0].getHiddenNeuron(0).getInputs();
+            this.hiddenLayer[0].setPreviousInputs(inputDataFromInputLayer);
+
+            //Для обратного распространения ошибки. Возможно в будущем будет смысл записывать и значения.
+            for(int neurIndex = 0; neurIndex < this.hiddenLayer[0].getNeuronsCount(); neurIndex++) {
+                this.hiddenLayer[0].getHiddenNeuron(neurIndex).setCountOutputs(counterOutputNeurons);
+            }
         }
         double[] outputDataFromLastHiddenLayer = new double[counterHiddenNeurons];
         for (int j = 0; j < counterHiddenNeurons; j++) {

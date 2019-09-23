@@ -1,6 +1,6 @@
-package com.project.NeuralNetwork.Base.Neuron;
+package com.project.NeuralNetwork.OldBase.Neuron;
 
-import com.project.NeuralNetwork.Base.Neuron.base.Neuron;
+import com.project.NeuralNetwork.OldBase.Neuron.base.Neuron;
 
 import java.util.Arrays;
 
