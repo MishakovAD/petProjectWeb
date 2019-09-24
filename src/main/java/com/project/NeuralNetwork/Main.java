@@ -36,8 +36,8 @@ public class Main {
             ref2[0] = 0.0;
             if (counter == 0) {
                 net2.setInputData(inp);
-                trainer.calculateError(ref1[0], net2.getOutputs()[0], 0);
-                trainer.calculateDeltaForOutput(ref1, net2.getOutputLayer());
+                trainer.calculateError(ref2[0], net2.getOutputs()[0], 0);
+                trainer.calculateDeltaForOutput(ref2, net2.getOutputLayer());
                 trainer.calculateDeltaForHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
             } else if (counter == 1) {
                 net2.setInputData(inp2);
@@ -46,13 +46,13 @@ public class Main {
                 trainer.calculateDeltaForHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
             } else if (counter == 2) {
                 net2.setInputData(inp3);
-                trainer.calculateError(ref2[0], net2.getOutputs()[0], 0);
-                trainer.calculateDeltaForOutput(ref2, net2.getOutputLayer());
+                trainer.calculateError(ref1[0], net2.getOutputs()[0], 0);
+                trainer.calculateDeltaForOutput(ref1, net2.getOutputLayer());
                 trainer.calculateDeltaForHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
             } else if (counter == 3) {
                 net2.setInputData(inp4);
-                trainer.calculateError(ref1[0], net2.getOutputs()[0], 0);
-                trainer.calculateDeltaForOutput(ref1, net2.getOutputLayer());
+                trainer.calculateError(ref2[0], net2.getOutputs()[0], 0);
+                trainer.calculateDeltaForOutput(ref2, net2.getOutputLayer());
                 trainer.calculateDeltaForHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
             }
             net2.correctWeightsOfNetwork();
