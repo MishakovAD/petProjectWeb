@@ -21,7 +21,6 @@ public class Trainer {
     private double[] sigmaInput;
     private double[] deltaOutput;
     private double[][][] deltaHidden;
-    private double[] deltaInput;
     private double speed;
     private int counter; //счетчик пройденных сетов тренировок.
     private int a;
@@ -53,6 +52,7 @@ public class Trainer {
             }
             double derivative = (a * Math.exp(-a * sum)) / ((1 + Math.exp(-a * sum)) * (1 + Math.exp(-a * sum)));
             this.sigmaOutput[i] = (reference[i] - result) * derivative;
+            outputLayer.getOutputNeuron(i).setSigma(this.sigmaOutput[i]);
             for (int inputCount = 0; inputCount < outputLayer.getOutputNeuron(i).getCountInputs(); inputCount++) {
                 this.deltaOutput[inputCount] = this.speed * this.sigmaOutput[i] * outputLayer.getOutputNeuron(i).getInput(inputCount);
             }
@@ -73,7 +73,7 @@ public class Trainer {
                     double[] sigmaCurrent = new double[countNeurons];
                     for (int i = 0; i < countNeurons; i++) { //считаем для каждого нейрона
                         for (int j = 0; j < countOutputs; j++) { //сумму ошибок на предыдущем уровне
-                            sigmaPrevious[i] += outputLayer.getOutputNeuron(j).getDelta()[i] * outputLayer.getOutputNeuron(j).getWeights()[i];
+                            sigmaPrevious[i] += outputLayer.getOutputNeuron(j).getSigma() * outputLayer.getOutputNeuron(j).getWeights()[i];
                         }
                     }
                     //вычисляем sigma для скрытого слоя перед выходным.
@@ -85,6 +85,7 @@ public class Trainer {
                     }
                     double derivative = (a * Math.exp(-a * sum)) / ((1 + Math.exp(-a * sum)) * (1 + Math.exp(-a * sum)));
                     sigmaCurrent[neuronsCount] = sigmaPrevious[neuronsCount] * derivative;
+                    hiddenLayer.getHiddenNeuron(neuronsCount).setSigma(sigmaCurrent[neuronsCount]);
 
                     //вычисляем изменение весов для текущего слоя.
                     double[] deltaWeights = new double[inputs.length];
@@ -100,7 +101,7 @@ public class Trainer {
                     double[] sigmaCurrent = new double[countOutputs];
                     for (int i = 0; i < countNeurons; i++) { //считаем для каждого нейрона
                         for (int j = 0; j < countOutputs; j++) { //сумму ошибок на предыдущем уровне
-                            sigmaPrevious[i] += previousHiddenLayer.getHiddenNeuron(j).getDelta()[i] * previousHiddenLayer.getHiddenNeuron(j).getWeights()[i];
+                            sigmaPrevious[i] += previousHiddenLayer.getHiddenNeuron(j).getSigma() * previousHiddenLayer.getHiddenNeuron(j).getWeights()[i];
                         }
                     }
                     //вычисляем sigma для скрытого слоя.
@@ -112,6 +113,7 @@ public class Trainer {
                     }
                     double derivative = (a * Math.exp(-a * sum)) / ((1 + Math.exp(-a * sum)) * (1 + Math.exp(-a * sum)));
                     sigmaCurrent[neuronsCount] = sigmaPrevious[neuronsCount] * derivative;
+                    hiddenLayer.getHiddenNeuron(neuronsCount).setSigma(sigmaCurrent[neuronsCount]);
 
                     //вычисляем изменение весов для текущего слоя.
                     double[] deltaWeights = new double[inputs.length];

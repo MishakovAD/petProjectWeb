@@ -20,12 +20,12 @@ public class Main {
         inp4[0] = 0.0;
         inp4[1] = 1.0;
         System.out.println(LocalTime.now());
-        NeuralNetwork net2 = new NeuralNetwork(2, 3, 3, 1);
+        NeuralNetwork net2 = new NeuralNetwork(2, 2 , 5, 1);
         System.out.println(LocalTime.now());
-        Trainer trainer = new Trainer(1, 10);
+        Trainer trainer = new Trainer(1, 0.1);
         int counter = 0;
         int globalCounter = 0;
-        while ((trainer.getError() > 0.02 || trainer.getError() == 0) && globalCounter < 10) {
+        while (globalCounter < 10000000) {
             if (counter == 4) {
                 counter = 0;
                 globalCounter++;
@@ -36,8 +36,8 @@ public class Main {
             ref2[0] = 0.0;
             if (counter == 0) {
                 net2.setInputData(inp);
-                trainer.calculateError(ref1[0], net2.getOutputs()[0], 0);
-                trainer.calculateDeltaForOutput(ref1, net2.getOutputLayer());
+                trainer.calculateError(ref2[0], net2.getOutputs()[0], 0);
+                trainer.calculateDeltaForOutput(ref2, net2.getOutputLayer());
                 trainer.calculateDeltaForHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
             } else if (counter == 1) {
                 net2.setInputData(inp2);
@@ -46,21 +46,22 @@ public class Main {
                 trainer.calculateDeltaForHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
             } else if (counter == 2) {
                 net2.setInputData(inp3);
-                trainer.calculateError(ref2[0], net2.getOutputs()[0], 0);
-                trainer.calculateDeltaForOutput(ref2, net2.getOutputLayer());
+                trainer.calculateError(ref1[0], net2.getOutputs()[0], 0);
+                trainer.calculateDeltaForOutput(ref1, net2.getOutputLayer());
                 trainer.calculateDeltaForHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
             } else if (counter == 3) {
                 net2.setInputData(inp4);
-                trainer.calculateError(ref1[0], net2.getOutputs()[0], 0);
-                trainer.calculateDeltaForOutput(ref1, net2.getOutputLayer());
+                trainer.calculateError(ref2[0], net2.getOutputs()[0], 0);
+                trainer.calculateDeltaForOutput(ref2, net2.getOutputLayer());
                 trainer.calculateDeltaForHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
             }
             net2.correctWeightsOfNetwork();
 
             counter++;
         }
-
-        //net2.setInputData(inp2);
+        net2.setInputData(inp2);
+        System.out.println(LocalTime.now());
+        net2.setInputData(inp);
         System.out.println(LocalTime.now());
     }
 }
