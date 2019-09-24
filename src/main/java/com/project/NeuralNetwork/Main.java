@@ -20,12 +20,12 @@ public class Main {
         inp4[0] = 0.0;
         inp4[1] = 1.0;
         System.out.println(LocalTime.now());
-        NeuralNetwork net2 = new NeuralNetwork(2, 3, 3, 1);
+        NeuralNetwork net2 = new NeuralNetwork(2, 1, 5, 1);
         System.out.println(LocalTime.now());
-        Trainer trainer = new Trainer(1, 10);
+        Trainer trainer = new Trainer(1, 0.1);
         int counter = 0;
         int globalCounter = 0;
-        while ((trainer.getError() > 0.02 || trainer.getError() == 0) && globalCounter < 10) {
+        while (globalCounter < 10000) {
             if (counter == 4) {
                 counter = 0;
                 globalCounter++;
@@ -59,8 +59,9 @@ public class Main {
 
             counter++;
         }
-
-        //net2.setInputData(inp2);
+        net2.setInputData(inp2);
+        System.out.println(LocalTime.now());
+        net2.setInputData(inp);
         System.out.println(LocalTime.now());
     }
 }
