@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
  */
 public class InsertionSort {
     public static void main(String[] args) {
+        int[] arr = new int[] {4, 34, 2, 43, 1, 54, 0};
+        sortByASC(arr);
         Map<Integer, Integer> map = new HashMap<>();
         map.put(4, 5);
         map.put(5, 8);
