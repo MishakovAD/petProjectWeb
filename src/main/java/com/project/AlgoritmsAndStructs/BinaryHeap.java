@@ -80,15 +80,23 @@ public class BinaryHeap {
 
     public static void main(String[] args) {
         BinaryHeap tree = new BinaryHeap();
+        Integer in = null;
+        meth(in);
         tree.insert(10, "A");
-        tree.insert(8, "B");
-        tree.insert(15, "C");
-        tree.insert(9, "D");
-        tree.insert(7, "D");
-        tree.insert(16, "D");
-        tree.insert(14, "D");
-        tree.insert(1, "D");
+        tree.insert(5, "B");
+        tree.insert(1, "C");
+        tree.insert(4, "D");
+        tree.insert(35, "D");
+        tree.insert(20, "D");
+        tree.insert(17, "D");
+        tree.insert(31, "D");
+        tree.insert(99, "D");
         int maxKey = tree.balance();
         System.out.println(tree);
+    }
+
+    public static void meth(Integer num) {
+        String str = String.valueOf(num);
+        System.out.println(str);
     }
 }
