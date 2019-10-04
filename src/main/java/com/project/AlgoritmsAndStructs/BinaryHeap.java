@@ -5,7 +5,7 @@ public class BinaryHeap {
     private Node rootNode;
 
     public <V extends  Object> boolean insert(int key, V data) {
-        System.out.println(data + " hashCode =  " + data.hashCode());
+        //System.out.println(data + " hashCode =  " + data.hashCode());
         Node node = new Node(key, data);
         if (rootNode == null) {
             rootNode = node;
@@ -80,23 +80,42 @@ public class BinaryHeap {
 
     public static void main(String[] args) {
         BinaryHeap tree = new BinaryHeap();
-        Integer in = null;
-        meth(in);
         tree.insert(10, "A");
         tree.insert(5, "B");
         tree.insert(1, "C");
         tree.insert(4, "D");
-        tree.insert(35, "D");
-        tree.insert(20, "D");
-        tree.insert(17, "D");
-        tree.insert(31, "D");
-        tree.insert(99, "D");
-        int maxKey = tree.balance();
-        System.out.println(tree);
+        tree.insert(35, "E");
+        tree.insert(20, "F");
+        tree.insert(17, "G");
+        tree.insert(31, "H");
+        tree.insert(99, "I");
+        tree.print(tree.rootNode);
+//        Node node = tree.rootNode;
+//        Node left;
+//        boolean leftVisited = true;
+//        Node right;
+//        while ((left = node.leftChild) != null && (right = node.rightChild) != null) {
+//            System.out.println(left.getData());
+//            System.out.println(right.getData());
+//            if (leftVisited) {
+//                node = right;
+//                leftVisited = false;
+//            } else {
+//                node = left;
+//                leftVisited = true;
+//            }
+//        }
+//        int maxKey = tree.balance();
+        //System.out.println(tree);
     }
 
-    public static void meth(Integer num) {
-        String str = String.valueOf(num);
-        System.out.println(str);
+    public void print(Node root) {
+        if (root == null) {
+            //System.out.println();
+            return;
+        }
+        print(root.leftChild);
+        System.out.println(root.getKey());
+        print(root.rightChild);
     }
 }
