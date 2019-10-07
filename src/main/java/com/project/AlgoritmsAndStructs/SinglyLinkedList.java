@@ -36,12 +36,11 @@ public class SinglyLinkedList {
         Node first = list.getFirst();
         Node current = first;
         Node next = current.next;
-        Node prev = current;
-        while (current.next != null) {
+        Node prev = null;
+        while (next != null) {
             next = current.next;
-            next.next = prev;
+            current.next = prev;
             prev = current;
-            current = current.next;
         }
         System.out.println();
     }
