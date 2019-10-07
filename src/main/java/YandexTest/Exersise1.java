@@ -34,5 +34,38 @@ private boolean m (Integer num) {
 }
  */
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public class Exersise1 {
+    public static void main(String[] args) {
+        List<Integer> list = new ArrayList<>();
+        list.add(5);
+        list.add(0);
+        list.add(0);
+        list.add(13);
+        list.add(14);
+        list.add(0);
+        list.add(0);
+        list.add(0);
+        list.add(25);
+        new Exersise1().solution(list);
+        System.out.println();
+    }
+
+    private void solution(List<Integer> list) {
+        Iterator iterator = list.iterator();
+        while (iterator.hasNext()) {
+            if ((Integer) iterator.next() == 0) {
+                iterator.remove();
+            }
+        }
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i) == 0) {
+                list.remove(i);
+                i--;
+            }
+        }
+    }
 }
