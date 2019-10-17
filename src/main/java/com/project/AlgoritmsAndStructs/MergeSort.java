@@ -1,10 +1,6 @@
 package com.project.AlgoritmsAndStructs;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Deque;
-import java.util.List;
 
 public class MergeSort<T extends Object> {
     public static void main(String[] args) {
