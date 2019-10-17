@@ -109,6 +109,16 @@ public class NeuronImpl implements Neuron {
         return function.getFuctType();
     }
 
+    @Override
+    public void setActivFuncType(Functions funcType) {
+        this.function = new ActivationFunction(funcType);
+    }
+
+    @Override
+    public void setParameterA(double a) {
+        this.a = a;
+    }
+
     //-----------------------------------Метод обратного распространения ошибки-----------------------------------\\
 
     @Override

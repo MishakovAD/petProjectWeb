@@ -65,6 +65,18 @@ public interface Neuron {
      */
     Functions whichActivationFunction();
 
+    /**
+     * Устанавливает тип функции активации.
+     * @param funcType тип функции активации
+     */
+    void setActivFuncType(Functions funcType);
+
+    /**
+     * Устанавливает значение параметра a - порога функции скачка/крутизна сигмы(тангенса)
+     * @param a параметр/крутизна
+     */
+    void setParameterA(double a);
+
     //-----------------------------------Метод обратного распространения ошибки-----------------------------------\\
 
     /**
