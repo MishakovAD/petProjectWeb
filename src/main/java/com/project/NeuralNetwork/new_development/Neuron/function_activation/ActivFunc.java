@@ -8,7 +8,7 @@ public interface ActivFunc {
      * @param a крутизна (для сигмоидальной и тангенсальной функции) или порог для скачкаобразной
      * @return выходной сигнал нейрона
      */
-    double calculation(double[] inputs, double[] weights, double a);
+    double calculation(double[] inputs, double[] weights, double... a);
 
     /**
      * Вычисляет выход нейрона, согласно выбранной функции.
@@ -23,5 +23,5 @@ public interface ActivFunc {
      * Возвращает тип функции активации.
      * @return тип функции активации
      */
-    Functions getFuctType();
+    Functions getFuncType();
 }

@@ -1,5 +1,8 @@
 package com.project.NeuralNetwork.new_development;
 
+import com.project.NeuralNetwork.new_development.Layers.HiddenLayer;
+import com.project.NeuralNetwork.new_development.Layers.InputLayer;
+import com.project.NeuralNetwork.new_development.Layers.OutputLayer;
 import com.project.NeuralNetwork.new_development.Neuron.HiddenNeuron;
 import com.project.NeuralNetwork.new_development.Neuron.InputNeuron;
 import com.project.NeuralNetwork.new_development.Neuron.OutputNeuron;
@@ -21,6 +24,13 @@ public class Test {
         Neuron output = new OutputNeuron(5);
         hidden.setInputs(inputs);
         output.setInputs(inputs);
+
+        InputLayer inputLayer = new InputLayer(5);
+        inputLayer.setData(inputs);
+        HiddenLayer hiddenLayer = new HiddenLayer(5, 5);
+        OutputLayer outputLayer = new OutputLayer(5, 5);
+        hiddenLayer.setData(inputs);
+        outputLayer.setData(inputs);
         System.out.println();
     }
 }

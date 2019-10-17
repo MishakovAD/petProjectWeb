@@ -5,13 +5,13 @@ import com.project.NeuralNetwork.new_development.Neuron.function_activation.Func
 
 public class SigmaFunction implements ActivFunc {
     @Override
-    public double calculation(double[] inputs, double[] weights, double a) {
+    public double calculation(double[] inputs, double[] weights, double... a) {
         double sum = 0;
         for (int i = 0; i < inputs.length; i++) {
             sum += inputs[i] * weights[i];
 
         }
-        return (1 / (1 + Math.exp(-a * sum)));
+        return (1 / (1 + Math.exp(-a[0] * sum)));
     }
 
     @Override
@@ -20,7 +20,7 @@ public class SigmaFunction implements ActivFunc {
     }
 
     @Override
-    public Functions getFuctType() {
+    public Functions getFuncType() {
         return Functions.SIGMA;
     }
 }

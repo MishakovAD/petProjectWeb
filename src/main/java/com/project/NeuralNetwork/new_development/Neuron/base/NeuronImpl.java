@@ -3,9 +3,13 @@ package com.project.NeuralNetwork.new_development.Neuron.base;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivFunc;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivationFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
+import com.project.NeuralNetwork.new_development.Neuron.function_activation.functions.user_function.UserFunction;
 
 import java.util.Arrays;
 
+/**
+ * Класс-предок для всех нейронов с реализацией основных методов.
+ */
 public class NeuronImpl implements Neuron {
     private double[] inputs;
     private double[] weights;
@@ -16,7 +20,10 @@ public class NeuronImpl implements Neuron {
     private double sigma;
     private double[] delta;
 
-
+    /**
+     * Создание нейрона с указание количества входов.
+     * @param inputsCount число входов
+     */
     public NeuronImpl(int inputsCount) {
         if (inputsCount < 1) {
             inputsCount = 1;
@@ -29,6 +36,11 @@ public class NeuronImpl implements Neuron {
         this.a = 1;
     }
 
+    /**
+     * Создание нейрона с указанием типа функции активации.
+     * @param inputsCount число входов
+     * @param function тип функции активации (из доступных в Enums)
+     */
     public NeuronImpl(int inputsCount, Functions function) {
         if (inputsCount < 1) {
             inputsCount = 1;
@@ -41,6 +53,12 @@ public class NeuronImpl implements Neuron {
         this.a = 1;
     }
 
+    /**
+     * Создание нейрона с указанием типа функции активации и параметра "а".
+     * @param inputsCount число входов
+     * @param function тип функции активации (из доступных в Enums)
+     * @param a крутизна/порог
+     */
     public NeuronImpl(int inputsCount, Functions function, double a) {
         if (inputsCount < 1) {
             inputsCount = 1;
@@ -51,6 +69,22 @@ public class NeuronImpl implements Neuron {
         this.delta = new double[inputsCount];
         this.function = new ActivationFunction(function);
         this.a = a;
+    }
+
+    /**
+     * Создание нейрона с использованием пользовательской функции активации.
+     * @param inputsCount число входов
+     * @param userFunction пользовательская функция активации
+     */
+    public NeuronImpl(int inputsCount, UserFunction userFunction) {
+        if (inputsCount < 1) {
+            inputsCount = 1;
+        }
+        this.inputs = new double[inputsCount];
+        this.weights = new double[inputsCount];
+        this.weights = Arrays.stream(this.weights).map(weight -> weight += Math.random()).toArray();
+        this.delta = new double[inputsCount];
+        this.function = new ActivationFunction(userFunction);
     }
 
     @Override
@@ -106,7 +140,7 @@ public class NeuronImpl implements Neuron {
 
     @Override
     public Functions whichActivationFunction() {
-        return function.getFuctType();
+        return function.getFuncType();
     }
 
     @Override
