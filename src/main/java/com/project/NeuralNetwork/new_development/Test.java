@@ -19,7 +19,7 @@ public class Test {
         double[] inp4 = new double[2];
         inp4[0] = 0.0;
         inp4[1] = 1.0;
-        NeuralNetwork net2 = new NeuralNetwork(2, 2, 5, 1);
+        NeuralNetwork net2 = new NeuralNetwork(2, 2, 3, 1);
         Teacher trainer = new Teacher(net2.getFunctionType(), 10);
 
         int globalCounter = 0;
