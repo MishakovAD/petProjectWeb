@@ -35,4 +35,17 @@ public interface Layer {
      * @return нейрон
      */
     Neuron getNeuron(int index);
+
+    /**
+     * Возвращает выход нейронов.
+     * @return выход нейрона
+     */
+    double[] getOutput();
+
+    /**
+     * Возвращает выход конкретного нейрона
+     * @param index индекс нейрона
+     * @return выход нейрона
+     */
+    double getOutputFromNeuron(int index);
 }

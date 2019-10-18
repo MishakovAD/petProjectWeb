@@ -1,36 +1,59 @@
 package com.project.NeuralNetwork.new_development;
 
-import com.project.NeuralNetwork.new_development.Layers.HiddenLayer;
-import com.project.NeuralNetwork.new_development.Layers.InputLayer;
-import com.project.NeuralNetwork.new_development.Layers.OutputLayer;
-import com.project.NeuralNetwork.new_development.Neuron.HiddenNeuron;
-import com.project.NeuralNetwork.new_development.Neuron.InputNeuron;
-import com.project.NeuralNetwork.new_development.Neuron.OutputNeuron;
-import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
-import com.project.NeuralNetwork.new_development.Neuron.base.NeuronImpl;
+import com.project.NeuralNetwork.new_development.NeuralNetwork.NeuralNetwork;
+import com.project.NeuralNetwork.new_development.NeuralNetwork.School.Teacher;
+
+import java.time.LocalTime;
 
 public class Test {
     public static void main(String[] args) {
-        Neuron n = new NeuronImpl(5);
-        Neuron input = new InputNeuron();
-        input.setInput(1);
-        double[] inputs = new double[5];
-        inputs[0] = 1;
-        inputs[1] = 0;
-        inputs[2] = 1;
-        inputs[3] = 0;
-        inputs[4] = 1;
-        Neuron hidden = new HiddenNeuron(5);
-        Neuron output = new OutputNeuron(5);
-        hidden.setInputs(inputs);
-        output.setInputs(inputs);
+        double[] inp1 = new double[2];
+        inp1[0] = 1.0;
+        inp1[1] = 0.0;
+        double[] inp2 = new double[2];
+        inp2[0] = 0.0;
+        inp2[1] = 0.0;
+        double[] inp3 = new double[2];
+        inp3[0] = 1.0;
+        inp3[1] = 1.0;
+        double[] inp4 = new double[2];
+        inp4[0] = 0.0;
+        inp4[1] = 1.0;
+        NeuralNetwork net2 = new NeuralNetwork(2, 2, 5, 1);
+        Teacher trainer = new Teacher(net2.getFunctionType(), 10);
 
-        InputLayer inputLayer = new InputLayer(5);
-        inputLayer.setData(inputs);
-        HiddenLayer hiddenLayer = new HiddenLayer(5, 5);
-        OutputLayer outputLayer = new OutputLayer(5, 5);
-        hiddenLayer.setData(inputs);
-        outputLayer.setData(inputs);
+        int globalCounter = 0;
+        int counter = 0;
+        System.out.println(LocalTime.now());
+        while (globalCounter < 10000000) {
+            if (counter == 4) {
+                counter = 0;
+                globalCounter++;
+            }
+            double[] ref1 = new double[1];
+            double[] ref2 = new double[1];
+            ref1[0] = 1.0;
+            ref2[0] = 0.0;
+            if (counter == 0) {
+                net2.setInputData(inp1);
+                trainer.calculateDeltaOutput(ref2, net2.getOutputLayer());
+                trainer.calculateDeltaHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
+            } else if (counter == 1) {
+                net2.setInputData(inp2);
+                trainer.calculateDeltaOutput(ref2, net2.getOutputLayer());
+                trainer.calculateDeltaHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
+            } else if (counter == 2) {
+                net2.setInputData(inp3);
+                trainer.calculateDeltaOutput(ref1, net2.getOutputLayer());
+                trainer.calculateDeltaHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
+            } else if (counter == 3) {
+                net2.setInputData(inp4);
+                trainer.calculateDeltaOutput(ref2, net2.getOutputLayer());
+                trainer.calculateDeltaHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
+            }
+            counter++;
+        }
+        System.out.println(LocalTime.now());
         System.out.println();
     }
 }

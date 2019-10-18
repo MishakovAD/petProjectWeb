@@ -24,4 +24,10 @@ public interface ActivFunc {
      * @return тип функции активации
      */
     Functions getFuncType();
+
+    /**
+     * Возвращает параметры, с которыми вычислялась функции активации.
+     * @return параметры ФА
+     */
+    double[] getParams();
 }

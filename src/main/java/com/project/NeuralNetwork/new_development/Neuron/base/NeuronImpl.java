@@ -153,11 +153,19 @@ public class NeuronImpl implements Neuron {
         this.a = a;
     }
 
+    @Override
+    public double[] getParams() {
+        return function.getParams();
+    }
+
     //-----------------------------------Метод обратного распространения ошибки-----------------------------------\\
 
     @Override
     public void setDelta(double[] delta) {
         this.delta = delta;
+        for (int i = 0; i < this.weights.length; i++) {
+            this.weights[i] = this.weights[i] + delta[i];
+        }
     }
 
     @Override
@@ -173,20 +181,5 @@ public class NeuronImpl implements Neuron {
     @Override
     public double getSigma() {
         return this.sigma;
-    }
-
-    @Override
-    public void recalculateOutput() {
-        //TODO: подумать о необходимости метода. Возможно достаточно его внести в setDelta() чтобы там сразу шел пересчет.
-        correctWeights();
-        calculation();
-    }
-
-    @Override
-    public void correctWeights() {
-        //TODO: подумать о необходимости метода. Возможно достаточно его внести в setDelta() чтобы там сразу шел пересчет.
-        for (int i = 0; i < this.weights.length; i++) {
-            this.weights[i] = this.weights[i] + this.delta[i];
-        }
     }
 }

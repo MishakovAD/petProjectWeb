@@ -11,6 +11,7 @@ public class ActivationFunction implements ActivFunc {
     private ActivFunc function;
     private UserFunction userFunction;
     private Functions funcType;
+    private double[] params;
 
     public ActivationFunction(Functions func) {
         this.funcType = func;
@@ -27,7 +28,6 @@ public class ActivationFunction implements ActivFunc {
             default:
                 this.function = new SigmaFunction();
                 break;
-
         }
     }
 
@@ -38,6 +38,7 @@ public class ActivationFunction implements ActivFunc {
 
     @Override
     public double calculation(double[] inputs, double[] weights, double... a) {
+        params = a;
         if (USER.equals(funcType)) {
             return userFunction.calculation(inputs, weights, a);
         } else {
@@ -47,15 +48,22 @@ public class ActivationFunction implements ActivFunc {
 
     @Override
     public double calculation(double[] inputs, double[] weights) {
+        params = new double[1];
+        params[0] = 1;
         if (USER.equals(funcType)) {
             return userFunction.calculation(inputs, weights);
         } else {
-            return function.calculation(inputs, weights);
+            return function.calculation(inputs, weights, params);
         }
     }
 
     @Override
     public Functions getFuncType() {
         return funcType;
+    }
+
+    @Override
+    public double[] getParams() {
+        return params;
     }
 }

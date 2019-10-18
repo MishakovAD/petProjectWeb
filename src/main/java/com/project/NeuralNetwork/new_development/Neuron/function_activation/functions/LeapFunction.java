@@ -4,13 +4,16 @@ import com.project.NeuralNetwork.new_development.Neuron.function_activation.Acti
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 
 public class LeapFunction implements ActivFunc {
+    private double[] params;
     @Override
     public double calculation(double[] inputs, double[] weights, double... a) {
+        params = a;
         double sum = 0;
         for (int i = 0; i < inputs.length; i++) {
             sum += inputs[i] * weights[i];
-
         }
+        int offset = 1;
+        sum += offset;
         if (sum >= a[0]) {
             return 1;
         } else {
@@ -26,5 +29,10 @@ public class LeapFunction implements ActivFunc {
     @Override
     public Functions getFuncType() {
         return Functions.LEAP;
+    }
+
+    @Override
+    public double[] getParams() {
+        return params;
     }
 }

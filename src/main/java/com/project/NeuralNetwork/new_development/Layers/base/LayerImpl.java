@@ -8,6 +8,8 @@ import com.project.NeuralNetwork.new_development.Neuron.base.NeuronImpl;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.functions.user_function.UserFunction;
 
+import static com.project.NeuralNetwork.new_development.Layers.base.Layers.INPUT_LAYER;
+
 /**
  * Класс предок для всех классов слоев нейронной сети.
  * Содержит в себе реализацию основных методов, а так же
@@ -34,7 +36,7 @@ public class LayerImpl implements Layer {
             switch (layer) {
                 case INPUT_LAYER:
                     neurons[i] = new InputNeuron();
-                    layerType = Layers.INPUT_LAYER;
+                    layerType = INPUT_LAYER;
                     break;
                 case HIDDEN_LAYER:
                     neurons[i] = new HiddenNeuron(inputsCount);
@@ -66,7 +68,7 @@ public class LayerImpl implements Layer {
             switch (layer) {
                 case INPUT_LAYER:
                     neurons[i] = new InputNeuron();
-                    layerType = Layers.INPUT_LAYER;
+                    layerType = INPUT_LAYER;
                     break;
                 case HIDDEN_LAYER:
                     neurons[i] = new HiddenNeuron(inputsCount, funcType);
@@ -99,7 +101,7 @@ public class LayerImpl implements Layer {
             switch (layer) {
                 case INPUT_LAYER:
                     neurons[i] = new InputNeuron();
-                    layerType = Layers.INPUT_LAYER;
+                    layerType = INPUT_LAYER;
                     break;
                 case HIDDEN_LAYER:
                     neurons[i] = new HiddenNeuron(inputsCount, funcType, a);
@@ -131,7 +133,7 @@ public class LayerImpl implements Layer {
             switch (layer) {
                 case INPUT_LAYER:
                     neurons[i] = new InputNeuron();
-                    layerType = Layers.INPUT_LAYER;
+                    layerType = INPUT_LAYER;
                     break;
                 case HIDDEN_LAYER:
                     neurons[i] = new HiddenNeuron(inputsCount, userFunction);
@@ -148,28 +150,27 @@ public class LayerImpl implements Layer {
 
     @Override
     public int getNeuronsCount() {
-        return 0;
+        return neurons.length;
     }
 
     @Override
     public int getInputsCount() {
+        if (neurons != null && neurons[0] != null) {
+            neurons[0].getInputsCount();
+        }
         return 0;
     }
 
     @Override
     public void setData(double[] data) {
         this.data = data;
-        if (Layers.INPUT_LAYER.equals(layerType)) {
-            if (neurons.length > data.length) {
-                for (int i = 0; i < data.length; i++) {
-                    neurons[i].setInput(data[i]);
-                }
-                //или выкидываем экспешн, кроме случаев, когда длины равны.
+        if (INPUT_LAYER.equals(layerType)) {
+            if (neurons.length != data.length) {
+                //throw new DataIsNotCorrectException()
             } else {
                 for (int i = 0; i < neurons.length; i++) {
                     neurons[i].setInput(data[i]);
                 }
-                //или выкидываем экспешн, кроме случаев, когда длины равны.
             }
         } else {
             for (int i = 0; i < neurons.length; i++) {
@@ -186,11 +187,26 @@ public class LayerImpl implements Layer {
 
     @Override
     public Neuron[] getNeuronsArray() {
-        return new Neuron[0];
+        return neurons;
     }
 
     @Override
     public Neuron getNeuron(int index) {
-        return null;
+        return neurons[index];
     }
+
+    @Override
+    public double[] getOutput() {
+        double[] output = new double[neurons.length];
+        for (int i = 0; i < neurons.length; i++) {
+            output[i] = neurons[i].getOutput();
+        }
+        return output;
+    }
+
+    @Override
+    public double getOutputFromNeuron(int index) {
+        return neurons[index].getOutput();
+    }
+
 }
