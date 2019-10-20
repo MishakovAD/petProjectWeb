@@ -75,7 +75,7 @@ public class Teacher implements ITeacher {
 
 
     private void calculateDeltaHidden(HiddenLayer hiddenLayer, Layer previousLayer) {
-        int outputCount = previousLayer.getInputsCount();
+        int prevNeuronsCount = previousLayer.getNeuronsCount();
         int neuronsCount = hiddenLayer.getNeuronsCount();
         for (int i = 0; i < neuronsCount; i++) {
             HiddenNeuron hiddenNeuron = (HiddenNeuron) hiddenLayer.getNeuron(i);
@@ -84,7 +84,7 @@ public class Teacher implements ITeacher {
             double[] sigmaPrevious = new double[neuronsCount];
             double sigmaCurrent;
             for (int k = 0; k < neuronsCount; k++) { //считаем для каждого нейрона
-                for (int m = 0; m < outputCount; m++) { //сумму ошибок на предыдущем уровне
+                for (int m = 0; m < prevNeuronsCount; m++) { //сумму ошибок на предыдущем уровне
                     sigmaPrevious[k] += previousLayer.getNeuron(m).getSigma() * previousLayer.getNeuron(m).getWeight(k);
                 }
             }

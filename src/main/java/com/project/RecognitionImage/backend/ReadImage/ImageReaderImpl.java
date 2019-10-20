@@ -33,9 +33,11 @@ public class ImageReaderImpl implements ImageReader {
         mc5.setTo(new Scalar(5));
         System.out.println("OpenCV Mat data:\n" + m.dump());
 
-        String filename = "C:/b.png";
+        //String filename = "C:/b.png";
+        String filename = "C:/Java_Projects/petProjectWeb/src/main/java/com/project/NeuralNetwork/new_development/NeuralNetwork/School/test_set/a_10x10.png";
         ImageReaderImpl i = new ImageReaderImpl();
-        //i.readeImage("C:/b.png");
+        i.readeImage(filename);
+        System.out.println();
     }
 
     @Override

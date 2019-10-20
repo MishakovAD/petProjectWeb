@@ -18,6 +18,7 @@ import static com.project.NeuralNetwork.new_development.Layers.base.Layers.INPUT
 public class LayerImpl implements Layer {
     private Neuron[] neurons;
     private double[] data;
+    private double[] outputs;
     private Layers layerType;
 
     /**
@@ -156,7 +157,7 @@ public class LayerImpl implements Layer {
     @Override
     public int getInputsCount() {
         if (neurons != null && neurons[0] != null) {
-            neurons[0].getInputsCount();
+            return neurons[0].getInputsCount();
         }
         return 0;
     }
@@ -201,6 +202,7 @@ public class LayerImpl implements Layer {
         for (int i = 0; i < neurons.length; i++) {
             output[i] = neurons[i].getOutput();
         }
+        this.outputs = output;
         return output;
     }
 

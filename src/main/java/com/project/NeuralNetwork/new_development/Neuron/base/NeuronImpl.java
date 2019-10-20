@@ -93,6 +93,7 @@ public class NeuronImpl implements Neuron {
         calculation();
     }
 
+    //Исключительно для входного слоя
     @Override
     public void setInput(double inputData) {
         this.inputs[0] = inputData;

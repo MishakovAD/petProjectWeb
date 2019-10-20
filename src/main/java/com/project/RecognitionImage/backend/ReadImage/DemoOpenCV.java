@@ -9,6 +9,8 @@ import org.bytedeco.opencv.opencv_core.*;
 import org.bytedeco.opencv.opencv_imgproc.*;
 import org.bytedeco.opencv.opencv_calib3d.*;
 import org.bytedeco.opencv.opencv_objdetect.*;
+
+import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getGrayMat;
 import static org.bytedeco.opencv.global.opencv_core.*;
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
 import static org.bytedeco.opencv.global.opencv_calib3d.*;

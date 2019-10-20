@@ -3,18 +3,14 @@ package com.project.NeuralNetwork.new_development.Neuron.function_activation.fun
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivFunc;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 
+import static com.project.NeuralNetwork.new_development.HelpUtils.HelpUtils.adder;
+
 public class SigmaFunction implements ActivFunc {
     private double[] params;
     @Override
     public double calculation(double[] inputs, double[] weights, double... a) {
         params = a;
-        double sum = 0;
-        for (int i = 0; i < inputs.length; i++) {
-            sum += inputs[i] * weights[i];
-
-        }
-        int offset = 1;
-        sum += offset;
+        double sum = adder(inputs, weights);
         return (1 / (1 + Math.exp(-a[0] * sum)));
     }
 
