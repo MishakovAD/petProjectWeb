@@ -165,6 +165,7 @@ public class LayerImpl implements Layer {
     @Override
     public void setData(double[] data) {
         this.data = data;
+        this.outputs = new double[neurons.length];
         if (INPUT_LAYER.equals(layerType)) {
             if (neurons.length != data.length) {
                 //throw new DataIsNotCorrectException()
@@ -181,6 +182,7 @@ public class LayerImpl implements Layer {
                     //throw new DataIsNotCorrectException()
                 } else {
                     neurons[i].setInputs(data);
+                    outputs[i] = neurons[i].getOutput();
                 }
             }
         }

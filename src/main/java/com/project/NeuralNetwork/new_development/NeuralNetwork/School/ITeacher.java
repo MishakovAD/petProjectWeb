@@ -4,15 +4,28 @@ import com.project.NeuralNetwork.new_development.Layers.HiddenLayer;
 import com.project.NeuralNetwork.new_development.Layers.OutputLayer;
 import com.project.NeuralNetwork.new_development.Layers.base.Layer;
 
+import java.util.List;
+
 public interface ITeacher {
     /**
      * Метод подсчета ошибки.
-     * @param ideal правильное значение
-     * @param result выход нейронной сети
-     * @param counter счетчик итераций (не эпох)
+     * @param ideal вектор верного ответа НС (размер == числу выходных нейронов)
+     * @param result вектор выходных значений НС
      * @return значение ошибки
      */
-    double calculateError(double ideal, double result, int counter);
+    double calculateError(double ideal[], double[] result);
+
+    /**
+     * Возвращает лист ранее посчитанных ошибок.
+     * Можно отследить уменьшение или увеличение ошибки.
+     * @return лист всех посчитанных ошибок.
+     */
+    List<Double> getPreviousErrors();
+
+    /**
+     * Выполняет очисту "записанных" ошибок НС.
+     */
+    void clearErrors();
 
     /**
      * Метод подстчета delta для выходнго слоя и запуска корректировки весов.
@@ -27,4 +40,10 @@ public interface ITeacher {
      * @param outputLayer выходной слой для расчетов
      */
     void calculateDeltaHidden(HiddenLayer[] hiddenLayers_array, OutputLayer outputLayer);
+
+    /**
+     * Устанавливает скорость обучения НС.
+     * @param speed скорость обучения
+     */
+    void setSpeed(double speed);
 }
