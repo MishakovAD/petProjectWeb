@@ -151,7 +151,7 @@ public class SplitImageToChar implements Splitter {
         }
         int len = pointsLeftUp.size();
         for (int i = 0; i < len - 1; i++) {
-            if (Math.abs(pointsLeftUp.get(i).x - pointsRightUp.get(i).x) - Math.abs(pointsLeftUp.get(i+1).x - pointsRightUp.get(i+1).x) > 10) {
+            if (Math.abs(pointsLeftUp.get(i).x - pointsRightUp.get(i).x) - Math.abs(pointsLeftUp.get(i+1).x - pointsRightUp.get(i+1).x) > 10) { //доработать это место, для верного разделения Ы
                 pointsLeftUp.remove(i+1);
                 pointsLeftDown.remove(i+1);
                 pointsRightUp.remove(i);
