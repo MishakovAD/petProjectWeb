@@ -104,8 +104,8 @@ public class Test {
         double[] inp4 = new double[2];
         inp4[0] = 0.0;
         inp4[1] = 1.0;
-        NeuralNetwork net2 = new NeuralNetwork(2, 1, 2, 1);
-        Teacher trainer = new Teacher(net2.getFunctionType(), 10);
+        NeuralNetwork net2 = new NeuralNetwork(2, 1, 4, 1);
+        Teacher trainer = new Teacher(net2.getFunctionType(), 0.1);
         double[] ref1 = new double[1];
         double[] ref2 = new double[1];
         ref1[0] = 1.0;
@@ -120,20 +120,17 @@ public class Test {
             }
             if (counter == 0) {
                 net2.setInputData(inp1);
-                trainer.calculateDeltaOutput(ref2, net2.getOutputLayer());
-                trainer.calculateDeltaHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
+                trainer.calculateDelta(ref1, net2.getOutputLayer(), net2.getHiddenLayerArray());
             } else if (counter == 1) {
                 net2.setInputData(inp2);
-                trainer.calculateDeltaOutput(ref2, net2.getOutputLayer());
-                trainer.calculateDeltaHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
+                trainer.calculateDelta(ref2, net2.getOutputLayer(), net2.getHiddenLayerArray());
             } else if (counter == 2) {
                 net2.setInputData(inp3);
-                trainer.calculateDeltaOutput(ref1, net2.getOutputLayer());
-                trainer.calculateDeltaHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
+                trainer.calculateDelta(ref2, net2.getOutputLayer(), net2.getHiddenLayerArray());
             } else if (counter == 3) {
                 net2.setInputData(inp4);
-                trainer.calculateDeltaOutput(ref2, net2.getOutputLayer());
-                trainer.calculateDeltaHidden(net2.getHiddenLayerArray(), net2.getOutputLayer());
+                trainer.calculateDelta(ref1, net2.getOutputLayer(), net2.getHiddenLayerArray());
+
             }
             counter++;
         }

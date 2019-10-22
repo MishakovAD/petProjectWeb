@@ -85,7 +85,26 @@ public class Teacher implements ITeacher {
     }
 
     @Override
-    public void calculateDeltaOutput(double[] ideal, OutputLayer outputLayer) {
+    public void calculateDelta(double[] ideal, OutputLayer outputLayer, HiddenLayer[] hiddenLayers_array) {
+        List<double[]> outputDelta = calculateDeltaOutput(ideal, outputLayer);
+        List<List<double[]>> hiddenDelta = calculateDeltaHidden(hiddenLayers_array, outputLayer);
+        for (int i = 0; i < outputDelta.size(); i++) {
+            outputLayer.getNeuron(i).setDelta(outputDelta.get(i));
+        }
+        for (int i = 0; i < hiddenLayers_array.length; i++) {
+            for (int j = 0; j < hiddenLayers_array[i].getNeuronsCount(); j++) {
+                hiddenLayers_array[i].getNeuron(j).setDelta(hiddenDelta.get(hiddenLayers_array.length-1-i).get(j));
+            }
+        }
+    }
+
+    @Override
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    private List<double[]> calculateDeltaOutput(double[] ideal, OutputLayer outputLayer) {
+        List<double[]> deltaList = new LinkedList<>();
         int countNeurons = outputLayer.getNeuronsCount();
         for (int i = 0; i < countNeurons; i++) {
             OutputNeuron outputNeuron = (OutputNeuron) outputLayer.getNeuron(i);
@@ -99,27 +118,34 @@ public class Teacher implements ITeacher {
             for (int j = 0; j < inputCount; j++) {
                 delta[j] = this.speed * sigma * outputNeuron.getInput(j);
             }
-            outputNeuron.setDelta(delta);
+            deltaList.add(delta);
         }
+        return deltaList;
     }
 
-    @Override
-    public void calculateDeltaHidden(HiddenLayer[] hiddenLayers_array, OutputLayer outputLayer) {
+    /**
+     * Внешний List характеризует массив скрытых слоев,
+     * внутренний - нейроны каждого слоя,
+     * массив double - то, как изменять веса отдельного нейрона.
+     * @param hiddenLayers_array массив скрытых слоев
+     * @param outputLayer выходной слой
+     * @return Лист листов массива double для изменения весов нейронов скрытого слоя
+     */
+    private List<List<double[]>> calculateDeltaHidden(HiddenLayer[] hiddenLayers_array, OutputLayer outputLayer) {
+        List<List<double[]>> hiddenArrayDeltaList = new LinkedList<>();
         int hiddenLayersCount = hiddenLayers_array.length;
         int lastLevel = hiddenLayersCount - 1;
-        calculateDeltaHidden(hiddenLayers_array[lastLevel], outputLayer);
+        List<double[]> deltaList = calculateDeltaHidden(hiddenLayers_array[lastLevel], outputLayer);
+        hiddenArrayDeltaList.add(deltaList);
         for (int i = hiddenLayersCount-2; i >= 0; i--) {
-            calculateDeltaHidden(hiddenLayers_array[i], hiddenLayers_array[i+1]);
+            deltaList = calculateDeltaHidden(hiddenLayers_array[i], hiddenLayers_array[i+1]);
+            hiddenArrayDeltaList.add(deltaList);
         }
+        return hiddenArrayDeltaList;
     }
 
-    @Override
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-
-
-    private void calculateDeltaHidden(HiddenLayer hiddenLayer, Layer previousLayer) {
+    private List<double[]> calculateDeltaHidden(HiddenLayer hiddenLayer, Layer previousLayer) {
+        List<double[]> deltaList = new LinkedList<>();
         int prevNeuronsCount = previousLayer.getNeuronsCount();
         int neuronsCount = hiddenLayer.getNeuronsCount();
         for (int i = 0; i < neuronsCount; i++) {
@@ -141,7 +167,8 @@ public class Teacher implements ITeacher {
             for (int j = 0; j < inputCount; j++) {
                 delta[j] = this.speed * sigmaCurrent * hiddenNeuron.getInput(j);
             }
-            hiddenNeuron.setDelta(delta);
+            deltaList.add(delta);
         }
+        return deltaList;
     }
 }

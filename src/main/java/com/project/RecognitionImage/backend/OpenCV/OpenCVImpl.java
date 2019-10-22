@@ -3,6 +3,8 @@ package com.project.RecognitionImage.backend.OpenCV;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -22,7 +24,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.blackAndWhiteMat;
 import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.blackGreyAndWhiteMat;
@@ -31,12 +35,17 @@ import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getG
 import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getMatWithBordersFromSobel;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
 import static org.opencv.imgcodecs.Imgcodecs.imwrite;
+import static org.opencv.imgproc.Imgproc.CHAIN_APPROX_NONE;
 import static org.opencv.imgproc.Imgproc.Canny;
 import static org.opencv.imgproc.Imgproc.GaussianBlur;
+import static org.opencv.imgproc.Imgproc.RETR_EXTERNAL;
 import static org.opencv.imgproc.Imgproc.THRESH_BINARY;
 import static org.opencv.imgproc.Imgproc.THRESH_OTSU;
 import static org.opencv.imgproc.Imgproc.cvtColor;
+import static org.opencv.imgproc.Imgproc.drawContours;
 import static org.opencv.imgproc.Imgproc.filter2D;
+import static org.opencv.imgproc.Imgproc.findContours;
+import static org.opencv.imgproc.Imgproc.line;
 import static org.opencv.imgproc.Imgproc.threshold;
 
 public class OpenCVImpl implements OpenCV {
@@ -48,41 +57,44 @@ public class OpenCVImpl implements OpenCV {
         OpenCVImpl cv = new OpenCVImpl();
         cv.init();
 
-        //Mat imgGray = cv.loadImage(path + "russian_text.PNG", Imgcodecs.IMREAD_GRAYSCALE);
-        Mat imgGray = cv.loadImage(path + "1.jpg", Imgcodecs.IMREAD_GRAYSCALE);
-        Mat processImg = cv.processingImage(imgGray);
-        Mat border = getMatWithBordersFromSobel(imgGray);
-        Mat bw = blackAndWhiteMat(imgGray);
-        Mat bwg = blackGreyAndWhiteMat(imgGray);
-        Mat result = new Mat(imgGray.rows(), imgGray.cols(), CvType.CV_8U);
-        for (int i = 0; i < imgGray.rows(); i++) {
-            for (int j = 0; j < imgGray.cols(); j++) {
-                double currentPixel = bwg.get(i, j)[0];
-                if (currentPixel == 0) {
-                    result.put(i, j, 0);
-                } else {
-                    result.put(i, j, 255);
-                }
-            }
-        }
-//        showImage(processImg, "Processing img");
-//        showImage(imgGray, "Original");
-//        showImage(border, "Border");
-        showImage(result, "Result");
-        showImage(bw, "BW");
-        showImage(bwg, "BWG");
+        Mat imgGray = cv.loadImage(path + "russian_text.png", Imgcodecs.IMREAD_GRAYSCALE);
+        //Mat imgGray = cv.loadImage(path + "text.jpg", Imgcodecs.IMREAD_GRAYSCALE);
 
-
-//        Mat result1234 = cv.processingImage(result2);
-//        boolean saveFile = imwrite("C:/result.jpg", result1234);
-
-
-        //        result = blackAndWhiteMat(img);
-//        Mat kernel =  getStructuringElement(MORPH_CROSS, new Size(3, 3)); //Крутой метод.
-//        //для вычисления границ посмотрет ьметоды Sobel and Scharr
-//        erode(res, result2, kernel);
+        showImage(imgGray, "Result");
+//        Mat processImg = cv.processingImage(imgGray);
+//        Mat border = getMatWithBordersFromSobel(imgGray);
+//        Mat bw = blackAndWhiteMat(imgGray);
+//        Mat bwg = blackGreyAndWhiteMat(imgGray);
+//        Mat result = new Mat(imgGray.rows(), imgGray.cols(), CvType.CV_8U);
+//        for (int i = 0; i < imgGray.rows(); i++) {
+//            for (int j = 0; j < imgGray.cols(); j++) {
+//                double currentPixel = bwg.get(i, j)[0];
+//                if (currentPixel == 0) {
+//                    result.put(i, j, 0);
+//                } else {
+//                    result.put(i, j, 255);
+//                }
+//            }
+//        }
+////        showImage(processImg, "Processing img");
+////        showImage(imgGray, "Original");
+////        showImage(border, "Border");
+//        showImage(result, "Result");
+//        showImage(bw, "BW");
+//        showImage(bwg, "BWG");
+//
+//
+////        Mat result1234 = cv.processingImage(result2);
+////        boolean saveFile = imwrite("C:/result.jpg", result1234);
+//
+//
+//        //        result = blackAndWhiteMat(img);
+////        Mat kernel =  getStructuringElement(MORPH_CROSS, new Size(3, 3)); //Крутой метод.
+////        //для вычисления границ посмотрет ьметоды Sobel and Scharr
+////        erode(res, result2, kernel);
 
     }
+
 
     @Override
     public void init() {

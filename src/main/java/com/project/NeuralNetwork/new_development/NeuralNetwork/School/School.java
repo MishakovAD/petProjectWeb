@@ -32,8 +32,7 @@ public class School implements ISchool {
             ILesson lesson = book.getLesson();
             net.setInputData(lesson.getQuestion());
             teacher.calculateError(lesson.getAnswer(), net.getOutput());
-            teacher.calculateDeltaOutput(lesson.getAnswer(), net.getOutputLayer());
-            teacher.calculateDeltaHidden(net.getHiddenLayerArray(), net.getOutputLayer());
+            teacher.calculateDelta(lesson.getAnswer(), net.getOutputLayer(), net.getHiddenLayerArray());
         }
     }
 }
