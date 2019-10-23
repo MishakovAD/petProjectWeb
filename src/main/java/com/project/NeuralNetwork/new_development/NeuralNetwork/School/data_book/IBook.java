@@ -15,6 +15,21 @@ public interface IBook {
     boolean addData(double[] data, double[] answer);
 
     /**
+     * Устанавливает новое значение на место старой страницы.
+     * @param index индекс заменяемой страницы
+     * @param data новое значение вопроса
+     * @return true, если замена прошла успешно
+     */
+    boolean setData(int index, double[] data);
+
+    /**
+     * Возвращает вопрос по индексу
+     * @param index индекс вопроса
+     * @return вопрос
+     */
+    double[] getQuestion(int index);
+
+    /**
      * Возвращает "урок" для НС.
      * @return "урок" для НС.
      */

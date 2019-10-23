@@ -4,6 +4,7 @@ import com.project.NeuralNetwork.new_development.Neuron.function_activation.Acti
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 
 //|TODO: реализовать данную функцию, ее производную, добавит ьв типы функций и везде, где может использоваться в switch
+//f(x) = ln(1+e^x)
 public class ReLUFunctiom implements ActivFunc {
     @Override
     public double calculation(double[] inputs, double[] weights, double... a) {

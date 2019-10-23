@@ -31,7 +31,7 @@ public class School implements ISchool {
             epochCount--;
             ILesson lesson = book.getLesson();
             net.setInputData(lesson.getQuestion());
-            teacher.calculateError(lesson.getAnswer(), net.getOutput());
+            //teacher.calculateError(lesson.getAnswer(), net.getOutput());
             teacher.calculateDelta(lesson.getAnswer(), net.getOutputLayer(), net.getHiddenLayerArray());
         }
     }

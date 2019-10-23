@@ -23,4 +23,5 @@ public interface ISchool {
      * @return true если обучение прошло успешно
      */
     boolean teach(Network net, DerivativeUserFunction derivativeUserFunction, IBook book, double startSpeed);
+    //TODO: в этот метод добавить еще одну книгу для проверочных данных. И когда обучение в методе закончится - делать проверку по этим данным и возвращать тру, если результат положительный
 }
