@@ -7,7 +7,8 @@ import com.project.NeuralNetwork.new_development.Neuron.function_activation.Func
 import static com.project.NeuralNetwork.new_development.HelpUtils.HelpUtils.adder;
 
 //|TODO: реализовать данную функцию, ее производную, добавит ьв типы функций и везде, где может использоваться в switch
-//f(x) = ln(1+e^x)
+//f(x) = ln(1+e^x) - это приближение к ReLU - softplus
+//https://stepik.org/lesson/24679/step/11?unit=7041
 public class ReLUFunctiom implements ActivFunc {
     private double[] params;
     @Override
