@@ -22,10 +22,10 @@ public class Test {
         OpenCV openCV = new OpenCVImpl();
         openCV.init();
 
-        NeuralNetwork net2 = new NeuralNetwork(100, 2, 16, 10);
-        ISchool school = new School(100000000);
+        NeuralNetwork net2 = new NeuralNetwork(100, 1, 10, 10);
+        ISchool school = new School(10000000);
         IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums.jpg");
-        IBook bookTest = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/7.jpg");
+        IBook bookTest = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums_test.jpg");
 
         System.out.println(LocalTime.now());
         school.teach(net2, book, 1);
