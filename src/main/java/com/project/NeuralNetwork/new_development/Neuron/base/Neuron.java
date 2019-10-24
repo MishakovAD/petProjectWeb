@@ -72,6 +72,12 @@ public interface Neuron {
     void setActivFuncType(Functions funcType);
 
     /**
+     * Возвращает тип функции активации нейрона.
+     * @return тип ФА
+     */
+    Functions getFuncType();
+
+    /**
      * Устанавливает значение параметра a - порога функции скачка/крутизна сигмы(тангенса)
      * @param a параметр/крутизна
      */

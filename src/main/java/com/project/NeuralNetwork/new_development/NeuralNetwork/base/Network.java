@@ -2,6 +2,7 @@ package com.project.NeuralNetwork.new_development.NeuralNetwork.base;
 
 import com.project.NeuralNetwork.new_development.Layers.HiddenLayer;
 import com.project.NeuralNetwork.new_development.Layers.OutputLayer;
+import com.project.NeuralNetwork.new_development.Layers.base.Layers;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 
 public interface Network {
@@ -41,4 +42,11 @@ public interface Network {
      * @return тип ФА
      */
     Functions getFunctionType();
+
+    /**
+     * Устанавливаем тип функции активации для определенного слоя.
+     * @param funcType тип функции активации
+     * @param layer уровень, на котором хотим установить другую ФА
+     */
+    void setFuncActivType(Layers layer, Functions funcType);
 }

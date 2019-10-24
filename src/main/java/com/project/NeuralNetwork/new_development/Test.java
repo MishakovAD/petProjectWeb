@@ -1,11 +1,13 @@
 package com.project.NeuralNetwork.new_development;
 
+import com.project.NeuralNetwork.new_development.Layers.base.Layers;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.NeuralNetwork;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.School.ISchool;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.School.School;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.School.Teacher;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.School.data_book.Book;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.School.data_book.IBook;
+import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 import com.project.RecognitionImage.backend.OpenCV.OpenCV;
 import com.project.RecognitionImage.backend.OpenCV.OpenCVImpl;
 import com.project.RecognitionImage.backend.SplitterImage.SplitImageToChar;
@@ -22,10 +24,11 @@ public class Test {
         OpenCV openCV = new OpenCVImpl();
         openCV.init();
 
-        NeuralNetwork net2 = new NeuralNetwork(100, 1, 10, 10);
+        NeuralNetwork net2 = new NeuralNetwork(100, 2, 33, 33, Functions.ReLU);
         ISchool school = new School(10000000);
-        IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums.jpg");
-        IBook bookTest = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums_test.jpg");
+        IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/big_chars.jpg");
+        //IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums.jpg");
+        //IBook bookTest = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums_test.jpg");
 
         System.out.println(LocalTime.now());
         school.teach(net2, book, 1);
@@ -46,8 +49,9 @@ public class Test {
         double[] inp4 = new double[2];
         inp4[0] = 0.0;
         inp4[1] = 1.0;
-        NeuralNetwork net2 = new NeuralNetwork(2, 1, 4, 1);
-        Teacher trainer = new Teacher(net2.getFunctionType(), 0.1);
+        NeuralNetwork net2 = new NeuralNetwork(2, 1, 3, 1);
+        net2.setFuncActivType(Layers.OUTPUT_LAYER, Functions.ReLU);
+        Teacher trainer = new Teacher(0.1);
         double[] ref1 = new double[1];
         double[] ref2 = new double[1];
         ref1[0] = 1.0;

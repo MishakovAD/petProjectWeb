@@ -211,7 +211,7 @@ public class SplitImageToChar implements Splitter {
         cv.init();
         Mat img = cv.loadImage(path, Imgcodecs.IMREAD_ANYCOLOR);
         List<Chars> l = getSingleChar(img);
-        return prepareTestDataForNums(img, l);
+        return prepareTestDataForChars(img, l);
     }
 
     @Override

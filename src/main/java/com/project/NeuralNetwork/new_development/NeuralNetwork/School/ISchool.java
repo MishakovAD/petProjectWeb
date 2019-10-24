@@ -3,6 +3,7 @@ package com.project.NeuralNetwork.new_development.NeuralNetwork.School;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.School.data_book.IBook;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.base.Network;
 import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.derivative_user_fa.DerivativeUserFunction;
+import com.project.NeuralNetwork.new_development.Neuron.function_activation.functions.user_function.UserFunction;
 
 public interface ISchool {
     /**
@@ -22,6 +23,6 @@ public interface ISchool {
      * @param startSpeed начальная скорость обучения НС
      * @return true если обучение прошло успешно
      */
-    boolean teach(Network net, DerivativeUserFunction derivativeUserFunction, IBook book, double startSpeed);
+    boolean teach(Network net, UserFunction userFunction, DerivativeUserFunction derivativeUserFunction, IBook book, double startSpeed);
     //TODO: в этот метод добавить еще одну книгу для проверочных данных. И когда обучение в методе закончится - делать проверку по этим данным и возвращать тру, если результат положительный
 }

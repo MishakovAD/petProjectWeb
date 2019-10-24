@@ -1,5 +1,6 @@
 package com.project.NeuralNetwork.new_development.Neuron.base;
 
+import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.derivative_user_fa.DerivativeUserFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivFunc;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivationFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
@@ -14,6 +15,7 @@ public class NeuronImpl implements Neuron {
     private double[] inputs;
     private double[] weights;
     private double output;
+    private Functions funcType;
     private ActivFunc function;
     private double a;
     //Обратное распространение ошибки
@@ -49,6 +51,7 @@ public class NeuronImpl implements Neuron {
         this.weights = new double[inputsCount];
         this.weights = Arrays.stream(this.weights).map(weight -> weight += Math.random()).toArray();
         this.delta = new double[inputsCount];
+        this.funcType = function;
         this.function = new ActivationFunction(function);
         this.a = 1;
     }
@@ -67,6 +70,7 @@ public class NeuronImpl implements Neuron {
         this.weights = new double[inputsCount];
         this.weights = Arrays.stream(this.weights).map(weight -> weight += Math.random()).toArray();
         this.delta = new double[inputsCount];
+        this.funcType = function;
         this.function = new ActivationFunction(function);
         this.a = a;
     }
@@ -76,7 +80,7 @@ public class NeuronImpl implements Neuron {
      * @param inputsCount число входов
      * @param userFunction пользовательская функция активации
      */
-    public NeuronImpl(int inputsCount, UserFunction userFunction) {
+    public NeuronImpl(int inputsCount, UserFunction userFunction, DerivativeUserFunction derivativeUserFunction) {
         if (inputsCount < 1) {
             inputsCount = 1;
         }
@@ -84,7 +88,8 @@ public class NeuronImpl implements Neuron {
         this.weights = new double[inputsCount];
         this.weights = Arrays.stream(this.weights).map(weight -> weight += Math.random()).toArray();
         this.delta = new double[inputsCount];
-        this.function = new ActivationFunction(userFunction);
+        this.funcType = Functions.USER;
+        this.function = new ActivationFunction(userFunction, derivativeUserFunction);
     }
 
     @Override
@@ -97,11 +102,16 @@ public class NeuronImpl implements Neuron {
     @Override
     public void setInput(double inputData) {
         this.inputs[0] = inputData;
-        this.output = inputData;
+        this.output = normalize(inputData);
+        //this.output = inputData;
+    }
+
+    private double normalize(double input) {
+        return (1/(input + 1));
     }
 
     private void calculation() {
-        this.output = this.function.calculation(inputs, weights, this.a);
+        this.output = this.function.activate(inputs, weights, this.a);
     }
 
     @Override
@@ -146,7 +156,13 @@ public class NeuronImpl implements Neuron {
 
     @Override
     public void setActivFuncType(Functions funcType) {
+        this.funcType = funcType;
         this.function = new ActivationFunction(funcType);
+    }
+
+    @Override
+    public Functions getFuncType() {
+        return funcType != null ? funcType: Functions.SIGMA;
     }
 
     @Override

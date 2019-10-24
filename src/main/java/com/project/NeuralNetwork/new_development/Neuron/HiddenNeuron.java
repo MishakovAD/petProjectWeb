@@ -2,6 +2,7 @@ package com.project.NeuralNetwork.new_development.Neuron;
 
 import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
 import com.project.NeuralNetwork.new_development.Neuron.base.NeuronImpl;
+import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.derivative_user_fa.DerivativeUserFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.functions.user_function.UserFunction;
 
@@ -18,7 +19,7 @@ public class HiddenNeuron extends NeuronImpl implements Neuron {
         super(inputsCount, function, a);
     }
 
-    public HiddenNeuron(int inputsCount, UserFunction userFunction) {
-        super(inputsCount, userFunction);
+    public HiddenNeuron(int inputsCount, UserFunction userFunction, DerivativeUserFunction derivativeUserFunction) {
+        super(inputsCount, userFunction, derivativeUserFunction);
     }
 }

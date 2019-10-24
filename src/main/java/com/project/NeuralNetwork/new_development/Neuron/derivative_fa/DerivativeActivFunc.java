@@ -9,7 +9,7 @@ public interface DerivativeActivFunc {
      * @param params параметры крутизны/порог
      * @return производную ФА
      */
-    double calculateDerivative(double[] inputs, double[] weights, double ... params);
+    double derivative(double[] inputs, double[] weights, double ... params);
 
     /**
      * Метод, вычисляющий производную функции активации.
@@ -17,5 +17,5 @@ public interface DerivativeActivFunc {
      * @param weights веса
      * @return производную ФА
      */
-    double calculateDerivative(double[] inputs, double[] weights);
+    double derivative(double[] inputs, double[] weights);
 }

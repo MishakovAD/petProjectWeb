@@ -41,22 +41,22 @@ public class DerivativeActivationFunction implements DerivativeActivFunc {
     }
 
     @Override
-    public double calculateDerivative(double[] inputs, double[] weights, double... params) {
+    public double derivative(double[] inputs, double[] weights, double... params) {
         if (USER.equals(funcType)) {
-            return derivativeUserFunction.calculateDerivative(inputs, weights, params);
+            return derivativeUserFunction.derivative(inputs, weights, params);
         } else {
-            return derivativeFunction.calculateDerivative(inputs, weights, params);
+            return derivativeFunction.derivative(inputs, weights, params);
         }
     }
 
     @Override
-    public double calculateDerivative(double[] inputs, double[] weights) {
+    public double derivative(double[] inputs, double[] weights) {
         double[] params = new double[1];
         params[0] = 1;
         if (USER.equals(funcType)) {
-            return derivativeUserFunction.calculateDerivative(inputs, weights);
+            return derivativeUserFunction.derivative(inputs, weights);
         } else {
-            return derivativeFunction.calculateDerivative(inputs, weights, params);
+            return derivativeFunction.derivative(inputs, weights, params);
         }
     }
 }
