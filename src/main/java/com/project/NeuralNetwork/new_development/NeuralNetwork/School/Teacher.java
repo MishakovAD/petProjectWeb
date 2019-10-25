@@ -5,17 +5,11 @@ import com.project.NeuralNetwork.new_development.Layers.OutputLayer;
 import com.project.NeuralNetwork.new_development.Layers.base.Layer;
 import com.project.NeuralNetwork.new_development.Neuron.HiddenNeuron;
 import com.project.NeuralNetwork.new_development.Neuron.OutputNeuron;
-import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.derivative_user_fa.DerivativeUserFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivFunc;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivationFunction;
-import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
-import com.project.NeuralNetwork.new_development.Neuron.function_activation.functions.user_function.UserFunction;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import static com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions.USER;
 
 public class Teacher implements ITeacher {
     private double speed;
@@ -87,6 +81,7 @@ public class Teacher implements ITeacher {
             double[] delta = new double[inputCount];
             double derivative = function.derivative(outputNeuron.getInputs(), outputNeuron.getWeights(), outputNeuron.getParams());
             sigma = (ideal[i] - result) * derivative;
+//            sigma = new BSE_function().calculateDerivationLossF(ideal[i], outputNeuron);
             outputNeuron.setSigma(sigma);
             for (int j = 0; j < inputCount; j++) {
                 delta[j] = this.speed * sigma * outputNeuron.getInput(j);

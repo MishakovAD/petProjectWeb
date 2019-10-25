@@ -15,7 +15,14 @@ public class ReLUFunctiom implements ActivFunc {
     public double activate(double[] inputs, double[] weights, double... a) {
         params = a;
         double sum = adder(inputs, weights);
-        return (Math.log(1+Math.exp(a[0]*sum)));
+        double activation = (Math.log(1+Math.exp(a[0]*sum)));
+        if (activation >= 1) {
+            return 1;
+        } else if (activation == 0) {
+            return 0.000000001;
+        } else {
+            return activation;
+        }
     }
 
     @Override

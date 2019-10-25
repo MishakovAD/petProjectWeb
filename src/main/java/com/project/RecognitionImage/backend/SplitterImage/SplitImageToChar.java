@@ -28,8 +28,8 @@ public class SplitImageToChar implements Splitter {
 
         //Mat imgGray = cv.loadImage(path + "russian_text.png", Imgcodecs.IMREAD_ANYCOLOR);
         //Mat imgGray = cv.loadImage(path + "chars.jpg", Imgcodecs.IMREAD_ANYCOLOR);
-        //Mat imgGray = cv.loadImage(path + "big_chars.jpg", Imgcodecs.IMREAD_ANYCOLOR);
-        Mat imgGray = cv.loadImage(path + "nums.jpg", Imgcodecs.IMREAD_ANYCOLOR);
+        Mat imgGray = cv.loadImage(path + "big_chars.jpg", Imgcodecs.IMREAD_ANYCOLOR);
+        //Mat imgGray = cv.loadImage(path + "nums.jpg", Imgcodecs.IMREAD_ANYCOLOR);
 
         List<Chars> l = s.getSingleChar(imgGray);
         s.prepareTestDataForChars(imgGray, l);

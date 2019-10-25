@@ -14,24 +14,28 @@ import com.project.RecognitionImage.backend.SplitterImage.SplitImageToChar;
 import org.opencv.core.Mat;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getGrayMat;
+import static java.lang.Float.NaN;
 
 
 public class Test {
     public static void main(String[] args) {
-//        new Test().xor();
+        new Test().xor();
         OpenCV openCV = new OpenCVImpl();
         openCV.init();
 
-        NeuralNetwork net2 = new NeuralNetwork(100, 2, 33, 33, Functions.SIGMA);
+        NeuralNetwork net2 = new NeuralNetwork(100, 2, 10, 33, Functions.SIGMA);
+        net2.setFuncActivType(Layers.HIDDEN_LAYER, Functions.ReLU);
         ISchool school = new School(10000000);
         IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/big_chars.jpg");
         //IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums.jpg");
         //IBook bookTest = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums_test.jpg");
 
         System.out.println(LocalTime.now());
-        school.teach(net2, book, 1);
+        school.teach(net2, book, 0.01);
         System.out.println(LocalTime.now());
         System.out.println();
     }
@@ -49,7 +53,7 @@ public class Test {
         double[] inp4 = new double[2];
         inp4[0] = 0.0;
         inp4[1] = 1.0;
-        NeuralNetwork net2 = new NeuralNetwork(2, 1, 3, 1);
+        NeuralNetwork net2 = new NeuralNetwork(2, 5, 5, 1, Functions.ReLU);
         net2.setFuncActivType(Layers.OUTPUT_LAYER, Functions.ReLU);
         Teacher trainer = new Teacher(0.1);
         double[] ref1 = new double[1];
@@ -77,6 +81,9 @@ public class Test {
                 net2.setInputData(inp4);
                 trainer.calculateDelta(ref1, net2.getOutputLayer(), net2.getHiddenLayerArray());
 
+            }
+            if (!(net2.getOutput()[0] < 0) && !(net2.getOutput()[0] > 0) && !(net2.getOutput()[0] == 0)) {
+                System.out.println();
             }
             counter++;
         }

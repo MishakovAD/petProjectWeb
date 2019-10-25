@@ -4,6 +4,7 @@ import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivFunc;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivationFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
+import com.project.NeuralNetwork.new_development.Neuron.function_activation.functions.SigmaFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.functions.user_function.UserFunction;
 
 import java.util.Arrays;
@@ -32,7 +33,7 @@ public class NeuronImpl implements Neuron {
         }
         this.inputs = new double[inputsCount];
         this.weights = new double[inputsCount];
-        this.weights = Arrays.stream(this.weights).map(weight -> weight += Math.random()).toArray();
+        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/10000)).toArray();
         this.delta = new double[inputsCount];
         this.function = new ActivationFunction(Functions.SIGMA);
         this.a = 1;
@@ -49,7 +50,7 @@ public class NeuronImpl implements Neuron {
         }
         this.inputs = new double[inputsCount];
         this.weights = new double[inputsCount];
-        this.weights = Arrays.stream(this.weights).map(weight -> weight += Math.random()).toArray();
+        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/1)).toArray();
         this.delta = new double[inputsCount];
         this.funcType = function;
         this.function = new ActivationFunction(function);
@@ -68,7 +69,7 @@ public class NeuronImpl implements Neuron {
         }
         this.inputs = new double[inputsCount];
         this.weights = new double[inputsCount];
-        this.weights = Arrays.stream(this.weights).map(weight -> weight += Math.random()).toArray();
+        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/1)).toArray();
         this.delta = new double[inputsCount];
         this.funcType = function;
         this.function = new ActivationFunction(function);
@@ -86,7 +87,7 @@ public class NeuronImpl implements Neuron {
         }
         this.inputs = new double[inputsCount];
         this.weights = new double[inputsCount];
-        this.weights = Arrays.stream(this.weights).map(weight -> weight += Math.random()).toArray();
+        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/1)).toArray();
         this.delta = new double[inputsCount];
         this.funcType = Functions.USER;
         this.function = new ActivationFunction(userFunction, derivativeUserFunction);
@@ -94,6 +95,7 @@ public class NeuronImpl implements Neuron {
 
     @Override
     public void setInputs(double[] inputs) {
+        inputs = normalize(inputs);
         this.inputs = inputs;
         calculation();
     }
@@ -107,7 +109,20 @@ public class NeuronImpl implements Neuron {
     }
 
     private double normalize(double input) {
-        return (1/(input + 1));
+        double[] i = new double[1];
+        double[] w = new double[1];
+        i[0] = input;
+        w[0] = 1;
+        return new SigmaFunction().activate(i, w);
+    }
+
+    private double[] normalize(double[] inputs) {
+        for (int i = 0; i < inputs.length; i++) {
+            if ((inputs[i] > 1)) {
+                inputs[i] = normalize(inputs[i]);
+            }
+        }
+        return inputs;
     }
 
     private void calculation() {

@@ -1,5 +1,6 @@
 package com.project.NeuralNetwork.new_development.Neuron.loss_function;
 
+import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
 import com.project.NeuralNetwork.new_development.Neuron.loss_function.functions.MSE_function;
 
 //TODO: реализовать
@@ -17,12 +18,12 @@ public class LossFunction implements LossFunc {
     }
 
     @Override
-    public double calculateLossF(double[] ideal, double[] result) {
+    public double calculateLossF(double ideal, double result) {
         return lossFunc.calculateLossF(ideal, result);
     }
 
     @Override
-    public double calculateDerivationLossF(double[] ideal, double[] result, int numOfNeuron) {
-        return lossFunc.calculateDerivationLossF(ideal, result, numOfNeuron);
+    public double calculateDerivationLossF(double ideal, Neuron neuron) {
+        return lossFunc.calculateDerivationLossF(ideal, neuron);
     }
 }
