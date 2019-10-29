@@ -5,9 +5,9 @@ import com.project.NeuralNetwork.new_development.Neuron.function_activation.Acti
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivationFunction;
 import com.project.NeuralNetwork.new_development.Neuron.loss_function.LossFunc;
 
-//Бинарная кросс энтропия
+//Бинарная кросс энтропия - для бинарной классификации (где один выход)
 //TODO: реализовать
-//BCE(p, t) = -t*log(p) - (1-t)*log(1-p), где p - наша ФА
+//BCE(p, t) = -t*log(p) - (1-t)*log(1-p), где p - наша ФА (еще вариант есть домноженный на -1. где есть верный?)
 //Для сигмоиды производная BCE = sigma - t
 public class BSE_function implements LossFunc {
     @Override

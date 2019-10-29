@@ -53,9 +53,9 @@ public class Test {
         double[] inp4 = new double[2];
         inp4[0] = 0.0;
         inp4[1] = 1.0;
-        NeuralNetwork net2 = new NeuralNetwork(2, 5, 5, 1, Functions.ReLU);
-        net2.setFuncActivType(Layers.OUTPUT_LAYER, Functions.ReLU);
-        Teacher trainer = new Teacher(0.1);
+        NeuralNetwork net2 = new NeuralNetwork(2, 1, 5, 1, Functions.SIGMA);
+        //net2.setFuncActivType(Layers.OUTPUT_LAYER, Functions.SIGMA);
+        Teacher trainer = new Teacher(10);
         double[] ref1 = new double[1];
         double[] ref2 = new double[1];
         ref1[0] = 1.0;
@@ -63,7 +63,7 @@ public class Test {
         int globalCounter = 0;
         int counter = 0;
         System.out.println(LocalTime.now());
-        while (globalCounter < 10000000) {
+        while (globalCounter < 10000000/0.1) {
             if (counter == 4) {
                 counter = 0;
                 globalCounter++;
@@ -80,9 +80,9 @@ public class Test {
             } else if (counter == 3) {
                 net2.setInputData(inp4);
                 trainer.calculateDelta(ref1, net2.getOutputLayer(), net2.getHiddenLayerArray());
-
             }
             if (!(net2.getOutput()[0] < 0) && !(net2.getOutput()[0] > 0) && !(net2.getOutput()[0] == 0)) {
+                //1028835 -> 1521140 -> 1531444 -> 1735633 -> 418394
                 System.out.println();
             }
             counter++;

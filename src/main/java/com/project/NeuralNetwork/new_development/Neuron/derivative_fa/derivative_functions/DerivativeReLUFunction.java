@@ -14,6 +14,6 @@ public class DerivativeReLUFunction implements DerivativeActivFunc {
 
     @Override
     public double derivative(double[] inputs, double[] weights) {
-        return 0;
+        return derivative(inputs, weights, 1);
     }
 }
