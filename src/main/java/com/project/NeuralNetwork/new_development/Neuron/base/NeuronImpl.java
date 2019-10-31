@@ -104,8 +104,8 @@ public class NeuronImpl implements Neuron {
     @Override
     public void setInput(double inputData) {
         this.inputs[0] = inputData;
-        this.output = normalize(inputData);
-        //this.output = inputData;
+        //this.output = normalize(inputData);
+        this.output = inputData;
     }
 
     private double normalize(double input) {

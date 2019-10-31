@@ -81,8 +81,9 @@ public class Teacher implements ITeacher {
             double sigma;
             double[] delta = new double[inputCount];
             double derivative = function.derivative(outputNeuron.getInputs(), outputNeuron.getWeights(), outputNeuron.getParams());
-            sigma = (ideal[i] - result) * derivative;
+//            sigma = (ideal[i] - result) * derivative;
 //            sigma = new BSE_function().calculateDerivationLossF(ideal[i], outputNeuron) * derivative;
+            sigma = new BSE_function().calculateLossF(ideal[i], result) * derivative;
             outputNeuron.setSigma(sigma);
             for (int j = 0; j < inputCount; j++) {
                 delta[j] = this.speed * sigma * outputNeuron.getInput(j);

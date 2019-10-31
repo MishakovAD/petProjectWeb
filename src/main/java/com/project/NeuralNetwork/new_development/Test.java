@@ -14,11 +14,8 @@ import com.project.RecognitionImage.backend.SplitterImage.SplitImageToChar;
 import org.opencv.core.Mat;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getGrayMat;
-import static java.lang.Float.NaN;
 
 
 public class Test {
@@ -27,15 +24,14 @@ public class Test {
         OpenCV openCV = new OpenCVImpl();
         openCV.init();
 
-        NeuralNetwork net2 = new NeuralNetwork(100, 2, 10, 33, Functions.SIGMA);
-        net2.setFuncActivType(Layers.HIDDEN_LAYER, Functions.ReLU);
+        NeuralNetwork net2 = new NeuralNetwork(100, 2, 33, 33, Functions.SIGMA);
         ISchool school = new School(10000000);
         IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/big_chars.jpg");
         //IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums.jpg");
         //IBook bookTest = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums_test.jpg");
 
         System.out.println(LocalTime.now());
-        school.teach(net2, book, 0.01);
+        school.teach(net2, book, 1);
         System.out.println(LocalTime.now());
         System.out.println();
     }
@@ -54,8 +50,8 @@ public class Test {
         inp4[0] = 0.0;
         inp4[1] = 1.0;
         NeuralNetwork net2 = new NeuralNetwork(2, 1, 5, 1, Functions.SIGMA);
-        //net2.setFuncActivType(Layers.OUTPUT_LAYER, Functions.SIGMA);
-        Teacher trainer = new Teacher(10);
+        net2.setFuncActivType(Layers.OUTPUT_LAYER, Functions.SIGMA);
+        Teacher trainer = new Teacher(0.1);
         double[] ref1 = new double[1];
         double[] ref2 = new double[1];
         ref1[0] = 1.0;
@@ -63,7 +59,7 @@ public class Test {
         int globalCounter = 0;
         int counter = 0;
         System.out.println(LocalTime.now());
-        while (globalCounter < 10000000/0.1) {
+        while (globalCounter < 10000000) {
             if (counter == 4) {
                 counter = 0;
                 globalCounter++;
