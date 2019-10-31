@@ -5,6 +5,8 @@ import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.Derivative
 import static com.project.NeuralNetwork.new_development.HelpUtils.HelpUtils.adder;
 
 //TODO: реализовать
+//Можно взять производную для реальной ReLU ФА:
+//производная = 1, если х больше 0 и = 0, если х меньше или равен 0.
 public class DerivativeReLUFunction implements DerivativeActivFunc {
     @Override
     public double derivative(double[] inputs, double[] weights, double... params) {

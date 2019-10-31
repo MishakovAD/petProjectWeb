@@ -83,10 +83,12 @@ public class Teacher implements ITeacher {
             double derivative = function.derivative(outputNeuron.getInputs(), outputNeuron.getWeights(), outputNeuron.getParams());
 //            sigma = (ideal[i] - result) * derivative;
 //            sigma = new BSE_function().calculateDerivationLossF(ideal[i], outputNeuron) * derivative;
-            sigma = new BSE_function().calculateLossF(ideal[i], result) * derivative;
+            double loss = new BSE_function().calculateLossF(ideal[i], result);
+            double lossDeriv = new BSE_function().calculateDerivationLossF(ideal[i], outputNeuron);
+            sigma = lossDeriv * derivative;
             outputNeuron.setSigma(sigma);
             for (int j = 0; j < inputCount; j++) {
-                delta[j] = this.speed * sigma * outputNeuron.getInput(j);
+                delta[j] = this.speed * sigma * outputNeuron.getInput(j); //Тут и в скрытых слоях точно умножаем на вход??
             }
             deltaList.add(delta);
         }

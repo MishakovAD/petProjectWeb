@@ -49,9 +49,9 @@ public class Test {
         double[] inp4 = new double[2];
         inp4[0] = 0.0;
         inp4[1] = 1.0;
-        NeuralNetwork net2 = new NeuralNetwork(2, 1, 5, 1, Functions.SIGMA);
+        NeuralNetwork net2 = new NeuralNetwork(2, 1, 3, 1, Functions.SIGMA);
         net2.setFuncActivType(Layers.OUTPUT_LAYER, Functions.SIGMA);
-        Teacher trainer = new Teacher(0.1);
+        Teacher trainer = new Teacher(1);
         double[] ref1 = new double[1];
         double[] ref2 = new double[1];
         ref1[0] = 1.0;
@@ -59,7 +59,7 @@ public class Test {
         int globalCounter = 0;
         int counter = 0;
         System.out.println(LocalTime.now());
-        while (globalCounter < 10000000) {
+        while (globalCounter < 10000000/0.001) {
             if (counter == 4) {
                 counter = 0;
                 globalCounter++;
