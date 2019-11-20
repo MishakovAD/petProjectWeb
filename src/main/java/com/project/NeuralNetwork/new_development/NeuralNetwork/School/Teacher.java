@@ -70,6 +70,9 @@ public class Teacher implements ITeacher {
         this.speed = speed;
     }
 
+    /*
+    https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
+     */
     private List<double[]> calculateDeltaOutput(double[] ideal, OutputLayer outputLayer) {
         ActivFunc function = new ActivationFunction(outputLayer.getFuncType());
         List<double[]> deltaList = new LinkedList<>();

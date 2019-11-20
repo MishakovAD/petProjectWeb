@@ -4,7 +4,6 @@ import com.project.NeuralNetwork.new_development.Neuron.HiddenNeuron;
 import com.project.NeuralNetwork.new_development.Neuron.InputNeuron;
 import com.project.NeuralNetwork.new_development.Neuron.OutputNeuron;
 import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
-import com.project.NeuralNetwork.new_development.Neuron.base.NeuronImpl;
 import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.derivative_user_fa.DerivativeUserFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.functions.user_function.UserFunction;

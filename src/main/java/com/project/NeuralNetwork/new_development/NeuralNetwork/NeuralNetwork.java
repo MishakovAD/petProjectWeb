@@ -10,6 +10,7 @@ import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.functions.user_function.UserFunction;
 
+//TODO: Сделать билдер, а не кучу конструкторов.
 public class NeuralNetwork implements Network {
     private InputLayer inputLayer;
     private HiddenLayer[] hiddenLayers_array;
