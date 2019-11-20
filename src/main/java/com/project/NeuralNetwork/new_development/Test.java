@@ -5,17 +5,13 @@ import com.project.NeuralNetwork.new_development.NeuralNetwork.NeuralNetwork;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.School.ISchool;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.School.School;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.School.Teacher;
-import com.project.NeuralNetwork.new_development.NeuralNetwork.School.data_book.Book;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.School.data_book.IBook;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 import com.project.RecognitionImage.backend.OpenCV.OpenCV;
 import com.project.RecognitionImage.backend.OpenCV.OpenCVImpl;
 import com.project.RecognitionImage.backend.SplitterImage.SplitImageToChar;
-import org.opencv.core.Mat;
 
 import java.time.LocalTime;
-
-import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getGrayMat;
 
 
 public class Test {

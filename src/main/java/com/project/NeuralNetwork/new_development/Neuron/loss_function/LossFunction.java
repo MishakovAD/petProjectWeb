@@ -18,8 +18,8 @@ public class LossFunction implements LossFunc {
     }
 
     @Override
-    public double calculateLossF(double ideal, double result) {
-        return lossFunc.calculateLossF(ideal, result);
+    public double calculateLossF(double ideal, Neuron neuron) {
+        return lossFunc.calculateLossF(ideal, neuron);
     }
 
     @Override

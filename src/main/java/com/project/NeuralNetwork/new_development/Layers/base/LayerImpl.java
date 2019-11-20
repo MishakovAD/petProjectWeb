@@ -222,4 +222,11 @@ public abstract class LayerImpl implements Layer {
         return Functions.SIGMA;
     }
 
+    @Override
+    public void correctWeights() {
+        for (int i = 0; i < neurons.length; i++) {
+            neurons[i].correctWeights();
+        }
+    }
+
 }

@@ -55,4 +55,9 @@ public interface Layer {
      * @return тип функции активации
      */
     Functions getFuncType();
+
+    /**
+     * Корректирует веса нейронов в слое.
+     */
+    void correctWeights();
 }

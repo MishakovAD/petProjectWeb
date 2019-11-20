@@ -11,7 +11,8 @@ import com.project.NeuralNetwork.new_development.Neuron.loss_function.LossFunc;
 //Для сигмоиды производная BCE = sigma - t
 public class BSE_function implements LossFunc {
     @Override
-    public double calculateLossF(double ideal, double result) {
+    public double calculateLossF(double ideal, Neuron neuron) {
+        double result = neuron.getOutput();
         double bse = (-1) * ideal * Math.log(result) - (1 - ideal) * Math.log(1 - result);
         return bse;
     }

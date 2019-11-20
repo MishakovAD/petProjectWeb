@@ -98,6 +98,11 @@ public interface Neuron {
     void setDelta(double[] delta);
 
     /**
+     * Пересчитывает веса, согласно установленным delta у нейронов.
+     */
+    void correctWeights();
+
+    /**
      * Возвращает массив значений для корректировки весов
      * @return массив для корректировки
      */

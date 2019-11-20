@@ -195,6 +195,10 @@ public class NeuronImpl implements Neuron {
     @Override
     public void setDelta(double[] delta) {
         this.delta = delta;
+    }
+
+    @Override
+    public void correctWeights() {
         for (int i = 0; i < this.weights.length; i++) {
             this.weights[i] = this.weights[i] - delta[i];
         }
