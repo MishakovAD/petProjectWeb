@@ -7,10 +7,10 @@ public interface LossFunc {
     /**
      * Вычисляем функцию потерь для выхода нашей НС.
      * @param ideal ожидаемый результат
-     * @param result получившийся результат
+     * @param neuron нейрон
      * @return значение функции потерь
      */
-    double calculateLossF(double ideal, double result);
+    double calculateLossF(double ideal, Neuron neuron);
 
     /**
      * Вычисляем производную функции потерь для выхода нашей НС.

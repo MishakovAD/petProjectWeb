@@ -196,7 +196,7 @@ public class NeuronImpl implements Neuron {
     public void setDelta(double[] delta) {
         this.delta = delta;
         for (int i = 0; i < this.weights.length; i++) {
-            this.weights[i] = this.weights[i] + delta[i];
+            this.weights[i] = this.weights[i] - delta[i];
         }
     }
 

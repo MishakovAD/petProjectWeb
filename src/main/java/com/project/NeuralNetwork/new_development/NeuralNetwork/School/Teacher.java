@@ -7,7 +7,9 @@ import com.project.NeuralNetwork.new_development.Neuron.HiddenNeuron;
 import com.project.NeuralNetwork.new_development.Neuron.OutputNeuron;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivFunc;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivationFunction;
+import com.project.NeuralNetwork.new_development.Neuron.loss_function.LossFunc;
 import com.project.NeuralNetwork.new_development.Neuron.loss_function.functions.BSE_function;
+import com.project.NeuralNetwork.new_development.Neuron.loss_function.functions.MSE_function;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -60,6 +62,8 @@ public class Teacher implements ITeacher {
         }
         for (int i = 0; i < hiddenLayers_array.length; i++) {
             for (int j = 0; j < hiddenLayers_array[i].getNeuronsCount(); j++) {
+
+
                 hiddenLayers_array[i].getNeuron(j).setDelta(hiddenDelta.get(hiddenLayers_array.length-1-i).get(j));
             }
         }
@@ -80,18 +84,15 @@ public class Teacher implements ITeacher {
         for (int i = 0; i < countNeurons; i++) {
             OutputNeuron outputNeuron = (OutputNeuron) outputLayer.getNeuron(i);
             int inputCount = outputNeuron.getInputsCount();
-            double result = outputNeuron.getOutput();
-            double sigma;
             double[] delta = new double[inputCount];
-            double derivative = function.derivative(outputNeuron.getInputs(), outputNeuron.getWeights(), outputNeuron.getParams());
-//            sigma = (ideal[i] - result) * derivative;
-//            sigma = new BSE_function().calculateDerivationLossF(ideal[i], outputNeuron) * derivative;
-            double loss = new BSE_function().calculateLossF(ideal[i], result);
-            double lossDeriv = new BSE_function().calculateDerivationLossF(ideal[i], outputNeuron);
-            sigma = lossDeriv * derivative;
+            double sigma = 0;
+            LossFunc lossFunc = new MSE_function(); //TODO: переделать.
+            double derivTotalErrorToOutput = lossFunc.calculateDerivationLossF(ideal[i], outputNeuron);
+            double derivOutputToInput = function.derivative(outputNeuron.getInputs(), outputNeuron.getWeights(), outputNeuron.getParams());
+            sigma = derivTotalErrorToOutput * derivOutputToInput;
             outputNeuron.setSigma(sigma);
             for (int j = 0; j < inputCount; j++) {
-                delta[j] = this.speed * sigma * outputNeuron.getInput(j); //Тут и в скрытых слоях точно умножаем на вход??
+                delta[j] = this.speed * sigma * outputNeuron.getInput(j);
             }
             deltaList.add(delta);
         }
