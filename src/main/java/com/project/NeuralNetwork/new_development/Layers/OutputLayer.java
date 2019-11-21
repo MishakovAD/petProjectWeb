@@ -3,6 +3,7 @@ package com.project.NeuralNetwork.new_development.Layers;
 import com.project.NeuralNetwork.new_development.Layers.base.Layer;
 import com.project.NeuralNetwork.new_development.Layers.base.LayerImpl;
 import com.project.NeuralNetwork.new_development.Layers.base.Layers;
+import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.derivative_user_fa.DerivativeUserFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.functions.user_function.UserFunction;
 
@@ -22,7 +23,7 @@ public class OutputLayer extends LayerImpl implements Layer {
         super(Layers.OUTPUT_LAYER, neuronsCount, inputsCount, funcType, a);
     }
 
-    public OutputLayer(int neuronsCount, int inputsCount, UserFunction userFunction) {
-        super(Layers.OUTPUT_LAYER, neuronsCount, inputsCount, userFunction);
+    public OutputLayer(int neuronsCount, int inputsCount, UserFunction userFunction, DerivativeUserFunction derivativeUserFunction) {
+        super(Layers.OUTPUT_LAYER, neuronsCount, inputsCount, userFunction, derivativeUserFunction);
     }
 }

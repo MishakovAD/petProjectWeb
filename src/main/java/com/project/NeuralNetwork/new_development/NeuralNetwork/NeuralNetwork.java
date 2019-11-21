@@ -3,7 +3,10 @@ package com.project.NeuralNetwork.new_development.NeuralNetwork;
 import com.project.NeuralNetwork.new_development.Layers.HiddenLayer;
 import com.project.NeuralNetwork.new_development.Layers.InputLayer;
 import com.project.NeuralNetwork.new_development.Layers.OutputLayer;
+import com.project.NeuralNetwork.new_development.Layers.base.Layers;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.base.Network;
+import com.project.NeuralNetwork.new_development.Neuron.HiddenNeuron;
+import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.derivative_user_fa.DerivativeUserFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.functions.user_function.UserFunction;
 
@@ -105,8 +108,9 @@ public class NeuralNetwork implements Network {
      * @param countHiddenNeurons число нейронов скрытого слоя
      * @param countOutputNeurons число выходных нейронов
      * @param userFunction пользовательская ФА
+     * @param derivativeUserFunction производная пользовательской ФА
      */
-    public NeuralNetwork(int countInputNeurons, int countHiddenLayers, int countHiddenNeurons, int countOutputNeurons, UserFunction userFunction) {
+    public NeuralNetwork(int countInputNeurons, int countHiddenLayers, int countHiddenNeurons, int countOutputNeurons, UserFunction userFunction, DerivativeUserFunction derivativeUserFunction) {
         if (!isCorrectInitialConditions(countInputNeurons, countOutputNeurons)) {
             //throw new NotCorrectInitialConditions();
         }
@@ -114,14 +118,14 @@ public class NeuralNetwork implements Network {
         inputLayer = new InputLayer(countInputNeurons);
         if (countHiddenLayers < 1) {
             this.withoutHiddenLayers = true;
-            outputLayer = new OutputLayer(countOutputNeurons, countInputNeurons, userFunction);
+            outputLayer = new OutputLayer(countOutputNeurons, countInputNeurons, userFunction, derivativeUserFunction);
         } else {
             hiddenLayers_array = new HiddenLayer[countHiddenLayers];
-            hiddenLayers_array[0] = new HiddenLayer(countHiddenNeurons, countInputNeurons, userFunction);
+            hiddenLayers_array[0] = new HiddenLayer(countHiddenNeurons, countInputNeurons, userFunction, derivativeUserFunction);
             for (int i = 1; i < countHiddenLayers; i++) {
-                hiddenLayers_array[i] = new HiddenLayer(countHiddenNeurons, countHiddenNeurons, userFunction);
+                hiddenLayers_array[i] = new HiddenLayer(countHiddenNeurons, countHiddenNeurons, userFunction, derivativeUserFunction);
             }
-            outputLayer = new OutputLayer(countOutputNeurons, countHiddenNeurons, userFunction);
+            outputLayer = new OutputLayer(countOutputNeurons, countHiddenNeurons, userFunction, derivativeUserFunction);
         }
 
     }
@@ -175,6 +179,23 @@ public class NeuralNetwork implements Network {
     @Override
     public Functions getFunctionType() {
         return this.funcType;
+    }
+
+    @Override
+    public void setFuncActivType(Layers layer, Functions funcType) {
+        if (Layers.HIDDEN_LAYER.equals(layer)) {
+            for (int i = 0; i < hiddenLayers_array.length; i++) {
+                HiddenLayer h_layer = hiddenLayers_array[i];
+                for (int j = 0; j < h_layer.getNeuronsCount(); j++) {
+                    HiddenNeuron h_neuron = (HiddenNeuron) h_layer.getNeuron(j);
+                    h_neuron.setActivFuncType(funcType);
+                }
+            }
+        } else if (Layers.OUTPUT_LAYER.equals(layer)) {
+            for (int i = 0; i < this.outputLayer.getNeuronsCount(); i++) {
+                this.outputLayer.getNeuron(i).setActivFuncType(funcType);
+            }
+        }
     }
 
 }

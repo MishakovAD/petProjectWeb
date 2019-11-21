@@ -1,13 +1,16 @@
 package com.project.NeuralNetwork.new_development;
 
+import com.project.NeuralNetwork.new_development.Layers.base.Layers;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.NeuralNetwork;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.School.ISchool;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.School.School;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.School.Teacher;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.School.data_book.Book;
 import com.project.NeuralNetwork.new_development.NeuralNetwork.School.data_book.IBook;
+import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 import com.project.RecognitionImage.backend.OpenCV.OpenCV;
 import com.project.RecognitionImage.backend.OpenCV.OpenCVImpl;
+import com.project.RecognitionImage.backend.SplitterImage.SplitImageToChar;
 import org.opencv.core.Mat;
 
 import java.time.LocalTime;
@@ -17,76 +20,18 @@ import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getG
 
 public class Test {
     public static void main(String[] args) {
-        new Test().xor();
+//        new Test().xor();
         OpenCV openCV = new OpenCVImpl();
         openCV.init();
-//        Mat picture_a = getGrayMat(openCV.loadImage("C:/Java_Projects/petProjectWeb/src/main/java/com/project/NeuralNetwork/new_development/NeuralNetwork/School/test_set/a_10x10.png"));
-//        Mat etalon_a_ = getGrayMat(openCV.loadImage("C:/Java_Projects/petProjectWeb/src/main/java/com/project/NeuralNetwork/new_development/NeuralNetwork/School/test_set/a.png"));
-//        Mat picture_b = getGrayMat(openCV.loadImage("C:/Java_Projects/petProjectWeb/src/main/java/com/project/NeuralNetwork/new_development/NeuralNetwork/School/test_set/b_10x10.png"));
-//        Mat etalon_b_ = getGrayMat(openCV.loadImage("C:/Java_Projects/petProjectWeb/src/main/java/com/project/NeuralNetwork/new_development/NeuralNetwork/School/test_set/b.png"));
-//        Mat picture_B = getGrayMat(openCV.loadImage("C:/Java_Projects/petProjectWeb/src/main/java/com/project/NeuralNetwork/new_development/NeuralNetwork/School/test_set/v_10x10.png"));
-//        Mat etalon_B_ = getGrayMat(openCV.loadImage("C:/Java_Projects/petProjectWeb/src/main/java/com/project/NeuralNetwork/new_development/NeuralNetwork/School/test_set/v.png"));
-        double[] pic_a = new double[100];
-        double[] etalon_a = new double[100];
-        double[] pic_b = new double[100];
-        double[] etalon_b = new double[100];
-        double[] pic_V = new double[100];
-        double[] etalon_V = new double[100];
-//        int index = 0;
-//        for (int i = 0; i < picture_a.rows(); i++) {
-//            for (int j = 0; j < picture_a.cols(); j++) {
-//                double currentPixel_a = picture_a.get(i, j)[0] + 1;
-//                double currentPixel_a_etalon = etalon_a_.get(i, j)[0] + 1;
-//                double currentPixel_b = picture_b.get(i, j)[0] + 1;
-//                double currentPixel_b_etalon = etalon_b_.get(i, j)[0] + 1;
-//                double currentPixel_B = picture_B.get(i, j)[0] + 1;
-//                double currentPixel_B_etalon = etalon_B_.get(i, j)[0] + 1;
-//                pic_a[index] = 1/currentPixel_a;
-//                etalon_a[index] = 1/currentPixel_a_etalon;
-//                pic_b[index] = 1/currentPixel_b;
-//                etalon_b[index] = 1/currentPixel_b_etalon;
-//                pic_V[index] = 1/currentPixel_B;
-//                etalon_V[index] = 1/currentPixel_B_etalon;
-////                pic_a[index] = currentPixel_a;
-////                etalon_a[index] = currentPixel_a_etalon;
-////                pic_b[index] = currentPixel_b;
-////                etalon_b[index] = currentPixel_b_etalon;
-////                pic_V[index] = currentPixel_B;
-////                etalon_V[index] = currentPixel_B_etalon;
-//                index++;
-//            }
-//        }
-        NeuralNetwork net2 = new NeuralNetwork(100, 2, 16, 3);
-        double[] a = new double[3];
-        a[0] = 1;
-        a[1] = 0;
-        a[2] = 0;
-        double[] b = new double[3];
-        b[0] = 0;
-        b[1] = 1;
-        b[2] = 0;
-        double[] v = new double[3];
-        v[0] = 0;
-        v[1] = 0;
-        v[2] = 1;
 
-        for (int i = 0; i < 100; i++) {
-            pic_a[i] = Math.random();
-            pic_b[i] = Math.random();
-            pic_V[i] = Math.random();
-        }
+        NeuralNetwork net2 = new NeuralNetwork(100, 2, 33, 33, Functions.SIGMA);
         ISchool school = new School(10000000);
-        IBook book = new Book();
-        book.addData(pic_a, a);
-        book.addData(pic_b, b);
-        book.addData(pic_V, v);
-        IBook etalonBook = new Book();
-        etalonBook.addData(etalon_a, a);
-        etalonBook.addData(etalon_b, b);
-        etalonBook.addData(etalon_V, v);
+        IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/big_chars.jpg");
+        //IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums.jpg");
+        //IBook bookTest = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums_test.jpg");
 
         System.out.println(LocalTime.now());
-        school.teach(net2, book, 0.1);
+        school.teach(net2, book, 1);
         System.out.println(LocalTime.now());
         System.out.println();
     }
@@ -104,8 +49,9 @@ public class Test {
         double[] inp4 = new double[2];
         inp4[0] = 0.0;
         inp4[1] = 1.0;
-        NeuralNetwork net2 = new NeuralNetwork(2, 1, 4, 1);
-        Teacher trainer = new Teacher(net2.getFunctionType(), 0.1);
+        NeuralNetwork net2 = new NeuralNetwork(2, 1, 3, 1);
+        net2.setFuncActivType(Layers.OUTPUT_LAYER, Functions.ReLU);
+        Teacher trainer = new Teacher(0.1);
         double[] ref1 = new double[1];
         double[] ref2 = new double[1];
         ref1[0] = 1.0;

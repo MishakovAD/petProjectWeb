@@ -30,6 +30,17 @@ public class Book implements IBook {
     }
 
     @Override
+    public boolean setData(int index, double[] data) {
+        questions.set(index, data);
+        return true;
+    }
+
+    @Override
+    public double[] getQuestion(int index) {
+        return questions.get(index);
+    }
+
+    @Override
     public ILesson getLesson() {
         if (canUsedLesson.size() == 0) {
             epochCount++;

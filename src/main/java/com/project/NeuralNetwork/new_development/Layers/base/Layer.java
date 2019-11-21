@@ -1,6 +1,7 @@
 package com.project.NeuralNetwork.new_development.Layers.base;
 
 import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
+import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 
 public interface Layer {
     /**
@@ -48,4 +49,10 @@ public interface Layer {
      * @return выход нейрона
      */
     double getOutputFromNeuron(int index);
+
+    /**
+     * Возвращает тип функции активации указанного слоя.
+     * @return тип функции активации
+     */
+    Functions getFuncType();
 }

@@ -1,22 +1,20 @@
 package com.project.RecognitionImage.backend.SplitterImage;
 
+import com.project.NeuralNetwork.new_development.NeuralNetwork.School.data_book.Book;
+import com.project.NeuralNetwork.new_development.NeuralNetwork.School.data_book.IBook;
 import com.project.RecognitionImage.backend.OpenCV.OpenCVImpl;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.project.RecognitionImage.backend.OpenCV.OpenCVImpl.showImage;
-import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.blackAndWhiteMat;
-import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.blackGreyAndWhiteMat;
-import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.drawBorderOfElements;
-import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getGrayMat;
-import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getMatWithBordersFromSobel;
-import static org.bytedeco.leptonica.global.lept.COLOR_BLUE;
-import static org.bytedeco.leptonica.global.lept.COLOR_RED;
 import static org.opencv.imgproc.Imgproc.line;
 import static org.opencv.imgproc.Imgproc.rectangle;
 
@@ -30,12 +28,11 @@ public class SplitImageToChar implements Splitter {
 
         //Mat imgGray = cv.loadImage(path + "russian_text.png", Imgcodecs.IMREAD_ANYCOLOR);
         //Mat imgGray = cv.loadImage(path + "chars.jpg", Imgcodecs.IMREAD_ANYCOLOR);
-        //Mat imgGray = cv.loadImage(path + "big_chars.jpg", Imgcodecs.IMREAD_GRAYSCALE);
-        //Mat imgGray = cv.loadImage(path + "chars2.jpg", Imgcodecs.IMREAD_GRAYSCALE);
-        //Mat imgGray = cv.loadImage(path + "chars3.jpg", Imgcodecs.IMREAD_ANYCOLOR);
-        Mat imgGray = drawBorderOfElements(cv.loadImage(path + "test.png", Imgcodecs.IMREAD_COLOR));
-        showImage(imgGray, "Result");
+        //Mat imgGray = cv.loadImage(path + "big_chars.jpg", Imgcodecs.IMREAD_ANYCOLOR);
+        Mat imgGray = cv.loadImage(path + "nums.jpg", Imgcodecs.IMREAD_ANYCOLOR);
+
         List<Chars> l = s.getSingleChar(imgGray);
+        s.prepareTestDataForChars(imgGray, l);
 
         for (int i = 0; i < l.size(); i++) {
 //            line(imgGray, l.get(i).getLeftUp(), l.get(i).getRightUp(), new Scalar(7, 7, 7));
@@ -204,8 +201,122 @@ public class SplitImageToChar implements Splitter {
                 }
             }
         }
-        showImage(words, "");
 
         return points;
     }
+
+    @Override
+    public IBook prepareTestSet(String path) {
+        OpenCVImpl cv = new OpenCVImpl();
+        cv.init();
+        Mat img = cv.loadImage(path, Imgcodecs.IMREAD_ANYCOLOR);
+        List<Chars> l = getSingleChar(img);
+        return prepareTestDataForChars(img, l);
+    }
+
+    @Override
+    public Mat zipMatToSize(Mat src, int width, int height) {
+        OpenCVImpl o = new OpenCVImpl();
+        BufferedImage originalImage = o.convertMatToBuffImg(src);
+        BufferedImage destImage = new BufferedImage(width, height, originalImage.getType());
+        Graphics2D g = destImage.createGraphics();
+        g.drawImage(originalImage, 0, 0, width, height, null);
+        g.dispose();
+        Mat dest = o.convertBuffImgToMat(destImage);
+        return dest;
+    }
+
+    private IBook prepareTestDataForChars(Mat img, List<Chars> points) {
+        OpenCVImpl o = new OpenCVImpl();
+        IBook book = new Book();
+        o.init();
+        List<double[]> testSet = new ArrayList<>();
+        List<double[]> answers = new ArrayList<>();
+
+        for (int i = 0; i < 33; i++){
+            double[] a = new double[33];
+            a[i] = 1;
+            answers.add(a);
+        }
+        int indexAnswer = 0;
+        for (int k = 0; k < points.size(); k++) {
+            int rows = (int) (points.get(k).getRightDown().y - points.get(k).getLeftUp().y);
+            int cols = (int) (points.get(k).getRightUp().x - points.get(k).getLeftUp().x);
+            Mat src = new Mat(rows, cols, CvType.CV_8U);
+            int x = 0;
+            int y = 0;
+            int index = 0;
+            if (k == 33) {
+                indexAnswer = 0;
+            }
+            double[] test = new double[100];
+            for (int i = (int) points.get(k).getLeftUp().x; i < points.get(k).getRightUp().x; i++) {
+                for (int j = (int) points.get(k).getLeftUp().y; j < (int) points.get(k).getRightDown().y; j++) {
+                    double[] pixel = img.get(j, i);
+                    src.put(y, x, pixel);
+                    y++;
+                }
+                y = 0;
+                x++;
+            }
+            Mat result = zipMatToSize(src, 10, 10);
+            for (int row = 0; row < result.rows(); row++) {
+                for (int col =0; col < result.cols(); col++) {
+                    double[] pixel = result.get(row, col);
+                    test[index] = pixel[0];
+                    index++;
+                }
+            }
+            testSet.add(test);
+            book.addData(test, answers.get(indexAnswer));
+            indexAnswer++;
+        }
+        return book;
+    }
+
+    private IBook prepareTestDataForNums(Mat img, List<Chars> points) {
+        OpenCVImpl o = new OpenCVImpl();
+        IBook book = new Book();
+        o.init();
+        List<double[]> answers = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++){
+            double[] a = new double[10];
+            a[i] = 1;
+            answers.add(a);
+        }
+        int indexAnswer = 0;
+        for (int k = 0; k < points.size(); k++) {
+            int rows = (int) (points.get(k).getRightDown().y - points.get(k).getLeftUp().y);
+            int cols = (int) (points.get(k).getRightUp().x - points.get(k).getLeftUp().x);
+            Mat src = new Mat(rows, cols, CvType.CV_8U);
+            int x = 0;
+            int y = 0;
+            int index = 0;
+            double[] test = new double[100];
+            for (int i = (int) points.get(k).getLeftUp().x; i < points.get(k).getRightUp().x; i++) {
+                for (int j = (int) points.get(k).getLeftUp().y; j < (int) points.get(k).getRightDown().y; j++) {
+                    double[] pixel = img.get(j, i);
+                    src.put(y, x, pixel);
+                    y++;
+                }
+                y = 0;
+                x++;
+            }
+            Mat result = zipMatToSize(src, 10, 10);
+            for (int row = 0; row < result.rows(); row++) {
+                for (int col =0; col < result.cols(); col++) {
+                    double[] pixel = result.get(row, col);
+                    //test[index] = pixel[0];
+                    test[index] = 1 / (pixel[0]+1);
+                    index++;
+                }
+            }
+            book.addData(test, answers.get(indexAnswer));
+            indexAnswer++;
+        }
+        return book;
+    }
+
+    //TODO: Сделать метод, для мелкого добавления шума, чтобы генерировать изображения разные.
 }

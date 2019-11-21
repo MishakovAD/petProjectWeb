@@ -5,9 +5,11 @@ import com.project.NeuralNetwork.new_development.Layers.OutputLayer;
 import com.project.NeuralNetwork.new_development.Layers.base.Layer;
 import com.project.NeuralNetwork.new_development.Neuron.HiddenNeuron;
 import com.project.NeuralNetwork.new_development.Neuron.OutputNeuron;
-import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.DerivativeActivationFunction;
 import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.derivative_user_fa.DerivativeUserFunction;
+import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivFunc;
+import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivationFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
+import com.project.NeuralNetwork.new_development.Neuron.function_activation.functions.user_function.UserFunction;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -16,72 +18,42 @@ import java.util.List;
 import static com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions.USER;
 
 public class Teacher implements ITeacher {
-    private List<Double> prevDeltaFromErrors;
-    private List<Double> prevErrors;
-    private DerivativeActivationFunction derivativeFunction;
     private double speed;
-    private Functions funcType;
 
     /**
      * Конструктор для создания объекта, обучающего НС.
-     * @param funcType тип функции активации, для корректного вычисления производной
      * @param speed скорость обучения
      */
-    public Teacher(Functions funcType, double speed) {
-        prevDeltaFromErrors = new LinkedList<>();
-        prevErrors = new ArrayList<>();
-        this.funcType = funcType;
-        derivativeFunction = new DerivativeActivationFunction(funcType);
+    public Teacher(double speed) {
         this.speed = speed;
     }
 
-    /**
-     * Конструктор для создания объекта, обучающего НС.
-     * @param derivativeUserFunction объект, вычисляющий производную пользовательской функции
-     * @param speed скорость обучения
-     */
-    public Teacher(DerivativeUserFunction derivativeUserFunction, double speed) {
-        this.funcType = USER;
-        this.derivativeFunction = new DerivativeActivationFunction(derivativeUserFunction);
-        this.speed = speed;
-    }
+//    /**
+//     * Конструктор для создания объекта, обучающего НС.
+//     * @param userFunction объект, вычисляющий пользовательскую функцию активации
+//     * @param derivativeUserFunction объект, вычисляющий производную пользовательской функции
+//     * @param speed скорость обучения
+//     */
+//    public Teacher(UserFunction userFunction, DerivativeUserFunction derivativeUserFunction, double speed) {
+//        this.funcType = USER;
+//        this.function = new ActivationFunction(userFunction, derivativeUserFunction);
+//        this.speed = speed;
+//    }
 
     @Override
     public double calculateError(double[] ideal, double[] result) {
         if (ideal.length != result.length) {
             //throw new DataIsNotCorrectException()
         }
-        if (prevErrors.size() > 5000) {
-            double lastError = prevErrors.get(prevErrors.size() - 1);
-            clearErrors(); //TODO: придумать, как лучше очищать занятую память ошибками.
-            prevErrors.add(lastError);
-        }
         double error = 0;
         double sum = 0;
         int len = result.length;
         for (int i = 0; i < len; i++) {
             double delta = ideal[i]-result[i];
-            sum = sum + delta*delta;
+            sum += delta*delta;
         }
-        prevDeltaFromErrors.add(sum);
-        double sum_delta = 0;
-        for (Double n : prevDeltaFromErrors) {
-            sum_delta += n;
-        }
-        error = sum_delta/prevDeltaFromErrors.size();
-        prevErrors.add(error);
+        error = sum/len;
         return error;
-    }
-
-    @Override
-    public List<Double> getPreviousErrors() {
-        return prevErrors;
-    }
-
-    @Override
-    public void clearErrors() {
-        prevDeltaFromErrors = new LinkedList<>();
-        prevErrors = new ArrayList<>();
     }
 
     @Override
@@ -104,6 +76,7 @@ public class Teacher implements ITeacher {
     }
 
     private List<double[]> calculateDeltaOutput(double[] ideal, OutputLayer outputLayer) {
+        ActivFunc function = new ActivationFunction(outputLayer.getFuncType());
         List<double[]> deltaList = new LinkedList<>();
         int countNeurons = outputLayer.getNeuronsCount();
         for (int i = 0; i < countNeurons; i++) {
@@ -112,7 +85,7 @@ public class Teacher implements ITeacher {
             double result = outputNeuron.getOutput();
             double sigma;
             double[] delta = new double[inputCount];
-            double derivative = derivativeFunction.calculateDerivative(outputNeuron.getInputs(), outputNeuron.getWeights(), outputNeuron.getParams());
+            double derivative = function.derivative(outputNeuron.getInputs(), outputNeuron.getWeights(), outputNeuron.getParams());
             sigma = (ideal[i] - result) * derivative;
             outputNeuron.setSigma(sigma);
             for (int j = 0; j < inputCount; j++) {
@@ -145,6 +118,7 @@ public class Teacher implements ITeacher {
     }
 
     private List<double[]> calculateDeltaHidden(HiddenLayer hiddenLayer, Layer previousLayer) {
+        ActivFunc function = new ActivationFunction(hiddenLayer.getFuncType());
         List<double[]> deltaList = new LinkedList<>();
         int prevNeuronsCount = previousLayer.getNeuronsCount();
         int neuronsCount = hiddenLayer.getNeuronsCount();
@@ -160,7 +134,7 @@ public class Teacher implements ITeacher {
                 }
             }
 
-            double derivative = derivativeFunction.calculateDerivative(hiddenNeuron.getInputs(), hiddenNeuron.getWeights(), hiddenNeuron.getParams());
+            double derivative = function.derivative(hiddenNeuron.getInputs(), hiddenNeuron.getWeights(), hiddenNeuron.getParams());
             sigmaCurrent = sigmaPrevious[i] * derivative;
             hiddenNeuron.setSigma(sigmaCurrent);
 

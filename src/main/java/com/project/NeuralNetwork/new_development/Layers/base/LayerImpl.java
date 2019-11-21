@@ -5,6 +5,7 @@ import com.project.NeuralNetwork.new_development.Neuron.InputNeuron;
 import com.project.NeuralNetwork.new_development.Neuron.OutputNeuron;
 import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
 import com.project.NeuralNetwork.new_development.Neuron.base.NeuronImpl;
+import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.derivative_user_fa.DerivativeUserFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.functions.user_function.UserFunction;
 
@@ -15,7 +16,7 @@ import static com.project.NeuralNetwork.new_development.Layers.base.Layers.INPUT
  * Содержит в себе реализацию основных методов, а так же
  * все необходимые конструкторы для создания слоя.
  */
-public class LayerImpl implements Layer {
+public abstract class LayerImpl implements Layer {
     private Neuron[] neurons;
     private double[] data;
     private double[] outputs;
@@ -124,8 +125,9 @@ public class LayerImpl implements Layer {
      * @param neuronsCount число нейронов
      * @param inputsCount число входов в нейрон (равно количеству нейронов на предыдущем уровне)
      * @param userFunction реализованная пользовательская функция активации
+     * @param derivativeUserFunction реализованная производная пользовательской функции активации
      */
-    public LayerImpl(Layers layer, int neuronsCount, int inputsCount, UserFunction userFunction) {
+    public LayerImpl(Layers layer, int neuronsCount, int inputsCount, UserFunction userFunction, DerivativeUserFunction derivativeUserFunction) {
         if (neuronsCount < 1) {
             neuronsCount = 1;
         }
@@ -137,11 +139,11 @@ public class LayerImpl implements Layer {
                     layerType = INPUT_LAYER;
                     break;
                 case HIDDEN_LAYER:
-                    neurons[i] = new HiddenNeuron(inputsCount, userFunction);
+                    neurons[i] = new HiddenNeuron(inputsCount, userFunction, derivativeUserFunction);
                     layerType = Layers.HIDDEN_LAYER;
                     break;
                 case OUTPUT_LAYER:
-                    neurons[i] = new OutputNeuron(inputsCount, userFunction);
+                    neurons[i] = new OutputNeuron(inputsCount, userFunction, derivativeUserFunction);
                     layerType = Layers.OUTPUT_LAYER;
                     break;
                 default: ;
@@ -211,6 +213,14 @@ public class LayerImpl implements Layer {
     @Override
     public double getOutputFromNeuron(int index) {
         return neurons[index].getOutput();
+    }
+
+    @Override
+    public Functions getFuncType() {
+        if (neurons.length > 0) {
+            return neurons[0].getFuncType();
+        }
+        return Functions.SIGMA;
     }
 
 }

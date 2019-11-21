@@ -9,5 +9,5 @@ public interface DerivativeUserFunction {
      * @param params параметры крутизны/порог
      * @return производную ФА
      */
-    double calculateDerivative(double[] inputs, double[] weights, double ... params);
+    double derivative(double[] inputs, double[] weights, double ... params);
 }

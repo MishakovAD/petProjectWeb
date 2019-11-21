@@ -5,12 +5,12 @@ import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.Derivative
 //TODO: реализовать производную данной функции
 public class DerivativeLeapFunction implements DerivativeActivFunc {
     @Override
-    public double calculateDerivative(double[] inputs, double[] weights, double... params) {
+    public double derivative(double[] inputs, double[] weights, double... params) {
         return 0;
     }
 
     @Override
-    public double calculateDerivative(double[] inputs, double[] weights) {
+    public double derivative(double[] inputs, double[] weights) {
         return 0;
     }
 }

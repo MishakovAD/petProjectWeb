@@ -2,8 +2,8 @@ package com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivativ
 
 import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.DerivativeActivFunc;
 
-//TODO: реализовать производную данной функции
-public class DerivativeTanhFunction implements DerivativeActivFunc {
+//TODO: реализовать
+public class DerivativeSoftmaxFunction implements DerivativeActivFunc {
     @Override
     public double derivative(double[] inputs, double[] weights, double... params) {
         return 0;
