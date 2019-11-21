@@ -12,7 +12,7 @@ import java.util.Arrays;
 /**
  * Класс-предок для всех нейронов с реализацией основных методов.
  */
-public class NeuronImpl implements Neuron {
+public abstract class NeuronImpl implements Neuron {
     private double[] inputs;
     private double[] weights;
     private double output;
@@ -33,7 +33,7 @@ public class NeuronImpl implements Neuron {
         }
         this.inputs = new double[inputsCount];
         this.weights = new double[inputsCount];
-        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/100000000)).toArray();
+        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random())).toArray();
         this.delta = new double[inputsCount];
         this.function = new ActivationFunction(Functions.SIGMA);
         this.a = 1;
@@ -50,7 +50,7 @@ public class NeuronImpl implements Neuron {
         }
         this.inputs = new double[inputsCount];
         this.weights = new double[inputsCount];
-        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/100000000)).toArray();
+        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random())).toArray();
         this.delta = new double[inputsCount];
         this.funcType = function;
         this.function = new ActivationFunction(function);
@@ -69,7 +69,7 @@ public class NeuronImpl implements Neuron {
         }
         this.inputs = new double[inputsCount];
         this.weights = new double[inputsCount];
-        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/100000000)).toArray();
+        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random())).toArray();
         this.delta = new double[inputsCount];
         this.funcType = function;
         this.function = new ActivationFunction(function);
@@ -87,7 +87,7 @@ public class NeuronImpl implements Neuron {
         }
         this.inputs = new double[inputsCount];
         this.weights = new double[inputsCount];
-        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/100000000)).toArray();
+        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random())).toArray();
         this.delta = new double[inputsCount];
         this.funcType = Functions.USER;
         this.function = new ActivationFunction(userFunction, derivativeUserFunction);
@@ -95,7 +95,7 @@ public class NeuronImpl implements Neuron {
 
     @Override
     public void setInputs(double[] inputs) {
-        inputs = normalize(inputs);
+        //inputs = normalize(inputs);
         this.inputs = inputs;
         calculation();
     }
