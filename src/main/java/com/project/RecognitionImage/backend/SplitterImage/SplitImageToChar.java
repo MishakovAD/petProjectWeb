@@ -10,6 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.project.RecognitionImage.backend.OpenCV.OpenCVImpl.showImage;
+import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.blackAndWhiteMat;
+import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.blackGreyAndWhiteMat;
+import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.drawBorderOfElements;
+import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getGrayMat;
+import static com.project.RecognitionImage.backend.OpenCV.Utils.OpenCVUtils.getMatWithBordersFromSobel;
 import static org.bytedeco.leptonica.global.lept.COLOR_BLUE;
 import static org.bytedeco.leptonica.global.lept.COLOR_RED;
 import static org.opencv.imgproc.Imgproc.line;
@@ -24,12 +29,12 @@ public class SplitImageToChar implements Splitter {
         cv.init();
 
         //Mat imgGray = cv.loadImage(path + "russian_text.png", Imgcodecs.IMREAD_ANYCOLOR);
-        Mat imgGray = cv.loadImage(path + "chars.jpg", Imgcodecs.IMREAD_ANYCOLOR);
+        //Mat imgGray = cv.loadImage(path + "chars.jpg", Imgcodecs.IMREAD_ANYCOLOR);
         //Mat imgGray = cv.loadImage(path + "big_chars.jpg", Imgcodecs.IMREAD_GRAYSCALE);
         //Mat imgGray = cv.loadImage(path + "chars2.jpg", Imgcodecs.IMREAD_GRAYSCALE);
         //Mat imgGray = cv.loadImage(path + "chars3.jpg", Imgcodecs.IMREAD_ANYCOLOR);
-        //Mat imgGray = cv.loadImage(path + "chars4.jpg", Imgcodecs.IMREAD_ANYCOLOR);
-//        showImage(imgGray, "Result");
+        Mat imgGray = drawBorderOfElements(cv.loadImage(path + "test.png", Imgcodecs.IMREAD_COLOR));
+        showImage(imgGray, "Result");
         List<Chars> l = s.getSingleChar(imgGray);
 
         for (int i = 0; i < l.size(); i++) {
