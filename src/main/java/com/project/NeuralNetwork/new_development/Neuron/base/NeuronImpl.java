@@ -33,7 +33,7 @@ public class NeuronImpl implements Neuron {
         }
         this.inputs = new double[inputsCount];
         this.weights = new double[inputsCount];
-        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/10000)).toArray();
+        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/100000000)).toArray();
         this.delta = new double[inputsCount];
         this.function = new ActivationFunction(Functions.SIGMA);
         this.a = 1;
@@ -50,7 +50,7 @@ public class NeuronImpl implements Neuron {
         }
         this.inputs = new double[inputsCount];
         this.weights = new double[inputsCount];
-        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/1)).toArray();
+        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/100000000)).toArray();
         this.delta = new double[inputsCount];
         this.funcType = function;
         this.function = new ActivationFunction(function);
@@ -69,7 +69,7 @@ public class NeuronImpl implements Neuron {
         }
         this.inputs = new double[inputsCount];
         this.weights = new double[inputsCount];
-        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/1)).toArray();
+        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/100000000)).toArray();
         this.delta = new double[inputsCount];
         this.funcType = function;
         this.function = new ActivationFunction(function);
@@ -87,7 +87,7 @@ public class NeuronImpl implements Neuron {
         }
         this.inputs = new double[inputsCount];
         this.weights = new double[inputsCount];
-        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/1)).toArray();
+        this.weights = Arrays.stream(this.weights).map(weight -> weight += (Math.random()/100000000)).toArray();
         this.delta = new double[inputsCount];
         this.funcType = Functions.USER;
         this.function = new ActivationFunction(userFunction, derivativeUserFunction);
@@ -113,6 +113,11 @@ public class NeuronImpl implements Neuron {
         double[] w = new double[1];
         i[0] = input;
         w[0] = 1;
+//        if (input < 127) {
+//            return 0;
+//        } else {
+//            return 1;
+//        }
         return new SigmaFunction().activate(i, w);
     }
 
@@ -200,6 +205,7 @@ public class NeuronImpl implements Neuron {
     @Override
     public void correctWeights() {
         for (int i = 0; i < this.weights.length; i++) {
+            //this.weights[i] = this.weights[i] + delta[i]; TODO: как правильно идти при градиентном спуске?
             this.weights[i] = this.weights[i] - delta[i];
         }
     }

@@ -211,7 +211,8 @@ public class SplitImageToChar implements Splitter {
         cv.init();
         Mat img = cv.loadImage(path, Imgcodecs.IMREAD_ANYCOLOR);
         List<Chars> l = getSingleChar(img);
-        return prepareTestDataForChars(img, l);
+        //return prepareTestDataForChars(img, l);
+        return prepareTestDataForNums(img, l);
     }
 
     @Override
@@ -307,8 +308,8 @@ public class SplitImageToChar implements Splitter {
             for (int row = 0; row < result.rows(); row++) {
                 for (int col =0; col < result.cols(); col++) {
                     double[] pixel = result.get(row, col);
-                    //test[index] = pixel[0];
-                    test[index] = 1 / (pixel[0]+1);
+                    test[index] = pixel[0];
+                    //test[index] = 1 / (pixel[0]+1); TODO: решить, как преобразовывать данные.
                     index++;
                 }
             }

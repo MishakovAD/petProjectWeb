@@ -24,14 +24,14 @@ public class Test {
         NeuralNetwork net2 = NeuralNetwork.newBuilder()
                 .setCountInputNeurons(100)
                 .setCountHiddenLayers(2)
-                .setCountHiddenNeurons(33)
-                .setCountOutputNeurons(33)
+                .setCountHiddenNeurons(25)
+                .setCountOutputNeurons(10)
                 .setFunctionType(Functions.SIGMA)
                 .build();
         ISchool school = new School(10000000);
-        IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/big_chars.jpg");
-        //IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums.jpg");
-        //IBook bookTest = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums_test.jpg");
+        //IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/big_chars.jpg");
+        IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums.jpg");
+        IBook bookTest = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums_test.jpg");
 
         System.out.println(LocalTime.now());
         school.teach(net2, book, 1);
