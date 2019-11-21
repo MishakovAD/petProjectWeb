@@ -24,11 +24,11 @@ public class Test {
         OpenCV openCV = new OpenCVImpl();
         openCV.init();
 
-        NeuralNetwork net2 = new NeuralNetwork(100, 2, 33, 33, Functions.SIGMA);
+        NeuralNetwork net2 = new NeuralNetwork(100, 2, 10, 10, Functions.SIGMA);
         ISchool school = new School(10000000);
-        IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/big_chars.jpg");
-        //IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums.jpg");
-        //IBook bookTest = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums_test.jpg");
+        //IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/big_chars.jpg");
+        IBook book = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums.jpg");
+        IBook bookTest = new SplitImageToChar().prepareTestSet("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/nums_test.jpg");
 
         System.out.println(LocalTime.now());
         school.teach(net2, book, 1);
