@@ -1,5 +1,7 @@
 package com.project.NeuralNetwork.new_development.Neuron.function_activation;
 
+import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
+
 public interface ActivFunc {
     /**
      * Вычисляет выход нейрона, согласно выбранной функции.
@@ -35,6 +37,13 @@ public interface ActivFunc {
      * @return производную ФА
      */
     double derivative(double[] inputs, double[] weights);
+
+    /**
+     * Метод, вычисляющий производную функции активации.
+     * @param neuron нейрон, для которого вычисляется производная
+     * @return производную ФА
+     */
+    double derivative(Neuron neuron);
 
     /**
      * Возвращает тип функции активации.

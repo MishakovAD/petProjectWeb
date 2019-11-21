@@ -5,8 +5,10 @@ import com.project.NeuralNetwork.new_development.Layers.OutputLayer;
 import com.project.NeuralNetwork.new_development.Layers.base.Layer;
 import com.project.NeuralNetwork.new_development.Neuron.HiddenNeuron;
 import com.project.NeuralNetwork.new_development.Neuron.OutputNeuron;
+import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivFunc;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivationFunction;
+import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 import com.project.NeuralNetwork.new_development.Neuron.loss_function.LossFunc;
 import com.project.NeuralNetwork.new_development.Neuron.loss_function.functions.BSE_function;
 import com.project.NeuralNetwork.new_development.Neuron.loss_function.functions.MSE_function;
@@ -24,18 +26,6 @@ public class Teacher implements ITeacher {
     public Teacher(double speed) {
         this.speed = speed;
     }
-
-//    /**
-//     * Конструктор для создания объекта, обучающего НС.
-//     * @param userFunction объект, вычисляющий пользовательскую функцию активации
-//     * @param derivativeUserFunction объект, вычисляющий производную пользовательской функции
-//     * @param speed скорость обучения
-//     */
-//    public Teacher(UserFunction userFunction, DerivativeUserFunction derivativeUserFunction, double speed) {
-//        this.funcType = USER;
-//        this.function = new ActivationFunction(userFunction, derivativeUserFunction);
-//        this.speed = speed;
-//    }
 
     @Override
     public double calculateError(double[] ideal, double[] result) {
@@ -84,7 +74,7 @@ public class Teacher implements ITeacher {
             double sigma = 0;
             LossFunc lossFunc = new MSE_function(); //TODO: переделать.
             double derivTotalErrorToOutput = lossFunc.calculateDerivationLossF(ideal[i], outputNeuron);
-            double derivOutputToInput = function.derivative(outputNeuron.getInputs(), outputNeuron.getWeights(), outputNeuron.getParams());
+            double derivOutputToInput = getDerivOutputToInput(function, outputNeuron);
             sigma = derivTotalErrorToOutput * derivOutputToInput;
             outputNeuron.setSigma(sigma);
             for (int j = 0; j < inputCount; j++) {
@@ -113,21 +103,19 @@ public class Teacher implements ITeacher {
     private void calculateDeltaHidden(HiddenLayer hiddenLayer, Layer previousLayer) {
         ActivFunc function = new ActivationFunction(hiddenLayer.getFuncType());
         int prevNeuronsCount = previousLayer.getNeuronsCount();
-        int neuronsCount = hiddenLayer.getNeuronsCount();
-        for (int i = 0; i < neuronsCount; i++) {
+        int currentNeuronsCount = hiddenLayer.getNeuronsCount();
+        for (int i = 0; i < currentNeuronsCount; i++) {
             HiddenNeuron hiddenNeuron = (HiddenNeuron) hiddenLayer.getNeuron(i);
             int inputCount = hiddenNeuron.getInputsCount();
             double[] delta = new double[inputCount];
-            double[] sigmaPrevious = new double[neuronsCount];
+            double sigmaPrevious = 0;
             double sigmaCurrent;
-            for (int k = 0; k < neuronsCount; k++) { //считаем для каждого нейрона
-                for (int m = 0; m < prevNeuronsCount; m++) { //сумму ошибок на предыдущем уровне
-                    sigmaPrevious[k] += previousLayer.getNeuron(m).getSigma() * previousLayer.getNeuron(m).getWeight(k);
-                }
+            for (int j = 0; j < prevNeuronsCount; j++) {
+                Neuron prevNeuron = previousLayer.getNeuron(j);
+                sigmaPrevious += prevNeuron.getSigma() * prevNeuron.getWeight(i);
             }
-
-            double derivative = function.derivative(hiddenNeuron.getInputs(), hiddenNeuron.getWeights(), hiddenNeuron.getParams());
-            sigmaCurrent = sigmaPrevious[i] * derivative;
+            double derivOutputToInput = getDerivOutputToInput(function, hiddenNeuron);
+            sigmaCurrent = sigmaPrevious * derivOutputToInput;
             hiddenNeuron.setSigma(sigmaCurrent);
 
             for (int j = 0; j < inputCount; j++) {
@@ -135,5 +123,15 @@ public class Teacher implements ITeacher {
             }
             hiddenNeuron.setDelta(delta);
         }
+    }
+
+
+    private double getDerivOutputToInput(ActivFunc function, Neuron neuron) {
+        if (Functions.SIGMA.equals(function.getFuncType())) {
+            return function.derivative(neuron);
+        } else {
+            return function.derivative(neuron.getInputs(), neuron.getWeights(), neuron.getParams());
+        }
+
     }
 }

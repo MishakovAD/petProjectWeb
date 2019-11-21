@@ -1,10 +1,10 @@
 package com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions;
 
+import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
 import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.DerivativeActivFunc;
 
 import static com.project.NeuralNetwork.new_development.HelpUtils.HelpUtils.adder;
 
-//Производная сигмоиды = sigma(1-sigma). Вероятнее всего можно упростить вычисления.
 public class DerivativeSigmaFunction implements DerivativeActivFunc {
     @Override
     public double derivative(double[] inputs, double[] weights, double... params) {
@@ -16,5 +16,10 @@ public class DerivativeSigmaFunction implements DerivativeActivFunc {
     @Override
     public double derivative(double[] inputs, double[] weights) {
         return derivative(inputs, weights, 1);
+    }
+
+    @Override
+    public double derivative(Neuron neuron) {
+        return neuron.getOutput() * (1 - neuron.getOutput());
     }
 }

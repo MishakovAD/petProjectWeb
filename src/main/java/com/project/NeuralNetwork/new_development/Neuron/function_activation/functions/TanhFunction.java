@@ -1,5 +1,6 @@
 package com.project.NeuralNetwork.new_development.Neuron.function_activation.functions;
 
+import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
 import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.DerivativeTanhFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivFunc;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
@@ -32,6 +33,11 @@ public class TanhFunction implements ActivFunc {
     @Override
     public double derivative(double[] inputs, double[] weights) {
         return new DerivativeTanhFunction().derivative(inputs, weights, params);
+    }
+
+    @Override
+    public double derivative(Neuron neuron) {
+        return new DerivativeTanhFunction().derivative(neuron);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.project.NeuralNetwork.new_development.Neuron.derivative_fa;
 
 
+import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
+
 public interface DerivativeActivFunc {
     /**
      * Метод, вычисляющий производную функции активации.
@@ -18,4 +20,11 @@ public interface DerivativeActivFunc {
      * @return производную ФА
      */
     double derivative(double[] inputs, double[] weights);
+
+    /**
+     * Метод, вычисляющий производную функции активации.
+     * @param neuron нейрон, для которого вычисляется производная
+     * @return производную ФА
+     */
+    double derivative(Neuron neuron);
 }

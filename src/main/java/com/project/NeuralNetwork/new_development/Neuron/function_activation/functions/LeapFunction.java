@@ -1,5 +1,6 @@
 package com.project.NeuralNetwork.new_development.Neuron.function_activation.functions;
 
+import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
 import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.DerivativeLeapFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivFunc;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
@@ -35,6 +36,11 @@ public class LeapFunction implements ActivFunc {
     @Override
     public double derivative(double[] inputs, double[] weights) {
         return new DerivativeLeapFunction().derivative(inputs, weights);
+    }
+
+    @Override
+    public double derivative(Neuron neuron) {
+        return new DerivativeLeapFunction().derivative(neuron);
     }
 
     @Override

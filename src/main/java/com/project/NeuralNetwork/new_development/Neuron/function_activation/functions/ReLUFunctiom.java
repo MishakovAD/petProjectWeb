@@ -1,5 +1,6 @@
 package com.project.NeuralNetwork.new_development.Neuron.function_activation.functions;
 
+import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
 import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.DerivativeReLUFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivFunc;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
@@ -40,6 +41,11 @@ public class ReLUFunctiom implements ActivFunc {
     @Override
     public double derivative(double[] inputs, double[] weights) {
         return new DerivativeReLUFunction().derivative(inputs, weights, this.params);
+    }
+
+    @Override
+    public double derivative(Neuron neuron) {
+        return new DerivativeReLUFunction().derivative(neuron);
     }
 
     @Override

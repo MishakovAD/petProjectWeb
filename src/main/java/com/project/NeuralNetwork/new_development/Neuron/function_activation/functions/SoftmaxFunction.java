@@ -1,5 +1,6 @@
 package com.project.NeuralNetwork.new_development.Neuron.function_activation.functions;
 
+import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivFunc;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
 
@@ -22,6 +23,11 @@ public class SoftmaxFunction implements ActivFunc {
 
     @Override
     public double derivative(double[] inputs, double[] weights) {
+        return 0;
+    }
+
+    @Override
+    public double derivative(Neuron neuron) {
         return 0;
     }
 

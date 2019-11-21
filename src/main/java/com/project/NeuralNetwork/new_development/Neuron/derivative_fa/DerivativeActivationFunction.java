@@ -1,5 +1,6 @@
 package com.project.NeuralNetwork.new_development.Neuron.derivative_fa;
 
+import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
 import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.DerivativeLeapFunction;
 import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.DerivativeSigmaFunction;
 import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.DerivativeTanhFunction;
@@ -57,6 +58,15 @@ public class DerivativeActivationFunction implements DerivativeActivFunc {
             return derivativeUserFunction.derivative(inputs, weights);
         } else {
             return derivativeFunction.derivative(inputs, weights, params);
+        }
+    }
+
+    @Override
+    public double derivative(Neuron neuron) {
+        if (USER.equals(funcType)) {
+            return derivativeUserFunction.derivative(neuron.getInputs(), neuron.getWeights());
+        } else {
+            return derivativeFunction.derivative(neuron);
         }
     }
 }

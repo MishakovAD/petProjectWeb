@@ -1,5 +1,6 @@
 package com.project.NeuralNetwork.new_development.Neuron.function_activation.functions;
 
+import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
 import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions.DerivativeSigmaFunction;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.ActivFunc;
 import com.project.NeuralNetwork.new_development.Neuron.function_activation.Functions;
@@ -28,6 +29,11 @@ public class SigmaFunction implements ActivFunc {
     @Override
     public double derivative(double[] inputs, double[] weights) {
         return new DerivativeSigmaFunction().derivative(inputs, weights);
+    }
+
+    @Override
+    public double derivative(Neuron neuron) {
+        return new DerivativeSigmaFunction().derivative(neuron);
     }
 
     @Override

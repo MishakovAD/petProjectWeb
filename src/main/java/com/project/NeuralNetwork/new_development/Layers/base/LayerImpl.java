@@ -173,6 +173,7 @@ public abstract class LayerImpl implements Layer {
             } else {
                 for (int i = 0; i < neurons.length; i++) {
                     neurons[i].setInput(data[i]);
+                    outputs[i] = neurons[i].getOutput();
                 }
             }
         } else {

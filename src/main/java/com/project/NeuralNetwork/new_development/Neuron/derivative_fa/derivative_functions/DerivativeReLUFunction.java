@@ -1,5 +1,6 @@
 package com.project.NeuralNetwork.new_development.Neuron.derivative_fa.derivative_functions;
 
+import com.project.NeuralNetwork.new_development.Neuron.base.Neuron;
 import com.project.NeuralNetwork.new_development.Neuron.derivative_fa.DerivativeActivFunc;
 
 import static com.project.NeuralNetwork.new_development.HelpUtils.HelpUtils.adder;
@@ -17,5 +18,10 @@ public class DerivativeReLUFunction implements DerivativeActivFunc {
     @Override
     public double derivative(double[] inputs, double[] weights) {
         return derivative(inputs, weights, 1);
+    }
+
+    @Override
+    public double derivative(Neuron neuron) {
+        return 0;
     }
 }
