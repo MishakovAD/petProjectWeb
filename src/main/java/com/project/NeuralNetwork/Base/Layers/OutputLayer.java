@@ -1,70 +1,29 @@
 package com.project.NeuralNetwork.Base.Layers;
 
-import com.project.NeuralNetwork.Base.Neurons.OutputNeuron;
-import org.apache.commons.lang3.ArrayUtils;
+import com.project.NeuralNetwork.Base.Layers.base.Layer;
+import com.project.NeuralNetwork.Base.Layers.base.LayerImpl;
+import com.project.NeuralNetwork.Base.Layers.base.Layers;
+import com.project.NeuralNetwork.Base.Neuron.derivative_fa.derivative_functions.derivative_user_fa.DerivativeUserFunction;
+import com.project.NeuralNetwork.Base.Neuron.function_activation.Functions;
+import com.project.NeuralNetwork.Base.Neuron.function_activation.functions.user_function.UserFunction;
 
-import java.util.LinkedList;
-import java.util.List;
-
-public class OutputLayer {
-    private int neuronsCount;
-    private int inputCount;
-    private OutputNeuron[] outputNeuronsArray;
-    private double[] data;
-
-    public OutputLayer(int neuronsCount, int inputCount, double[] data) {
-        if (neuronsCount < 1 || inputCount < 1) {
-            neuronsCount = 5;
-            inputCount = 1;
-        }
-        if (inputCount < data.length) {
-//            throw new Exception(); //TODO: Сделать рабочий вариант.
-        }
-        this.neuronsCount = neuronsCount;
-        this.inputCount = inputCount;
-        this.outputNeuronsArray = new OutputNeuron[neuronsCount];
-        for (int i = 0; i < neuronsCount; i++) {
-            OutputNeuron outputNeuron = new OutputNeuron(inputCount, data);
-            outputNeuronsArray[i] = outputNeuron;
-        }
+/**
+ * Выходной слой нейросети
+ */
+public class OutputLayer extends LayerImpl implements Layer {
+    public OutputLayer(int neuronsCount, int inputsCount) {
+        super(Layers.OUTPUT_LAYER, neuronsCount, inputsCount);
     }
 
-    public OutputNeuron[] getOutputNeuronsArray() {
-        return outputNeuronsArray;
+    public OutputLayer(int neuronsCount, int inputsCount, Functions funcType) {
+        super(Layers.OUTPUT_LAYER, neuronsCount, inputsCount, funcType);
     }
 
-    public OutputNeuron getOutputNeuron(int index) {
-        return outputNeuronsArray[index];
+    public OutputLayer(int neuronsCount, int inputsCount, Functions funcType, double a) {
+        super(Layers.OUTPUT_LAYER, neuronsCount, inputsCount, funcType, a);
     }
 
-    public int getNeuronsCount() {
-        return neuronsCount;
-    }
-
-    public List<Double[]> getWeightsList() {
-        List<Double[]> outputWeights = new LinkedList<>();
-        for (int i = 0; i < this.outputNeuronsArray.length; i++) {
-            double[] weights = getOutputNeuron(i).getWeights();
-            outputWeights.add(ArrayUtils.toObject(weights));
-        }
-        return outputWeights;
-    }
-
-    public void setWeights(List<Double[]> weights) {
-        for (int i = 0; i < this.outputNeuronsArray.length; i++) {
-            this.outputNeuronsArray[i].setWeights(ArrayUtils.toPrimitive(weights.get(i)));
-        }
-    }
-
-    public void setInputs(double[] inputs) {
-        for (int i = 0; i < this.outputNeuronsArray.length; i++) {
-            this.outputNeuronsArray[i].setInputs(inputs);
-        }
-    }
-
-    public void correctWeightsOfOutputLayer() {
-        for (int i = 0; i < outputNeuronsArray.length; i++) {
-            outputNeuronsArray[i].correctWeights();
-        }
+    public OutputLayer(int neuronsCount, int inputsCount, UserFunction userFunction, DerivativeUserFunction derivativeUserFunction) {
+        super(Layers.OUTPUT_LAYER, neuronsCount, inputsCount, userFunction, derivativeUserFunction);
     }
 }

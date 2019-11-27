@@ -1,7 +1,7 @@
 package com.project.RecognitionImage.backend.SplitterImage;
 
-import com.project.NeuralNetwork.new_development.NeuralNetwork.School.data_book.Book;
-import com.project.NeuralNetwork.new_development.NeuralNetwork.School.data_book.IBook;
+import com.project.NeuralNetwork.Base.Networks.School.data_book.Book;
+import com.project.NeuralNetwork.Base.Networks.School.data_book.IBook;
 import com.project.RecognitionImage.backend.OpenCV.OpenCVImpl;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
