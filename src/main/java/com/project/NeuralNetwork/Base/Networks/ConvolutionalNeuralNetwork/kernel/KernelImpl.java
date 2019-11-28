@@ -5,16 +5,14 @@ import org.opencv.core.Mat;
 
 public class KernelImpl implements Kernel {
     private int size; //рассматриваем пока только квадратные фильтры (ядра), поэтому число строк или колонок = size
-    private int channels; //количество каналов у изображения равно количеству каналов ядра.
     private double[][] kernel;
 
-    public KernelImpl(double[][] kernel, int channels) throws NotCorrectInitialConditions {
+    public KernelImpl(double[][] kernel) throws NotCorrectInitialConditions {
         if (kernel == null || kernel.length <= 0 || kernel[0].length <= 0) {
             throw new NotCorrectInitialConditions();
         }
         this.kernel = kernel;
         this.size = kernel[0].length;
-        this.channels = channels;
     }
 
     @Override
