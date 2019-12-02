@@ -37,4 +37,9 @@ public class KernelImpl implements Kernel {
         }
         return result;
     }
+
+    @Override
+    public double[][] getKernelArray() {
+        return this.kernel;
+    }
 }

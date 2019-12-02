@@ -16,4 +16,10 @@ public interface Kernel {
      * @return результат поэлементного умножения.
      */
     double[] multiplication(Mat partOfImg) throws NotCorrectInitialConditions;
+
+    /**
+     * Получаем матрицу ядра.
+     * @return матрицу ядра
+     */
+    double[][] getKernelArray();
 }

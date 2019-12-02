@@ -114,13 +114,13 @@ public class HelpUtils {
     public static void main(String[] args) throws NotCorrectInitialConditions, NotCorrectData {
         OpenCVImpl cv = new OpenCVImpl();
         cv.init();
-        double[][] test = {{0, 1, 0}, {1, -4, 1}, {0, 1, 0}};
+        double[][] test = {{0, 1, 0}, {1, -1, 1}, {0, 1, 0}};
         Kernel testKernel = new KernelImpl(test);
         Mat img = cv.loadImage("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/" + "nums.jpg", Imgcodecs.IMREAD_COLOR);
         //Mat img = cv.loadImage("src/main/java/com/project/RecognitionImage/backend/OpenCV/test/" + "captcha/1.jpg", Imgcodecs.IMREAD_COLOR);
         showImage(img, "Before");
         Mat zipImg = zipMatToSize(img, 300, 50);
-        Mat res = pooling(img, 5, 1);
+        Mat res = pooling(img, 2, 1);
         Mat result = //convolution(
                         //convolution(
                         convolution(res,
