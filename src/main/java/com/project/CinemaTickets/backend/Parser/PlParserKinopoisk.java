@@ -74,7 +74,7 @@ public class PlParserKinopoisk implements PliParserKinopoisk {
         String cinemaUnderground = document.select("div.cinema-header__metro").text();
         String infoAboutCinema = "Рэйтинг: " + document.select("span.cinema-header__rating.cinema-header__rating_type_positive").text();
         String urlToKinopoisk = document.location(); //TODO: придумать, как можно исключить добавление ссылок по датам и прочее. Только, чтобы добавлялась ссылка на кинотеатр с расписанием на сегодня
-
+        //TODO: Сделать проверку на пустуе "" значения еще тут и везде
         if (cinemaName != null) {
             cinema.setCinemaName(cinemaName);
         } else {

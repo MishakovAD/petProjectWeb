@@ -1,8 +1,11 @@
 package Leetcode;
 
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+@Component
 public class Tasks {
     public static void main(String[] args) {
         Tasks t = new Tasks();
