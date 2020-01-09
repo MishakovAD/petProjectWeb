@@ -1,6 +1,6 @@
 package com.project.RecognitionImage.backend.SplitterImage;
 
-import com.project.NeuralNetwork.new_development.NeuralNetwork.School.data_book.IBook;
+import com.project.NeuralNetwork.Base.Networks.School.data_book.IBook;
 import org.opencv.core.Mat;
 
 import java.util.List;

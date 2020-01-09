@@ -1,7 +1,7 @@
 package com.project.RecognitionImage.backend.SplitterImage;
 
-import com.project.NeuralNetwork.new_development.NeuralNetwork.School.data_book.Book;
-import com.project.NeuralNetwork.new_development.NeuralNetwork.School.data_book.IBook;
+import com.project.NeuralNetwork.Base.Networks.School.data_book.Book;
+import com.project.NeuralNetwork.Base.Networks.School.data_book.IBook;
 import com.project.RecognitionImage.backend.OpenCV.OpenCVImpl;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -28,8 +28,8 @@ public class SplitImageToChar implements Splitter {
 
         //Mat imgGray = cv.loadImage(path + "russian_text.png", Imgcodecs.IMREAD_ANYCOLOR);
         //Mat imgGray = cv.loadImage(path + "chars.jpg", Imgcodecs.IMREAD_ANYCOLOR);
-        //Mat imgGray = cv.loadImage(path + "big_chars.jpg", Imgcodecs.IMREAD_ANYCOLOR);
-        Mat imgGray = cv.loadImage(path + "nums.jpg", Imgcodecs.IMREAD_ANYCOLOR);
+        Mat imgGray = cv.loadImage(path + "big_chars.jpg", Imgcodecs.IMREAD_ANYCOLOR);
+        //Mat imgGray = cv.loadImage(path + "nums.jpg", Imgcodecs.IMREAD_ANYCOLOR);
 
         List<Chars> l = s.getSingleChar(imgGray);
         s.prepareTestDataForChars(imgGray, l);
@@ -308,8 +308,8 @@ public class SplitImageToChar implements Splitter {
             for (int row = 0; row < result.rows(); row++) {
                 for (int col =0; col < result.cols(); col++) {
                     double[] pixel = result.get(row, col);
-                    //test[index] = pixel[0];
-                    test[index] = 1 / (pixel[0]+1);
+                    test[index] = pixel[0];
+                    //test[index] = 1 / (pixel[0]+1); TODO: решить, как преобразовывать данные.
                     index++;
                 }
             }

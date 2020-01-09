@@ -71,7 +71,7 @@ public class PlHttpClient implements PliHttpClient {
         } else {
             htmlDocumentAtString = new StringBuilder("Файл не найден. Ошибка 404.");
         }
-
+//TODO: Текст изменился, нужно актуализировать!
         if (StringUtils.containsIgnoreCase(htmlDocumentAtString, CHECK_ANTI_SPAM) && redirectionList.size() > 0) {
             String answerCaptchaUrl = getAnswerUrlForCaptcha(htmlDocumentAtString);
             HttpGet requestCaptcha = getRequestWithHeaders(answerCaptchaUrl);

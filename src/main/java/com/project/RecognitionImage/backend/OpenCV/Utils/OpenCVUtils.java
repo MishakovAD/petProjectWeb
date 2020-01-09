@@ -1,11 +1,14 @@
 package com.project.RecognitionImage.backend.OpenCV.Utils;
 
+import com.project.RecognitionImage.backend.OpenCV.OpenCVImpl;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 import static org.opencv.imgproc.Imgproc.filter2D;
@@ -405,4 +408,16 @@ public class OpenCVUtils {
         avg = sum / arr.length;
         return avg;
     }
+
+    public static Mat zipMatToSize(Mat src, int width, int height) {
+        OpenCVImpl o = new OpenCVImpl();
+        BufferedImage originalImage = o.convertMatToBuffImg(src);
+        BufferedImage destImage = new BufferedImage(width, height, originalImage.getType());
+        Graphics2D g = destImage.createGraphics();
+        g.drawImage(originalImage, 0, 0, width, height, null);
+        g.dispose();
+        Mat dest = o.convertBuffImgToMat(destImage);
+        return dest;
+    }
+
 }
